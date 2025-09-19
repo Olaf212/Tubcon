@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cargando...</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #EF0315;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .message {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="loader"></div>
+    <p class="message" id="loaderMessage">Enviando correo...</p>
+  </div>
+  <script>
+    // Permite cambiar el mensaje desde el HTML principal
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.message) {
+        document.getElementById("loaderMessage").textContent = event.data.message;
+      }
+    });
+  </script>
+</body>
+</html>

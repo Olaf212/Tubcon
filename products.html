@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TUBCON - Catálogo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="src/products.css">
+    <link rel="stylesheet" href="src/chatbot.css">
+</head>
+
+<body>
+   <header>
+        <div class="logo">
+            <img src="public/images/logo.png" class="logo" alt="TUBCON S.A. de C.V." />
+        </div>
+
+        <!-- Menú normal (solo desktop) -->
+        <nav class="menu-desktop">
+            <ul>
+                <li><a href="index.html" >Inicio</a></li>
+                <li><a href="products.html" style="color:#EF0315">Productos</a></li>
+                <li><a href="ubication.html">Instalaciones</a></li>
+                <li><a href="email.html">Asesoría</a></li>
+                <li><a href="contact.html">Contacto</a></li>
+            </ul>
+        </nav>
+
+        <!-- Botón hamburguesa (solo móvil) -->
+        <button class="hamburger" id="hamburger">&#9776;</button>
+
+        <!-- Menú lateral overlay (solo móvil) -->
+        <nav id="sidebar">
+            <button class="close" id="close">&times;</button>
+
+            <!-- Logo en el sidebar -->
+            <div class="sidebar-logo">
+                <img src="public/images/logo.png" alt="TUBCON S.A. de C.V.">
+            </div>
+            <br>
+            <br>
+
+            <ul>
+                <li><a href="index.html" >Inicio</a></li>
+                <li><a href="products.html" style="color:#EF0315">Productos</a></li>
+                <li><a href="ubication.html">Instalaciones</a></li>
+                <li><a href="email.html">Asesoría</a></li>
+                <li><a href="contact.html">Contacto</a></li>
+            </ul>
+
+            <div class="sidebar-bottom">
+                <a href="https://www.google.com/maps?q=TUBCON%20SA%20DE%20CV" target="_blank">
+                    <i class="fa-solid fa-location-dot"></i> Dónde comprar
+                </a>
+                <a href="#">Sé un distribuidor TUBCON</a>
+                <a href="https://wa.me/5543225189" target="_blank">
+                    <i class="fa-solid fa-phone"></i> 55-43-22-51-89
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Overlay para cerrar el menú -->
+        <div id="overlay"></div>
+    </header>
+
+    <section id="quienes-somos">
+        <div class="flippingbook-container">
+            <!-- Iframe modificado para deshabilitar sonido -->
+            <iframe src="https://online.flippingbook.com/view/729924485/" allow="clipboard-write"></iframe>
+        </div>
+        
+        <div class="instructions">Utiliza los controles para navegar por nuestro catálogo</div>
+    </section>
+
+    <footer>
+        <p>© 2025 TUBCON S.A. de C.V. Todos los derechos reservados.</p>
+        <p>Síguenos en redes sociales</p>
+    </footer>
+
+    <!-- Chatbot ORIGINAL para desktop -->
+    <div class="chatbot-container" id="desktopChatbot">
+        <div class="chatbot-header" id="chatbotToggle">
+            <span>Asistente TUBCON</span>
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="chatbot-body" id="chatbotBody">
+            <div class="chatbot-messages" id="chatbotMessages"></div>
+            <div class="chatbot-input">
+                <input type="text" id="userInput" placeholder="Escribe tu pregunta...">
+                <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot BURBUJA para móvil -->
+    <div class="chatbot-bubble" id="mobileChatbotBubble">
+        <i class="fas fa-comment"></i>
+    </div>
+
+    <div class="chatbot-mobile-window" id="mobileChatbotWindow">
+        <div class="chatbot-header">
+            <span>Asistente TUBCON</span>
+            <button class="close-chat" id="closeMobileChat">×</button>
+        </div>
+        <div class="chatbot-messages" id="mobileChatbotMessages"></div>
+        <div class="chatbot-input">
+            <input type="text" id="mobileUserInput" placeholder="Escribe tu pregunta...">
+            <button id="mobileSendButton"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Funcionalidad del menú móvil
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.getElementById('close');
+        const overlay = document.getElementById('overlay');
+        
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeSidebar.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+        
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    </script>
+    
+    <!-- JavaScript del Chatbot -->
+    <script type="module">
+        // Importar las funciones desde el archivo JavaScript
+        import {
+            knowledgeBase,
+            procesarMensaje,
+            consultarWitAI,
+            procesarEntidadesWit,
+            procesarRespuestaLocal,
+            consultarGemini
+        } from './chatbot.js';
+
+        // JavaScript del Chatbot
+        // Inicializar chatbot cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function () {
+            // Selecciona un saludo al azar
+            const saludoAleatorio = knowledgeBase.saludos[
+                Math.floor(Math.random() * knowledgeBase.saludos.length)
+            ];
+
+            // Inserta el saludo en ambos contenedores de mensajes
+            const mensajeDivDesktop = document.createElement('div');
+            mensajeDivDesktop.className = 'message bot-message';
+            mensajeDivDesktop.textContent = saludoAleatorio;
+            document.getElementById('chatbotMessages').appendChild(mensajeDivDesktop);
+
+            const mensajeDivMobile = document.createElement('div');
+            mensajeDivMobile.className = 'message bot-message';
+            mensajeDivMobile.textContent = saludoAleatorio;
+            document.getElementById('mobileChatbotMessages').appendChild(mensajeDivMobile);
+
+            // Configurar event listeners para desktop
+            document.getElementById('chatbotToggle').addEventListener('click', toggleChat);
+            document.getElementById('sendButton').addEventListener('click', function() {
+                sendMessage('userInput', 'chatbotMessages');
+            });
+            document.getElementById('userInput').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    sendMessage('userInput', 'chatbotMessages');
+                }
+            });
+
+            // Configurar event listeners para móvil
+            document.getElementById('mobileSendButton').addEventListener('click', function() {
+                sendMessage('mobileUserInput', 'mobileChatbotMessages');
+            });
+            document.getElementById('mobileUserInput').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    sendMessage('mobileUserInput', 'mobileChatbotMessages');
+                }
+            });
+        });
+
+        // Estado del chatbot
+        let isChatOpen = false;
+
+        // Función para alternar el chatbot
+        function toggleChat() {
+            const chatBody = document.getElementById('chatbotBody');
+            isChatOpen = !isChatOpen;
+
+            if (isChatOpen) {
+                chatBody.classList.add('active');
+                document.body.classList.add('chatbot-active'); // Añadir clase para ocultar header
+                // Hacer scroll al final después de la animación
+                setTimeout(() => {
+                    const messages = document.getElementById('chatbotMessages');
+                    messages.scrollTop = messages.scrollHeight;
+                }, 300);
+            } else {
+                chatBody.classList.remove('active');
+                document.body.classList.remove('chatbot-active'); // Quitar clase para mostrar header
+            }
+        }
+
+        // Función para enviar mensaje
+        async function sendMessage(inputId, messagesId) {
+            const userInput = document.getElementById(inputId);
+            const messageText = userInput.value.trim();
+
+            if (!messageText) return;
+
+            // Agregar mensaje del usuario
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'message user-message';
+            userMessageDiv.textContent = messageText;
+            document.getElementById(messagesId).appendChild(userMessageDiv);
+
+            // Limpiar input y mantener el foco
+            userInput.value = '';
+            userInput.focus();
+
+            // Hacer scroll al final
+            const messages = document.getElementById(messagesId);
+            messages.scrollTop = messages.scrollHeight;
+
+            // Mostrar indicador de typing
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message typing-indicator';
+            typingDiv.innerHTML = '<span></span><span></span><span></span>';
+            messages.appendChild(typingDiv);
+            messages.scrollTop = messages.scrollHeight;
+
+            // Usar la función importada
+            try {
+                const respuesta = await procesarMensaje(messageText);
+
+                // Eliminar indicador de typing
+                const typingIndicator = messages.querySelector('.typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+
+                // Mostrar la respuesta
+                appendBotMessage(respuesta, messagesId);
+
+            } catch (error) {
+                console.error("Error procesando mensaje:", error);
+
+                // Eliminar indicador de typing
+                const typingIndicator = messages.querySelector('.typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+
+                // Mostrar mensaje de error
+                appendBotMessage("No pude procesar tu solicitud en este momento. ¿Podrías intentarlo de nuevo?", messagesId);
+            }
+        }
+
+        // Función auxiliar para agregar mensajes del bot
+        function appendBotMessage(message, messagesId) {
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.className = 'message bot-message';
+            botMessageDiv.innerHTML = message;
+            document.getElementById(messagesId).appendChild(botMessageDiv);
+
+            // Hacer scroll al final
+            const messages = document.getElementById(messagesId);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // Control chatbot móvil - CORREGIDO Y COMPLETO
+        const mobileBubble = document.getElementById('mobileChatbotBubble');
+        const mobileWindow = document.getElementById('mobileChatbotWindow');
+        const closeMobile = document.getElementById('closeMobileChat');
+
+        // Event listeners para abrir y cerrar el chatbot móvil
+        if (mobileBubble && mobileWindow && closeMobile) {
+            mobileBubble.addEventListener('click', function() {
+                mobileWindow.classList.add('active');
+                document.body.classList.add('chatbot-active'); // Ocultar header
+                document.body.style.overflow = 'hidden'; // Evitar scroll del body
+            });
+
+            closeMobile.addEventListener('click', function() {
+                mobileWindow.classList.remove('active');
+                document.body.classList.remove('chatbot-active'); // Mostrar header
+                document.body.style.overflow = ''; // Restaurar scroll
+            });
+
+            // Agrega esto para el deslizamiento en móvil
+            let startY = 0;
+            mobileWindow.addEventListener('touchstart', function(e) {
+                startY = e.touches[0].clientY;
+            });
+
+            mobileWindow.addEventListener('touchmove', function(e) {
+                const currentY = e.touches[0].clientY;
+                if (currentY - startY > 100) {
+                    mobileWindow.classList.remove('active');
+                    document.body.classList.remove('chatbot-active'); // Mostrar header
+                    document.body.style.overflow = ''; // Restaurar scroll
+                }
+            });
+        }
+    </script>
+    <!-- Burbuja de WhatsApp -->
+    <div class="whatsapp-float" id="whatsappFloat">
+        <a href="https://wa.me/525543225189" id="whatsappLink" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <div class="whatsapp-tooltip">
+            ¿Necesitas ayuda? Chatea con nosotros por WhatsApp
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Detectar si es dispositivo móvil
+            function isMobileDevice() {
+                return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+            }
+            // Configurar el comportamiento del botón de WhatsApp
+            const whatsappLink = document.getElementById('whatsappLink');
+            
+            if (isMobileDevice()) {
+                // En móviles, abrir directamente la app de WhatsApp
+                whatsappLink.href = "https://wa.me/525543225189";
+            } else {
+                // En desktop, abrir WhatsApp Web
+                whatsappLink.href = "https://web.whatsapp.com/send?phone=525543225189";
+            }
+        });
+    </script>
+</body>
+</html>

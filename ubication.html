@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TUBCON Informativo</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="public/images/iconoa.ico">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="./src/ubication.css" />
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- CSS del Chatbot (externo) -->
+  <link rel="stylesheet" href="src/chatbot.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+  <header>
+    <div class="logo">
+      <img src="public/images/logo.png" class="logo" alt="TUBCON S.A. de C.V." />
+    </div>
+
+    <!-- Menú normal (solo desktop) -->
+    <nav class="menu-desktop">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="products.html">Productos</a></li>
+        <li><a href="ubication.html" style="color:#EF0315">Instalaciones</a></li>
+        <li><a href="email.html">Asesoría</a></li>
+        <li><a href="contact.html">Contacto</a></li>
+      </ul>
+    </nav>
+
+    <!-- Botón hamburguesa (solo móvil) -->
+    <button class="hamburger" id="hamburger">&#9776;</button>
+
+    <!-- Menú lateral overlay (solo móvil) -->
+    <nav id="sidebar">
+      <button class="close" id="close">&times;</button>
+      <div class="sidebar-logo">
+        <img src="public/images/logo.png" alt="TUBCON S.A. de C.V.">
+      </div>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="products.html">Productos</a></li>
+        <li><a href="ubication.html" style="color:#EF0315">Instalaciones</a></li>
+        <li><a href="email.html">Asesoría</a></li>
+        <li><a href="contact.html">Contacto</a></li>
+      </ul>
+      <div class="sidebar-bottom">
+        <a href="https://www.google.com/maps?q=TUBCON%20SA%20DE%20CV" target="_blank">
+          <i class="fa-solid fa-location-dot"></i> Dónde comprar
+        </a>
+        <a href="#">Sé un distribuidor TUBCON</a>
+        <a href="https://wa.me/5543225189" target="_blank">
+          <i class="fa-solid fa-phone"></i> 55-43-22-51-89
+        </a>
+      </div>
+    </nav>
+    <div id="overlay"></div>
+  </header>
+
+  <!-- Carrusel -->
+  <div class="carousel-container">
+    <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+    <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
+ 
+     <!-- Modal para visualización de imagen -->
+    <div class="modal">
+       <span class="close-modal">&times;</span>
+        <img class="modal-content" alt="">
+        <div class="caption"></div>
+        <div class="zoom-controls">
+            <button class="zoom-btn" id="zoom-in">+</button>
+            <button class="zoom-btn" id="zoom-out">-</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const gallery = document.querySelector('.gallery');
+            const modal = document.querySelector('.modal');
+            const modalImg = document.querySelector('.modal-content');
+            const caption = document.querySelector('.caption');
+            const closeBtn = document.querySelector('.close-modal');
+            const zoomInBtn = document.getElementById('zoom-in');
+            const zoomOutBtn = document.getElementById('zoom-out');
+            
+            // Variables para controlar el estado del zoom
+            let currentZoom = 1;
+            const ZOOM_INCREMENT = 0.5;
+            const MAX_ZOOM = 3;
+            const MIN_ZOOM = 1;
+            
+            // Variables para el arrastre en móvil
+            let isDragging = false;
+            let startX, startY, scrollLeft, scrollTop;
+            let initialTouchX, initialTouchY;
+            
+            // Abrir modal al hacer clic en una imagen
+            gallery.querySelectorAll('img').forEach(img => {
+                img.addEventListener('click', function() {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                    caption.textContent = this.alt;
+                    currentZoom = 1;
+                    modalImg.classList.remove('zoomed');
+                    modalImg.style.transform = 'translate(-50%, -50%) scale(1)';
+                });
+            });
+            
+            // Cerrar modal
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // Cerrar modal al hacer clic fuera de la imagen
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Zoom in
+            zoomInBtn.addEventListener('click', function() {
+                if (currentZoom < MAX_ZOOM) {
+                    currentZoom += ZOOM_INCREMENT;
+                    updateZoom();
+                }
+            });
+            
+            // Zoom out
+            zoomOutBtn.addEventListener('click', function() {
+                if (currentZoom > MIN_ZOOM) {
+                    currentZoom -= ZOOM_INCREMENT;
+                    updateZoom();
+                }
+            });
+            
+            // Zoom con la rueda del ratón (solo desktop)
+            modalImg.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                
+                if (e.deltaY < 0 && currentZoom < MAX_ZOOM) {
+                    // Zoom in
+                    currentZoom += ZOOM_INCREMENT * 0.5;
+                } else if (e.deltaY > 0 && currentZoom > MIN_ZOOM) {
+                    // Zoom out
+                    currentZoom -= ZOOM_INCREMENT * 0.5;
+                }
+                
+                updateZoom();
+            });
+            
+            // Zoom con doble clic o doble tap
+            modalImg.addEventListener('dblclick', function() {
+                if (currentZoom === MIN_ZOOM) {
+                    currentZoom = MAX_ZOOM;
+                } else {
+                    currentZoom = MIN_ZOOM;
+                }
+                updateZoom();
+            });
+            
+            // Funcionalidad de arrastre para móvil
+            modalImg.addEventListener('touchstart', function(e) {
+                if (currentZoom > MIN_ZOOM) {
+                    isDragging = true;
+                    initialTouchX = e.touches[0].clientX;
+                    initialTouchY = e.touches[0].clientY;
+                    modalImg.style.cursor = 'grabbing';
+                }
+            });
+            
+            modalImg.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                
+                e.preventDefault();
+                
+                const touchX = e.touches[0].clientX;
+                const touchY = e.touches[0].clientY;
+                
+                const deltaX = touchX - initialTouchX;
+                const deltaY = touchY - initialTouchY;
+                
+                // Obtener la transformación actual
+                const transformValue = modalImg.style.transform;
+                const matrix = new DOMMatrixReadOnly(transformValue);
+                
+                // Aplicar el desplazamiento
+                modalImg.style.transform = `translate(${matrix.m41 + deltaX}px, ${matrix.m42 + deltaY}px) scale(${currentZoom})`;
+                
+                initialTouchX = touchX;
+                initialTouchY = touchY;
+            });
+            
+            modalImg.addEventListener('touchend', function() {
+                isDragging = false;
+                modalImg.style.cursor = 'grab';
+            });
+            
+            // Función para actualizar el zoom
+            function updateZoom() {
+                modalImg.style.transform = `translate(-50%, -50%) scale(${currentZoom})`;
+                
+                if (currentZoom > MIN_ZOOM) {
+                    modalImg.classList.add('zoomed');
+                    modalImg.style.cursor = 'grab';
+                } else {
+                    modalImg.classList.remove('zoomed');
+                    modalImg.style.cursor = 'zoom-in';
+                }
+            }
+            
+            // Cerrar con la tecla Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <div class="carousel-slides">
+      <!-- Sección Instalaciones -->
+      <section id="instalaciones" class="carousel-section">
+        <h2>Instalaciones</h2>
+        <p>Contamos con infraestructura moderna y almacenes para brindar el mejor servicio.</p>
+        <div class="gallery">
+          <img src="/public/images/publicidad2.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad3.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad4.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad5.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad6.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad7.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad8.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad9.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad10.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad11.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad12.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad13.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad14.jpg" alt="Instalaciones TUBCON">
+          <img src="/public/images/publicidad1.jpg" alt="Instalaciones TUBCON">
+        </div>
+      </section>
+
+      <!-- Sección Equipo -->
+      <section id="equipo" class="carousel-section">
+        <h2>Nuestro Equipo</h2>
+        <p>Profesionales altamente capacitados para brindarte el mejor servicio.</p>
+        <div class="team-grid">
+          <div class="team-member">
+            <img src="https://via.placeholder.com/150?text=Director" alt="Director">
+          
+          </div>
+          <div class="team-member">
+            <img src="https://via.placeholder.com/150?text=Ingeniera" alt="Ingeniera">
+            
+          </div>
+          <div class="team-member">
+            <img src="https://via.placeholder.com/150?text=Técnico" alt="Técnico">
+           
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección Mapa -->
+      <section id="ubicacion" class="carousel-section">
+        <h2>Ubicación</h2>
+        <p>Visítanos en nuestras instalaciones en Teotihuacán.</p>
+        <div id="map"></div>
+      </section>
+    </div>
+
+    <div class="carousel-nav">
+      <div class="carousel-dot active" onclick="goToSlide(0)"></div>
+      <div class="carousel-dot" onclick="goToSlide(1)"></div>
+      <div class="carousel-dot" onclick="goToSlide(2)"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 TUBCON S.A. de C.V. Todos los derechos reservados.</p>
+    <p>Síguenos en redes sociales</p>
+  </footer>
+
+  <!-- Chatbot Desktop -->
+  <div class="chatbot-container" id="desktopChatbot">
+    <div class="chatbot-header" id="chatbotToggle">
+      <span>Asistente TUBCON</span>
+      <i class="fas fa-robot"></i>
+    </div>
+    <div class="chatbot-body" id="chatbotBody">
+      <div class="chatbot-messages" id="chatbotMessages"></div>
+      <div class="chatbot-input">
+        <input type="text" id="userInput" placeholder="Escribe tu pregunta...">
+        <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Móvil -->
+  <div class="chatbot-bubble" id="mobileChatbotBubble">
+    <i class="fas fa-comment"></i>
+  </div>
+  <div class="chatbot-mobile-window" id="mobileChatbotWindow">
+    <div class="chatbot-header">
+      <span>Asistente TUBCON</span>
+      <button class="close-chat" id="closeMobileChat">×</button>
+    </div>
+    <div class="chatbot-messages" id="mobileChatbotMessages"></div>
+    <div class="chatbot-input">
+      <input type="text" id="mobileUserInput" placeholder="Escribe tu pregunta...">
+      <button id="mobileSendButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- Leaflet -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- JavaScript menú y carrusel -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const hamburger = document.getElementById('hamburger');
+      const sidebar = document.getElementById('sidebar');
+      const closeBtn = document.getElementById('close');
+      const overlay = document.getElementById('overlay');
+
+      // Menú móvil
+      function closeMenu() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+      hamburger.addEventListener('click', () => {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+      closeBtn.addEventListener('click', closeMenu);
+      overlay.addEventListener('click', closeMenu);
+      document.querySelectorAll('#sidebar a').forEach(link => link.addEventListener('click', closeMenu));
+
+      // Carrusel
+      let currentSlide = 0;
+      const totalSlides = 3;
+      const carouselSlides = document.querySelector('.carousel-slides');
+      const dots = document.querySelectorAll('.carousel-dot');
+
+      function updateCarousel() {
+        carouselSlides.style.transform = `translateX(-${currentSlide * 33.33}%)`;
+        dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
+        initMapIfNeeded();
+      }
+      window.moveSlide = dir => {
+        currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
+        updateCarousel();
+      };
+      window.goToSlide = i => {
+        currentSlide = i;
+        updateCarousel();
+      };
+
+      // Mapa
+      let mapInitialized = false;
+      function initMapIfNeeded() {
+        if (currentSlide === 2 && !mapInitialized) {
+          const ubicacion = [19.683913, -98.876015];
+          const map = L.map('map').setView(ubicacion, 15);
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 19
+          }).addTo(map);
+          const icono = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+            iconSize: [35, 35],
+            iconAnchor: [17, 34],
+            popupAnchor: [0, -30]
+          });
+          L.marker(ubicacion, { icon: icono }).addTo(map).bindPopup(`
+            <div style="text-align:center; font-size:14px; line-height:1.4;">
+              <strong style="color:#004080;">TUBCON S.A. de C.V.</strong><br>
+              Avenida México No. Puxtla 25<br>
+              Teotihuacán Centro, 55805<br>
+              Teotihuacán de Arista, Méx.
+            </div>
+          `).openPopup();
+          mapInitialized = true;
+        }
+      }
+      updateCarousel();
+    });
+  </script>
+
+  <!-- Chatbot -->
+  <script type="module">
+    import { knowledgeBase, procesarMensaje } from './chatbot.js';
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Mensaje inicial
+      const saludo = knowledgeBase.saludos[Math.floor(Math.random() * knowledgeBase.saludos.length)];
+      ["chatbotMessages", "mobileChatbotMessages"].forEach(id => {
+        const msg = document.createElement('div');
+        msg.className = 'message bot-message';
+        msg.textContent = saludo;
+        document.getElementById(id).appendChild(msg);
+      });
+
+      // Desktop
+      document.getElementById('chatbotToggle').addEventListener('click', () => {
+        document.getElementById('chatbotBody').classList.toggle('active');
+      });
+      document.getElementById('sendButton').addEventListener('click', () => sendMessage('userInput', 'chatbotMessages'));
+      document.getElementById('userInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter') sendMessage('userInput', 'chatbotMessages');
+      });
+
+      // Móvil
+      document.getElementById('mobileSendButton').addEventListener('click', () => sendMessage('mobileUserInput', 'mobileChatbotMessages'));
+      document.getElementById('mobileUserInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter') sendMessage('mobileUserInput', 'mobileChatbotMessages');
+      });
+
+      // Burbuja móvil
+      const bubble = document.getElementById('mobileChatbotBubble');
+      const windowChat = document.getElementById('mobileChatbotWindow');
+      const closeMobile = document.getElementById('closeMobileChat');
+      bubble.addEventListener('click', () => {
+        windowChat.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+      closeMobile.addEventListener('click', () => {
+        windowChat.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+
+      async function sendMessage(inputId, messagesId) {
+        const input = document.getElementById(inputId);
+        const text = input.value.trim();
+        if (!text) return;
+        const userMsg = document.createElement('div');
+        userMsg.className = 'message user-message';
+        userMsg.textContent = text;
+        document.getElementById(messagesId).appendChild(userMsg);
+        input.value = '';
+        const messages = document.getElementById(messagesId);
+        messages.scrollTop = messages.scrollHeight;
+
+        const typing = document.createElement('div');
+        typing.className = 'message bot-message typing-indicator';
+        typing.innerHTML = '<span></span><span></span><span></span>';
+        messages.appendChild(typing);
+
+        try {
+          const respuesta = await procesarMensaje(text);
+          typing.remove();
+          appendBotMessage(respuesta, messagesId);
+        } catch {
+          typing.remove();
+          appendBotMessage("No pude procesar tu solicitud en este momento.", messagesId);
+        }
+      }
+
+      function appendBotMessage(msg, messagesId) {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot-message';
+        botMsg.innerHTML = msg;
+        const messages = document.getElementById(messagesId);
+        messages.appendChild(botMsg);
+        messages.scrollTop = messages.scrollHeight;
+      }
+    });
+  </script>
+<!-- Burbuja de WhatsApp -->
+<div class="whatsapp-float" id="whatsappFloat">
+    <a href="https://wa.me/525543225189" id="whatsappLink" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <div class="whatsapp-tooltip">
+        ¿Necesitas ayuda? Chatea con nosotros por WhatsApp
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Detectar si es dispositivo móvil
+        function isMobileDevice() {
+            return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+        }
+        
+        // Configurar el comportamiento del botón de WhatsApp
+        const whatsappLink = document.getElementById('whatsappLink');
+        
+        if (isMobileDevice()) {
+            // En móviles, abrir directamente la app de WhatsApp
+            whatsappLink.href = "https://wa.me/525543225189";
+        } else {
+            // En desktop, abrir WhatsApp Web
+            whatsappLink.href = "https://web.whatsapp.com/send?phone=525543225189";
+        }
+    });
+</script>
+</body>
+</html>
