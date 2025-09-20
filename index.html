@@ -22,14 +22,16 @@
     <link rel="stylesheet" href="src/chatbot.css">
     
     <style>
-        /* ESTILOS PARA OCULTAR HEADER CUANDO CHATBOT ESTÉ ABIERTO */
-        header {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        
-        body.chatbot-active header {
-            opacity: 0;
-            visibility: hidden;
+        /* ESTILOS PARA OCULTAR HEADER SOLO EN MÓVIL CUANDO CHATBOT ESTÉ ABIERTO */
+        @media (max-width: 768px) {
+            header {
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+            
+            body.chatbot-active header {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
         
         /* Asegurar que el chatbot móvil tenga el z-index correcto */
@@ -272,7 +274,10 @@
 
             if (isChatOpen) {
                 chatBody.classList.add('active');
-                document.body.classList.add('chatbot-active'); // Añadir clase para ocultar header
+                // Solo añadir la clase chatbot-active en dispositivos móviles
+                if (window.innerWidth <= 768) {
+                    document.body.classList.add('chatbot-active');
+                }
                 // Hacer scroll al final después de la animación
                 setTimeout(() => {
                     const messages = document.getElementById('chatbotMessages');
@@ -280,7 +285,10 @@
                 }, 300);
             } else {
                 chatBody.classList.remove('active');
-                document.body.classList.remove('chatbot-active'); // Quitar clase para mostrar header
+                // Solo quitar la clase chatbot-active en dispositivos móviles
+                if (window.innerWidth <= 768) {
+                    document.body.classList.remove('chatbot-active');
+                }
             }
         }
 
