@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TUBCON - Distribuidores</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="public/images/iconoa.ico">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="src/brands.css">
+  <link rel="stylesheet" href="src/chatbot.css">
+  
+  <style>
+    /* Estilos para las tarjetas volteables */
+    .distributors-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .distributors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .card {
+      perspective: 1000px;
+      height: 400px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .card-front {
+      background: linear-gradient(45deg, #EF0315, #ff6b6b);
+      color: white;
+    }
+
+    .card-back {
+      background: white;
+      color: #333;
+      transform: rotateY(180deg);
+      text-align: left;
+      justify-content: space-between;
+    }
+
+    .logo-container {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .logo-container i {
+      font-size: 40px;
+    }
+
+    .distributor-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .distributor-location {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .flip-hint {
+      position: absolute;
+      bottom: 15px;
+      font-size: 0.8rem;
+      opacity: 0.8;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 4px 8px;
+      border-radius: 15px;
+    }
+
+    .info-title {
+      color: #EF0315;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .distributor-info {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: 10px;
+      font-size: 0.9rem;
+    }
+
+    .distributor-info p {
+      margin-bottom: 10px;
+    }
+
+    .specialty {
+      display: inline-block;
+      background: #EF0315;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      margin: 3px 3px 3px 0;
+    }
+
+    .visit-btn {
+      display: inline-block;
+      background: #EF0315;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .visit-btn:hover {
+      background: #c50211;
+    }
+
+    .visit-btn i {
+      margin-left: 5px;
+    }
+
+    /* Responsividad para móviles */
+    @media (max-width: 768px) {
+      .distributors-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .card {
+        height: 350px;
+      }
+      
+      .logo-container {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .logo-container i {
+        font-size: 30px;
+      }
+      
+      .distributor-name {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="public/images/logo.png" class="logo" alt="TUBCON S.A. de C.V." />
+    </div>
+    <nav class="menu-desktop">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="products.html">Productos</a></li>
+        <li><a href="ubication.html">Instalaciones</a></li>
+        <li><a href="email.html">Asesoría</a></li>
+        <li><a href="brands.html" style="color:#EF0315">Distribuidores</a></li>
+        <li><a href="contact.html">Contacto</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <nav id="sidebar">
+      <button class="close" id="close">&times;</button>
+      <div class="sidebar-logo">
+        <img src="public/images/logo.png" alt="TUBCON S.A. de C.V.">
+      </div>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="products.html">Productos</a></li>
+        <li><a href="ubication.html">Instalaciones</a></li>
+        <li><a href="email.html">Asesoría</a></li>
+        <li><a href="brands.html"style="color:#EF0315">Distribuidores</a></li>
+        <li><a href="contact.html">Contacto</a></li>
+      </ul>
+    </nav>
+    <div id="overlay"></div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main>
+    <div class="distributors-container">
+      <div class="distributors-grid">
+<!-- Distribuidor 1 -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca.png" alt="Logo Fluida S.A. de C.V." class="logo-image" />
+      <h2 class="distributor-name">Fluida S.A. de C.V.</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Conexiones Industriales de Fluida S.A. de C.V.</h3>
+      <div class="distributor-info">
+        <p>Fluida S.A. de C.V. es una empresa mexicana dedicada a la fabricación de conexiones para tuberías, especialmente bajo la marca CIFUNSA. Su sede se encuentra en Saltillo, Coahuila, y ofrece productos de alta calidad para diversas aplicaciones industriales.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Conexiones galvanizadas (C150 y C300)</span></li>
+          <li><span class="specialty">Niples de acero C-40</span></li>
+          <li><span class="specialty">Conexiones de acero al carbón soldables</span></li>
+          <li><span class="specialty">Bridas de acero</span></li>
+          <li><span class="specialty">Conexiones y tubería de CPVC</span></li>
+          <li><span class="specialty">Válvulas y coples de acero</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Coahuila, Nuevo León, Tamaulipas y otras regiones del norte de México.</p>
+      </div>
+      <a href="http://www.fluida.com.mx" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+
+        
+       <!-- Distribuidor 2 -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <!-- Imagen con una clase para controlar su tamaño -->
+      <img src="./public/images/marcas/marca (12).png" alt="Logo Urrea S.A. de C.V." class="logo-image" />
+      <h2 class="distributor-name">Urrea S.A. de C.V.</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Materiales Plomeros del Pacífico</h3>
+      <div class="distributor-info">
+        <p>Urrea S.A. de C.V. es una empresa mexicana con más de 118 años ofreciendo soluciones para el disfrute responsable del agua. Su sede se encuentra en Guadalajara, Jalisco, y ofrece una amplia gama de productos para la plomería y la construcción.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Tubería CPVC</span></li>
+          <li><span class="specialty">Herramientas</span></li>
+          <li><span class="specialty">Material sanitario</span></li>
+          <li><span class="specialty">Sistemas de riego</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Jalisco, Michoacán, Colima y otras regiones del occidente de México.</p>
+      </div>
+      <a href="https://urrea.mx/?gad_source=1&gad_campaignid=766631168&gclid=Cj0KCQjw58PGBhCkARIsADbDilx5fHRb4punrOZal0hH3Bm6JMBW1VZs83wXS8UPWSTU4rO6ruMR_h0aAlFREALw_wcB" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+
+        
+        <!-- Distribuidor 3 -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (1).png" alt="Logo KYO-Plásticos y Conexiones" class="logo-image" />
+      <h2 class="distributor-name">KYO-Plásticos y Conexiones</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Hydro Solutions Centro</h3>
+      <div class="distributor-info">
+        <p>Especialistas en soluciones hidráulicas y sistemas de tubería para proyectos residenciales e industriales.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Sistemas de presión</span></li>
+          <li><span class="specialty">Tubería industrial</span></li>
+          <li><span class="specialty">Bombas y motores</span></li>
+          <li><span class="specialty">Control de flujo</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Ciudad de México, Estado de México, Morelos.</p>
+      </div>
+      <a href="https://grupovalro.com.mx/" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+     <!-- Distribuidor 4 -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (2).png" alt="Logo DISA México" class="logo-image" />
+      <h2 class="distributor-name">DISA México</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Soluciones Hidrosanitarias</h3>
+      <div class="distributor-info">
+        <p>DISA México es una empresa mexicana dedicada a la comercialización, importación y distribución de productos dirigidos al sector ferretero, la industria, el hogar y la construcción. Ofrece una amplia gama de soluciones en sistemas hidráulicos y sanitarios.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Calentadores solares</span></li>
+          <li><span class="specialty">Calentadores de gas sin tanque</span></li>
+          <li><span class="specialty">Bombas centrífugas</span></li>
+          <li><span class="specialty">Bombas sumergibles</span></li>
+          <li><span class="specialty">Mangueras y accesorios</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Principalmente en Guadalajara, Jalisco, con distribución a nivel nacional.</p>
+      </div>
+      <a href="https://www.disamexico.com.mx/en/02-plumbing.php" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+        <!-- Distribuidor 5 -->
+        <!-- Distribuidor 5 -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (3).png" alt="Logo Rotoplas" class="logo-image" />
+      <h2 class="distributor-name">Rotoplas</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Soluciones Integrales de Agua</h3>
+      <div class="distributor-info">
+        <p>Rotoplas es una empresa mexicana líder en soluciones para almacenar, conducir, purificar y tratar el agua. Con más de 45 años de experiencia, ofrece productos innovadores y sustentables para el manejo del agua en hogares, industrias y comunidades.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Tinacos y cisternas</span></li>
+          <li><span class="specialty">Sistemas de conducción Tuboplus</span></li>
+          <li><span class="specialty">Purificadores y filtros</span></li>
+          <li><span class="specialty">Biodigestores</span></li>
+          <li><span class="specialty">Bombas y accesorios hidráulicos</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Presencia en 14 países de Latinoamérica y Estados Unidos, con operaciones en México, Argentina, Brasil, Chile, Colombia, Costa Rica, El Salvador, Guatemala, Honduras, Nicaragua, Panamá, Perú y Uruguay.</p>
+      </div>
+      <a href="https://rotoplas.com.mx" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+ <!-- Distribuidor 6 -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (4).png" alt="Logo IUSA" class="logo-image" />
+      <h2 class="distributor-name">IUSA</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Soluciones Integrales en Electricidad y Plomería</h3>
+      <div class="distributor-info">
+        <p>Grupo IUSA es una empresa mexicana líder en la fabricación y distribución de productos para los sectores eléctrico, hidráulico y de construcción. Con más de 80 años de experiencia, ofrece soluciones innovadoras y de alta calidad para diversas aplicaciones industriales y comerciales.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Cables y conductores eléctricos</span></li>
+          <li><span class="specialty">Tubos y conexiones hidráulicas</span></li>
+          <li><span class="specialty">Medidores de energía eléctrica</span></li>
+          <li><span class="specialty">Transformadores y equipos de medición</span></li>
+          <li><span class="specialty">Accesorios para instalaciones eléctricas y de plomería</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Presencia en México, Estados Unidos, Centroamérica y Sudamérica, con una amplia red de distribución y centros de servicio.</p>
+      </div>
+      <a href="https://www.iusa.com.mx/" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+    <!-- Distribuidor 7 -->
+    <!-- Distribuidor 6 -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (5).png" alt="Logo ARMEBE" class="logo-image" />
+      <h2 class="distributor-name">ARMEBE</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Especialistas en Recipientes a Presión</h3>
+      <div class="distributor-info">
+        <p>ARMEBE es una empresa mexicana con más de 70 años de experiencia en el diseño y fabricación de tanques de alta calidad para Gas L.P. y otros productos a presión. Sus instalaciones están ubicadas en la Ciudad de México, y cuentan con certificaciones bajo las normas NOM-012/3-SEDG-2003 y ASME U y UM.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Tanques estacionarios (100 a 5,000 litros)</span></li>
+          <li><span class="specialty">Tanques portátiles y transportables</span></li>
+          <li><span class="specialty">Tanques para estaciones de carburación</span></li>
+          <li><span class="specialty">Autotanques para distribución de Gas L.P.</span></li>
+          <li><span class="specialty">Tanques para montacargas y vehículos recreativos (RV's)</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> ARMEBE tiene presencia en México y exporta a países como Estados Unidos, Canadá, Colombia, Chile, Belice, El Salvador, Guatemala, Cuba y Puerto Rico.</p>
+      </div>
+      <a href="https://armebe.com.mx/" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+    <!-- Distribuidor 8 -->
+    <!-- Distribuidor 6 -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (6).png" alt="Logo Fénix Solar" class="logo-image" />
+      <h2 class="distributor-name">Fénix Solar</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Especialistas en Energía Solar</h3>
+      <div class="distributor-info">
+        <p>Fénix Solar es una empresa mexicana líder en la fabricación y comercialización de calentadores solares. Con más de 9 años de experiencia, ofrece soluciones eficientes y sostenibles para el ahorro de energía en hogares, negocios y proyectos gubernamentales.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Calentadores solares de gravedad</span></li>
+          <li><span class="specialty">Calentadores solares de alta presión</span></li>
+          <li><span class="specialty">Calentadores solares tipo panel</span></li>
+          <li><span class="specialty">Tinacos y cisternas</span></li>
+          <li><span class="specialty">Juegos de baño</span></li>
+          <li><span class="specialty">Herramienta agrícola</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Fénix Solar tiene presencia en 12 estados de la República Mexicana, incluyendo el Estado de México, Ciudad de México, Jalisco, Puebla, Veracruz, entre otros. Además, cuenta con más de 1,500 clientes mayoristas y distribuidores en todo el país.</p>
+      </div>
+      <a href="https://www.fenix-solar.mx/" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- Distribuidor Calorex -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (7).png" alt="Logo Calorex" class="logo-image" />
+      <h2 class="distributor-name">Calorex</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Calentadores de Agua Solar, Digitales y a Gas</h3>
+      <div class="distributor-info">
+        <p>Calorex es una empresa mexicana con más de 75 años de experiencia en la fabricación y comercialización de soluciones para el calentamiento de agua. Ofrece productos innovadores y eficientes, incluyendo calentadores solares, digitales y a gas, adaptados a las necesidades residenciales, comerciales e industriales.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Calentadores solares termosifón</span></li>
+          <li><span class="specialty">Calentadores solares de paso</span></li>
+          <li><span class="specialty">Calentadores digitales</span></li>
+          <li><span class="specialty">Calentadores a gas</span></li>
+          <li><span class="specialty">Calentadores solares comerciales</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Calorex tiene presencia en todo México, con una amplia red de distribuidores y centros de servicio en diversas regiones del país.</p>
+      </div>
+      <a href="https://www.calorex.com.mx/" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Distribuidor Enerhit -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (8).png" alt="Logo Enerhit" class="logo-image" />
+      <h2 class="distributor-name">Enerhit</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Calentadores de Agua Solar y a Gas</h3>
+      <div class="distributor-info">
+        <p>Enerhit es una marca de IUSA con más de 75 años de experiencia en soluciones para el calentamiento de agua. Ofrece productos innovadores y eficientes, incluyendo calentadores solares y de gas, adaptados a las necesidades residenciales, comerciales e industriales.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Calentadores solares planos de vidrio templado</span></li>
+          <li><span class="specialty">Calentadores solares de paso</span></li>
+          <li><span class="specialty">Calentadores a gas de rápida recuperación</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Enerhit tiene presencia en todo México, con una amplia red de distribuidores y centros de servicio en diversas regiones del país.</p>
+      </div>
+      <a href="https://www.iusa.com.mx/enerhit" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Distribuidor Solvex -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (9).png" alt="Logo Solvex" class="logo-image" />
+      <h2 class="distributor-name">Solvex</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Soluciones en Energía Solar y a Gas</h3>
+      <div class="distributor-info">
+        <p>Solvex es una empresa mexicana especializada en la fabricación de calentadores solares y de gas. Con más de 30 años en el mercado, ofrece soluciones eficientes para el calentamiento de agua en hogares y empresas.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Calentadores solares de alta eficiencia</span></li>
+          <li><span class="specialty">Calentadores solares de paso</span></li>
+          <li><span class="specialty">Calentadores a gas</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Solvex tiene presencia en todo México, con una red de distribución en varias regiones del país.</p>
+      </div>
+      <a href="https://www.solvex.com.mx/" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+
+
+<!-- Distribuidor Grupo IML -->
+<div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <img src="./public/images/marcas/marca (10).png" alt="Logo Grupo IML" class="logo-image" />
+      <h2 class="distributor-name">Grupo IML</h2>
+      <div class="flip-hint">Haz clic para más información</div>
+    </div>
+    <div class="card-back">
+      <h3 class="info-title">Productos de Gas</h3>
+      <div class="distributor-info">
+        <p>Grupo IML es una empresa mexicana con más de 350 productos en su catálogo, especializada en estufas, productos para GLP, luminarias LED y artículos de ferretería. Su compromiso es ofrecer productos de calidad que mejoren la vida cotidiana de sus clientes.</p>
+        <p><strong>Productos destacados:</strong></p>
+        <ul class="product-list">
+          <li><span class="specialty">Estufas de gas</span></li>
+          <li><span class="specialty">Luminarias LED</span></li>
+          <li><span class="specialty">Productos para GLP</span></li>
+          <li><span class="specialty">Artículos de ferretería</span></li>
+        </ul>
+        <p><strong>Área de cobertura:</strong> Grupo IML tiene presencia en diversas regiones de México, con una amplia red de distribución.</p>
+      </div>
+      <a href="https://www.grupoiml.com/" class="visit-btn">Visitar sitio web <i class="fas fa-external-link-alt"></i></a>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+         
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 TUBCON S.A. de C.V. Todos los derechos reservados.</p>
+    <p>Síguenos en redes sociales</p>
+  </footer>
+
+  <!-- Chatbot -->
+  <div class="chatbot-container" id="desktopChatbot">
+    <div class="chatbot-header" id="chatbotToggle">
+      <span>Asistente TUBCON</span>
+      <i class="fas fa-robot"></i>
+    </div>
+    <div class="chatbot-body" id="chatbotBody">
+      <div class="chatbot-messages" id="chatbotMessages"></div>
+      <div class="chatbot-input">
+        <input type="text" id="userInput" placeholder="Escribe tu pregunta...">
+        <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chatbot-bubble" id="mobileChatbotBubble">
+    <i class="fas fa-comment"></i>
+  </div>
+  <div class="chatbot-mobile-window" id="mobileChatbotWindow">
+    <div class="chatbot-header">
+      <span>Asistente TUBCON</span>
+      <button class="close-chat" id="closeMobileChat">×</button>
+    </div>
+    <div class="chatbot-messages" id="mobileChatbotMessages"></div>
+    <div class="chatbot-input">
+      <input type="text" id="mobileUserInput" placeholder="Escribe tu pregunta...">
+      <button id="mobileSendButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- WhatsApp -->
+  <div class="whatsapp-float" id="whatsappFloat">
+    <a href="https://wa.me/525543225189" id="whatsappLink" target="_blank">
+      <i class="fab fa-whatsapp"></i>
+    </a>
+    <div class="whatsapp-tooltip">¿Necesitas ayuda? Chatea con nosotros por WhatsApp</div>
+  </div>
+
+  <!-- JS -->
+  <script>
+    // Menú
+    document.addEventListener('DOMContentLoaded', function () {
+      const hamburger = document.getElementById('hamburger');
+      const sidebar = document.getElementById('sidebar');
+      const closeBtn = document.getElementById('close');
+      const overlay = document.getElementById('overlay');
+
+      function closeMenu() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      hamburger.addEventListener('click', () => {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+      closeBtn.addEventListener('click', closeMenu);
+      overlay.addEventListener('click', closeMenu);
+    });
+
+    // Chatbot simple
+    const knowledgeBase = {
+      saludos: [
+        "¡Hola! Soy el asistente virtual de TUBCON. ¿En qué puedo ayudarte hoy?",
+        "¡Bienvenido! Estoy aquí para ayudarte con información sobre nuestros productos y servicios.",
+        "¡Hola! ¿En qué puedo asistirte hoy?"
+      ],
+      default: "Lo siento, no entendí tu pregunta. ¿Podrías reformularla?"
+    };
+
+    function procesarMensaje(msg) {
+      const t = msg.toLowerCase();
+      if (t.includes("hola") || t.includes("buenas")) return knowledgeBase.saludos[0];
+      return knowledgeBase.default;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const saludo = knowledgeBase.saludos[Math.floor(Math.random() * knowledgeBase.saludos.length)];
+      document.getElementById('chatbotMessages').innerHTML = `<div class="message bot-message">${saludo}</div>`;
+      document.getElementById('mobileChatbotMessages').innerHTML = `<div class="message bot-message">${saludo}</div>`;
+
+      document.getElementById('chatbotToggle').addEventListener('click', toggleChat);
+      document.getElementById('sendButton').addEventListener('click', () => sendMessage('userInput', 'chatbotMessages'));
+      document.getElementById('userInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage('userInput', 'chatbotMessages'); });
+      document.getElementById('mobileSendButton').addEventListener('click', () => sendMessage('mobileUserInput', 'mobileChatbotMessages'));
+      document.getElementById('mobileUserInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage('mobileUserInput', 'mobileChatbotMessages'); });
+    });
+
+    let isChatOpen = false;
+    function toggleChat() {
+      const chatBody = document.getElementById('chatbotBody');
+      isChatOpen = !isChatOpen;
+      chatBody.classList.toggle('active', isChatOpen);
+      
+      // Controlar la visibilidad de WhatsApp cuando el chatbot está abierto
+      if (isChatOpen) {
+        document.body.classList.add('chatbot-active');
+      } else {
+        document.body.classList.remove('chatbot-active');
+      }
+    }
+
+    function sendMessage(inputId, messagesId) {
+      const userInput = document.getElementById(inputId);
+      const text = userInput.value.trim();
+      if (!text) return;
+      const messages = document.getElementById(messagesId);
+      messages.innerHTML += `<div class="message user-message">${text}</div>`;
+      userInput.value = '';
+      const respuesta = procesarMensaje(text);
+      setTimeout(() => {
+        messages.innerHTML += `<div class="message bot-message">${respuesta}</div>`;
+        messages.scrollTop = messages.scrollHeight;
+      }, 500);
+    }
+
+    // Función para voltear las tarjetas
+    function flipCard(card) {
+      card.classList.toggle('flipped');
+    }
+  </script>
+</body>
+</html>
