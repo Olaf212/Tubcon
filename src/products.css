@@ -882,4 +882,122 @@ footer {
                 height: 50vh;
                 min-height: 400px;
             }
+        } /* ESTILOS PARA OCULTAR HEADER SOLO EN MÓVIL CUANDO CHATBOT ESTÉ ABIERTO */
+        @media (max-width: 768px) {
+            header {
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+            
+            body.chatbot-active header {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        
+        /* Asegurar que el chatbot móvil tenga el z-index correcto */
+        .chatbot-mobile-window.active {
+            z-index: 1003;
+        }
+        
+        /* Burbuja de WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 105px;
+            right: 25px;
+            z-index: 1000;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .whatsapp-float.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+        
+        .whatsapp-float a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .whatsapp-float a:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+        
+        .whatsapp-float i {
+            font-size: 32px;
+            color: white;
+        }
+        
+        .whatsapp-tooltip {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .whatsapp-float:hover .whatsapp-tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Ajustes para móvil */
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                z-index: 1004; /* WhatsApp por encima del chatbot en móvil */
+            }
+            
+            .whatsapp-float a {
+                width: 55px;
+                height: 55px;
+            }
+            
+            .whatsapp-float i {
+                font-size: 28px;
+            }
+            
+            /* Ocultar burbuja del chatbot cuando esté abierto en móvil */
+            .chatbot-bubble.hidden {
+                opacity: 0;
+                transform: scale(0.8);
+                pointer-events: none;
+            }
+
+            /* Ocultar WhatsApp en móvil cuando el chatbot esté abierto */
+            body.chatbot-active .whatsapp-float {
+                opacity: 0;
+                transform: scale(0.8);
+                pointer-events: none;
+            }
+            
+            /* Ocultar chatbot desktop en móvil */
+            .chatbot-container {
+                display: none;
+            }
+        }
+        
+        /* Mostrar chatbot desktop solo en desktop */
+        @media (min-width: 769px) {
+            .chatbot-bubble, .chatbot-mobile-window {
+                display: none;
+            }
         }
