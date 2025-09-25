@@ -21,33 +21,15 @@
     <!-- CSS del Chatbot (externo) -->
     <link rel="stylesheet" href="src/chatbot.css">
     
-    <style>
-        /* ESTILOS PARA OCULTAR HEADER SOLO EN MÓVIL CUANDO CHATBOT ESTÉ ABIERTO */
-        @media (max-width: 768px) {
-            header {
-                transition: opacity 0.3s ease, visibility 0.3s ease;
-            }
-            
-            body.chatbot-active header {
-                opacity: 0;
-                visibility: hidden;
-            }
-        }
-        
-        /* Asegurar que el chatbot móvil tenga el z-index correcto */
-        .chatbot-mobile-window.active {
-            z-index: 1003;
-        }
-    </style>
+ 
 </head>
 
 <body>
+    <!-- HEADER -->
     <header>
         <div class="logo">
             <img src="public/images/logo.png" class="logo" alt="TUBCON S.A. de C.V." />
         </div>
-
-        <!-- Menú normal (solo desktop) -->
         <nav class="menu-desktop">
             <ul>
                 <li><a href="index.html" style="color:#EF0315">Inicio</a></li>
@@ -59,21 +41,13 @@
                 <li><a href="contact.html">Contacto</a></li>
             </ul>
         </nav>
-
-        <!-- Botón hamburguesa (solo móvil) -->
         <button class="hamburger" id="hamburger">&#9776;</button>
-
-        <!-- Menú lateral overlay (solo móvil) -->
         <nav id="sidebar">
             <button class="close" id="close">&times;</button>
-
-            <!-- Logo en el sidebar -->
             <div class="sidebar-logo">
                 <img src="public/images/logo.png" alt="TUBCON S.A. de C.V.">
             </div>
-            <br>
-            <br>
-
+            <br><br>
             <ul>
                 <li><a href="index.html" style="color:#EF0315">Inicio</a></li>
                 <li><a href="#quienes-somos">¿Quiénes somos?</a></li>
@@ -83,7 +57,6 @@
                 <li><a href="brands.html">Distribuidores</a></li>
                 <li><a href="contact.html">Contacto</a></li>
             </ul>
-
             <div class="sidebar-bottom">
                 <a href="https://www.google.com/maps?q=TUBCON%20SA%20DE%20CV" target="_blank">
                     <i class="fa-solid fa-location-dot"></i> Dónde comprar
@@ -96,7 +69,7 @@
         </nav>
     </header>
 
-    <!-- Sección Hero con el carrusel -->
+    <!-- HERO -->
     <section id="inicio" class="hero">
         <div class="carousel">
             <div class="slides">
@@ -111,7 +84,7 @@
         </div>
     </section>
 
-    <!-- Sección ¿Quiénes somos? -->
+    <!-- QUIÉNES SOMOS -->
     <section id="quienes-somos">
         <h2>¿Quiénes somos?</h2>
         <p>Tubcon es una empresa enfocada principalmente a la distribución de mayoreo de material de plomería en general
@@ -120,7 +93,7 @@
             mercado.</p>
     </section>
 
-    <!-- Sección Misión y Visión CORREGIDA -->
+    <!-- MISIÓN VISIÓN -->
     <section id="mision-vision">
         <div class="grid">
             <div class="item">
@@ -139,6 +112,7 @@
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer>
         <p>© 2025 TUBCON S.A. de C.V. Todos los derechos reservados.</p>
         <p>Síguenos en redes sociales</p>
@@ -146,7 +120,7 @@
 
     <div id="overlay"></div>
 
-    <!-- Chatbot ORIGINAL para desktop -->
+    <!-- CHATBOT DESKTOP -->
     <div class="chatbot-container" id="desktopChatbot">
         <div class="chatbot-header" id="chatbotToggle">
             <span>Asistente TUBCON</span>
@@ -161,7 +135,7 @@
         </div>
     </div>
 
-    <!-- Chatbot BURBUJA para móvil -->
+    <!-- CHATBOT MÓVIL -->
     <div class="chatbot-bubble" id="mobileChatbotBubble">
         <i class="fas fa-comment"></i>
     </div>
@@ -178,254 +152,196 @@
         </div>
     </div>
 
-    <!-- JavaScript del menú móvil -->
+    <!-- WHATSAPP FLOAT -->
+    <div class="whatsapp-float" id="whatsappFloat">
+        <a href="https://wa.me/525543225189" id="whatsappLink" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <div class="whatsapp-tooltip">
+            ¿Necesitas ayuda? Chatea con nosotros por WhatsApp
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <!-- Menú móvil -->
     <script>
-         // Control del menú hamburguesa
     document.addEventListener('DOMContentLoaded', function () {
         const hamburger = document.getElementById('hamburger');
         const sidebar = document.getElementById('sidebar');
         const closeBtn = document.getElementById('close');
         const overlay = document.getElementById('overlay');
-
-        // Abrir menú
         hamburger.addEventListener('click', function () {
             sidebar.classList.add('active');
             overlay.classList.add('active');
-            document.body.classList.add('menu-active'); // Añadir clase al body
-            document.body.style.overflow = 'hidden'; // Evitar scroll
+            document.body.classList.add('menu-active');
+            document.body.style.overflow = 'hidden';
         });
-
-        // Cerrar menú
         closeBtn.addEventListener('click', closeMenu);
         overlay.addEventListener('click', closeMenu);
-
-        // Cerrar con Escape key
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closeMenu();
         });
-
         function closeMenu() {
             sidebar.classList.remove('active');
             overlay.classList.remove('active');
-            document.body.classList.remove('menu-active'); // Quitar clase del body
-            document.body.style.overflow = ''; // Restaurar scroll
+            document.body.classList.remove('menu-active');
+            document.body.style.overflow = '';
         }
     });
     </script>
 
-    <!-- Importar la lógica JavaScript como módulo -->
+    <!-- Chatbot -->
     <script type="module">
-        // Importar las funciones desde el archivo JavaScript
-        import {
-            knowledgeBase,
-            procesarMensaje,
-            consultarWitAI,
-            procesarEntidadesWit,
-            procesarRespuestaLocal,
-            consultarGemini
-        } from './chatbot.js';
+        import { knowledgeBase, procesarMensaje } from './chatbot.js';
+        let isDesktopChatOpen = false;
+        let isMobileChatOpen = false;
 
-        // JavaScript del Chatbot
-        // Inicializar chatbot cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function () {
-            // Selecciona un saludo al azar
             const saludoAleatorio = knowledgeBase.saludos[
                 Math.floor(Math.random() * knowledgeBase.saludos.length)
             ];
-
-            // Inserta el saludo en ambos contenedores de mensajes
             const mensajeDivDesktop = document.createElement('div');
             mensajeDivDesktop.className = 'message bot-message';
             mensajeDivDesktop.textContent = saludoAleatorio;
             document.getElementById('chatbotMessages').appendChild(mensajeDivDesktop);
-
             const mensajeDivMobile = document.createElement('div');
             mensajeDivMobile.className = 'message bot-message';
             mensajeDivMobile.textContent = saludoAleatorio;
             document.getElementById('mobileChatbotMessages').appendChild(mensajeDivMobile);
-
-            // Configurar event listeners para desktop
-            document.getElementById('chatbotToggle').addEventListener('click', toggleChat);
+            document.getElementById('chatbotToggle').addEventListener('click', toggleDesktopChat);
             document.getElementById('sendButton').addEventListener('click', function() {
                 sendMessage('userInput', 'chatbotMessages');
             });
             document.getElementById('userInput').addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') {
-                    sendMessage('userInput', 'chatbotMessages');
-                }
+                if (e.key === 'Enter') sendMessage('userInput', 'chatbotMessages');
             });
-
-            // Configurar event listeners para móvil
             document.getElementById('mobileSendButton').addEventListener('click', function() {
                 sendMessage('mobileUserInput', 'mobileChatbotMessages');
             });
             document.getElementById('mobileUserInput').addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') {
-                    sendMessage('mobileUserInput', 'mobileChatbotMessages');
-                }
+                if (e.key === 'Enter') sendMessage('mobileUserInput', 'mobileChatbotMessages');
             });
+            const whatsappLink = document.getElementById('whatsappLink');
+            const isMobile = window.innerWidth <= 768;
+            whatsappLink.href = isMobile
+                ? "https://wa.me/525543225189"
+                : "https://web.whatsapp.com/send?phone=525543225189";
         });
 
-        // Estado del chatbot
-        let isChatOpen = false;
-
-        // Función para alternar el chatbot
-        function toggleChat() {
+        function toggleDesktopChat() {
             const chatBody = document.getElementById('chatbotBody');
-            isChatOpen = !isChatOpen;
-
-            if (isChatOpen) {
+            isDesktopChatOpen = !isDesktopChatOpen;
+            if (isDesktopChatOpen) {
                 chatBody.classList.add('active');
-                // Solo añadir la clase chatbot-active en dispositivos móviles
-                if (window.innerWidth <= 768) {
-                    document.body.classList.add('chatbot-active');
+                if (window.innerWidth > 768) {
+                    document.getElementById('whatsappFloat').classList.add('hidden');
                 }
-                // Hacer scroll al final después de la animación
                 setTimeout(() => {
                     const messages = document.getElementById('chatbotMessages');
                     messages.scrollTop = messages.scrollHeight;
                 }, 300);
             } else {
                 chatBody.classList.remove('active');
-                // Solo quitar la clase chatbot-active en dispositivos móviles
-                if (window.innerWidth <= 768) {
-                    document.body.classList.remove('chatbot-active');
+                if (window.innerWidth > 768) {
+                    document.getElementById('whatsappFloat').classList.remove('hidden');
                 }
             }
         }
 
-        // Función para enviar mensaje
         async function sendMessage(inputId, messagesId) {
             const userInput = document.getElementById(inputId);
             const messageText = userInput.value.trim();
-
             if (!messageText) return;
-
-            // Agregar mensaje del usuario
             const userMessageDiv = document.createElement('div');
             userMessageDiv.className = 'message user-message';
             userMessageDiv.textContent = messageText;
             document.getElementById(messagesId).appendChild(userMessageDiv);
-
-            // Limpiar input y mantener el foco
             userInput.value = '';
             userInput.focus();
-
-            // Hacer scroll al final
             const messages = document.getElementById(messagesId);
             messages.scrollTop = messages.scrollHeight;
-
-            // Mostrar indicador de typing
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message bot-message typing-indicator';
             typingDiv.innerHTML = '<span></span><span></span><span></span>';
             messages.appendChild(typingDiv);
             messages.scrollTop = messages.scrollHeight;
-
-            // Usar la función importada
             try {
                 const respuesta = await procesarMensaje(messageText);
-
-                // Eliminar indicador de typing
                 const typingIndicator = messages.querySelector('.typing-indicator');
-                if (typingIndicator) {
-                    typingIndicator.remove();
-                }
-
-                // Mostrar la respuesta
+                if (typingIndicator) typingIndicator.remove();
                 appendBotMessage(respuesta, messagesId);
-
             } catch (error) {
                 console.error("Error procesando mensaje:", error);
-
-                // Eliminar indicador de typing
                 const typingIndicator = messages.querySelector('.typing-indicator');
-                if (typingIndicator) {
-                    typingIndicator.remove();
-                }
-
-                // Mostrar mensaje de error
+                if (typingIndicator) typingIndicator.remove();
                 appendBotMessage("No pude procesar tu solicitud en este momento. ¿Podrías intentarlo de nuevo?", messagesId);
             }
         }
 
-        // Función auxiliar para agregar mensajes del bot
         function appendBotMessage(message, messagesId) {
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'message bot-message';
             botMessageDiv.innerHTML = message;
             document.getElementById(messagesId).appendChild(botMessageDiv);
-
-            // Hacer scroll al final
             const messages = document.getElementById(messagesId);
             messages.scrollTop = messages.scrollHeight;
         }
 
-        // Control chatbot móvil - CORREGIDO Y COMPLETO
         const mobileBubble = document.getElementById('mobileChatbotBubble');
         const mobileWindow = document.getElementById('mobileChatbotWindow');
         const closeMobile = document.getElementById('closeMobileChat');
-
-        // Event listeners para abrir y cerrar el chatbot móvil
         if (mobileBubble && mobileWindow && closeMobile) {
             mobileBubble.addEventListener('click', function() {
+                isMobileChatOpen = true;
                 mobileWindow.classList.add('active');
-                document.body.classList.add('chatbot-active'); // Ocultar header
-                document.body.style.overflow = 'hidden'; // Evitar scroll del body
+                document.body.classList.add('chatbot-active');
+                document.body.style.overflow = 'hidden';
+                mobileBubble.classList.add('hidden');
             });
-
             closeMobile.addEventListener('click', function() {
+                isMobileChatOpen = false;
                 mobileWindow.classList.remove('active');
-                document.body.classList.remove('chatbot-active'); // Mostrar header
-                document.body.style.overflow = ''; // Restaurar scroll
+                document.body.classList.remove('chatbot-active');
+                document.body.style.overflow = '';
+                mobileBubble.classList.remove('hidden');
             });
-
-            // Agrega esto para el deslizamiento en móvil
             let startY = 0;
             mobileWindow.addEventListener('touchstart', function(e) {
                 startY = e.touches[0].clientY;
             });
-
             mobileWindow.addEventListener('touchmove', function(e) {
                 const currentY = e.touches[0].clientY;
                 if (currentY - startY > 100) {
+                    isMobileChatOpen = false;
                     mobileWindow.classList.remove('active');
-                    document.body.classList.remove('chatbot-active'); // Mostrar header
-                    document.body.style.overflow = ''; // Restaurar scroll
+                    document.body.classList.remove('chatbot-active');
+                    document.body.style.overflow = '';
+                    mobileBubble.classList.remove('hidden');
                 }
             });
         }
+        
+        window.addEventListener('resize', function() {
+            const whatsappLink = document.getElementById('whatsappLink');
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                whatsappLink.href = "https://wa.me/525543225189";
+                document.getElementById('whatsappFloat').classList.remove('hidden');
+                if (isMobileChatOpen) {
+                    document.getElementById('mobileChatbotBubble').classList.add('hidden');
+                } else {
+                    document.getElementById('mobileChatbotBubble').classList.remove('hidden');
+                }
+            } else {
+                whatsappLink.href = "https://web.whatsapp.com/send?phone=525543225189";
+                if (isDesktopChatOpen) {
+                    document.getElementById('whatsappFloat').classList.add('hidden');
+                } else {
+                    document.getElementById('whatsappFloat').classList.remove('hidden');
+                }
+                document.getElementById('mobileChatbotBubble').classList.add('hidden');
+            }
+        });
     </script>
-    <!-- Burbuja de WhatsApp -->
-<div class="whatsapp-float" id="whatsappFloat">
-    <a href="https://wa.me/525543225189" id="whatsappLink" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-    <div class="whatsapp-tooltip">
-        ¿Necesitas ayuda? Chatea con nosotros por WhatsApp
-    </div>
-</div>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Detectar si es dispositivo móvil
-        function isMobileDevice() {
-            return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
-        }
-        
-        // Configurar el comportamiento del botón de WhatsApp
-        const whatsappLink = document.getElementById('whatsappLink');
-        
-        if (isMobileDevice()) {
-            // En móviles, abrir directamente la app de WhatsApp
-            whatsappLink.href = "https://wa.me/525543225189";
-        } else {
-            // En desktop, abrir WhatsApp Web
-            whatsappLink.href = "https://web.whatsapp.com/send?phone=525543225189";
-        }
-    });
-</script>
 </body>
-
 </html>
