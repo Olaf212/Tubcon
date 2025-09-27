@@ -3,6 +3,9 @@ export const WIT_AI_TOKEN = "PU6SJVTN7UBA5TJOAUTVZWBZIHUVNXJF";
 export const WIT_API_VERSION = "20250502";
 export const GEMINI_API_KEY = "AIzaSyD5G2WoPDgnXC9lT4lpPPyPGchb712hg2w";
 export const UNSPLASH_ACCESS_KEY = "wtEzyz_eYhND7kjWxBmLj_DQILUePcx-nxXVdv3t4tc";
+// Configuración WhatsApp
+export const WHATSAPP_NUMERO_EMPRESA = "+5215543225189"; // Tu número de TUBCON
+export const WHATSAPP_ENABLED = true; // Cambiar a false para desactivar
 
 // Base de conocimientos local - MEJORADA PARA BÚSQUEDAS PRECISAS
 export const knowledgeBase = {
@@ -14,7 +17,7 @@ export const knowledgeBase = {
     respuestas: {
         'tubcon|empresa|quiénes son|quién es': "TUBCON es una empresa especializada en la distribución de material de plomería, trabajando con las mejores marcas del mercado.",
         'productos|qué venden|qué tienen|catálogo': "Ofrecemos tubos, conexiones, accesorios de PVC, tinacos, cisternas, reguladores de gas, mancueras y bombas de agua de las mejores marcas. Puedes ver nuestro catálogo en la sección de productos.",
-        'ubicación|dónde están|local|dirección|localización|mapa|como llegar|dirección exacta': "📍 *Nuestra ubicación:*\nAvenida México No., Puxtla 25, Teotihuacan Centro, 55805 Teotihuacán de Arista, Méx.",
+        'ubicación|dónde están|local|dirección|localización|mapa|como llegar|dirección exacta|ubican': "📍 *Nuestra ubicación:*\nAvenida México No., Puxtla 25, Teotihuacan Centro, 55805 Teotihuacán de Arista, Méx.",
         'contacto|teléfono|whatsapp|email|correo': "Puedes contactarnos a través de la sección de contacto o llamarnos al 55-43-22-51-89.",
 
         // PRODUCTOS PRINCIPALES - CORREGIDO (sin duplicados)
@@ -746,6 +749,35 @@ export const inicializarChatbot = () => {
     console.log('   - renderizarRespuestaEnChat(respuesta)');
 };
 
+const procesarMensajeBot = async (mensaje, idUsuario) => {
+    const contexto = contextosDeConversacion[idUsuario].map(interaccion => {
+        if (interaccion.usuario) return `Usuario: ${interaccion.usuario}`;
+        if (interaccion.bot) return `Bot: ${interaccion.bot}`;
+    }).join('\n'); // Unir las interacciones previas
+
+    const url = `https://api.wit.ai/message?v=20230910&q=${encodeURIComponent(mensaje)}&context=${encodeURIComponent(contexto)}`;
+
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${WIT_AI_TOKEN}`,
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        return 'Lo siento, hubo un error al procesar tu mensaje.';
+    }
+
+    const data = await response.json();
+    const respuesta = data?.intents?.[0]?.name || "No entendí bien tu pregunta.";
+    return respuesta;
+};
 
 // Inicializar automáticamente
 inicializarChatbot();
+
+
+
+
+
