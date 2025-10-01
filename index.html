@@ -20,11 +20,15 @@
 
     <!-- CSS del Chatbot (externo) -->
     <link rel="stylesheet" href="src/chatbot.css">
-    
- 
+
+
 </head>
 
 <body>
+    <!-- PRELOADER EXTERNO -->
+    <div id="preloader-container">
+        <iframe src="preloader.html" frameborder="0" style="width:100%; height:100%;"></iframe>
+    </div>
     <!-- HEADER -->
     <header>
         <div class="logo">
@@ -165,29 +169,29 @@
     <!-- SCRIPTS -->
     <!-- Menú móvil -->
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const hamburger = document.getElementById('hamburger');
-        const sidebar = document.getElementById('sidebar');
-        const closeBtn = document.getElementById('close');
-        const overlay = document.getElementById('overlay');
-        hamburger.addEventListener('click', function () {
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-            document.body.classList.add('menu-active');
-            document.body.style.overflow = 'hidden';
+        document.addEventListener('DOMContentLoaded', function () {
+            const hamburger = document.getElementById('hamburger');
+            const sidebar = document.getElementById('sidebar');
+            const closeBtn = document.getElementById('close');
+            const overlay = document.getElementById('overlay');
+            hamburger.addEventListener('click', function () {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+                document.body.classList.add('menu-active');
+                document.body.style.overflow = 'hidden';
+            });
+            closeBtn.addEventListener('click', closeMenu);
+            overlay.addEventListener('click', closeMenu);
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeMenu();
+            });
+            function closeMenu() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.classList.remove('menu-active');
+                document.body.style.overflow = '';
+            }
         });
-        closeBtn.addEventListener('click', closeMenu);
-        overlay.addEventListener('click', closeMenu);
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeMenu();
-        });
-        function closeMenu() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.classList.remove('menu-active');
-            document.body.style.overflow = '';
-        }
-    });
     </script>
 
     <!-- Chatbot -->
@@ -209,13 +213,13 @@
             mensajeDivMobile.textContent = saludoAleatorio;
             document.getElementById('mobileChatbotMessages').appendChild(mensajeDivMobile);
             document.getElementById('chatbotToggle').addEventListener('click', toggleDesktopChat);
-            document.getElementById('sendButton').addEventListener('click', function() {
+            document.getElementById('sendButton').addEventListener('click', function () {
                 sendMessage('userInput', 'chatbotMessages');
             });
             document.getElementById('userInput').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') sendMessage('userInput', 'chatbotMessages');
             });
-            document.getElementById('mobileSendButton').addEventListener('click', function() {
+            document.getElementById('mobileSendButton').addEventListener('click', function () {
                 sendMessage('mobileUserInput', 'mobileChatbotMessages');
             });
             document.getElementById('mobileUserInput').addEventListener('keydown', function (e) {
@@ -291,14 +295,14 @@
         const mobileWindow = document.getElementById('mobileChatbotWindow');
         const closeMobile = document.getElementById('closeMobileChat');
         if (mobileBubble && mobileWindow && closeMobile) {
-            mobileBubble.addEventListener('click', function() {
+            mobileBubble.addEventListener('click', function () {
                 isMobileChatOpen = true;
                 mobileWindow.classList.add('active');
                 document.body.classList.add('chatbot-active');
                 document.body.style.overflow = 'hidden';
                 mobileBubble.classList.add('hidden');
             });
-            closeMobile.addEventListener('click', function() {
+            closeMobile.addEventListener('click', function () {
                 isMobileChatOpen = false;
                 mobileWindow.classList.remove('active');
                 document.body.classList.remove('chatbot-active');
@@ -306,10 +310,10 @@
                 mobileBubble.classList.remove('hidden');
             });
             let startY = 0;
-            mobileWindow.addEventListener('touchstart', function(e) {
+            mobileWindow.addEventListener('touchstart', function (e) {
                 startY = e.touches[0].clientY;
             });
-            mobileWindow.addEventListener('touchmove', function(e) {
+            mobileWindow.addEventListener('touchmove', function (e) {
                 const currentY = e.touches[0].clientY;
                 if (currentY - startY > 100) {
                     isMobileChatOpen = false;
@@ -320,8 +324,8 @@
                 }
             });
         }
-        
-        window.addEventListener('resize', function() {
+
+        window.addEventListener('resize', function () {
             const whatsappLink = document.getElementById('whatsappLink');
             const isMobile = window.innerWidth <= 768;
             if (isMobile) {
@@ -343,5 +347,26 @@
             }
         });
     </script>
+
+
+
+
+
+
+    <!-- Script para ocultar preloader -->
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const preloader = document.getElementById('preloader-container');
+                preloader.classList.add('fade-out');
+                
+                setTimeout(function() {
+                    preloader.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+    </script>
 </body>
+</body>
+
 </html>

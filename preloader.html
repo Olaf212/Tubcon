@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letra T - Animación Mejorada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a3a, #0d1b2a);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 900px;
+            padding: 30px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #e63946, #f1faee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(230, 57, 70, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: #a8dadc;
+            font-weight: 300;
+        }
+        
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            perspective: 1000px;
+        }
+        
+        .letter-box {
+            width: 350px;
+            height: 350px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        
+        .letter-box:hover {
+            transform: rotateY(5deg) rotateX(5deg);
+        }
+        
+        svg {
+            width: 80%;
+            height: 80%;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+        }
+        
+        /* Estilos para las líneas */
+        line {
+            stroke-width: 8;
+            fill: none;
+            stroke-linecap: round;
+            opacity: 0;
+        }
+        
+        /* Línea vertical (roja) */
+        #vertical-line {
+            stroke: #e63946;
+            stroke-dasharray: 320;
+            stroke-dashoffset: 320;
+            animation: drawVertical 2s ease-out forwards;
+        }
+        
+        /* Línea horizontal izquierda (gris) */
+        #horizontal-left {
+            stroke: #adb5bd;
+            stroke-dasharray: 150;
+            stroke-dashoffset: 150;
+            animation: drawLeft 1.2s ease-out forwards;
+            animation-delay: 2s;
+        }
+        
+        /* Línea horizontal derecha (roja) */
+        #horizontal-right {
+            stroke: #e63946;
+            stroke-dasharray: 150;
+            stroke-dashoffset: 150;
+            animation: drawRight 1.2s ease-out forwards;
+            animation-delay: 2.8s;
+        }
+        
+        /* Animaciones */
+        @keyframes drawVertical {
+            0% {
+                opacity: 1;
+                stroke-dashoffset: 320;
+            }
+            100% {
+                opacity: 1;
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes drawLeft {
+            0% {
+                opacity: 1;
+                stroke-dashoffset: 150;
+            }
+            100% {
+                opacity: 1;
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes drawRight {
+            0% {
+                opacity: 1;
+                stroke-dashoffset: 150;
+            }
+            100% {
+                opacity: 1;
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        /* Efecto de brillo al completar la animación */
+        .glow {
+            animation: glow 0.5s ease-out forwards;
+            animation-delay: 4s;
+        }
+        
+        @keyframes glow {
+            0% {
+                filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+            }
+            100% {
+                filter: drop-shadow(0 0 20px rgba(230, 57, 70, 0.7));
+            }
+        }
+        
+        /* Información y controles */
+        .info-panel {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h2 {
+            color: #a8dadc;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+        }
+        
+        .step {
+            text-align: center;
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin: 0 10px;
+            transition: transform 0.3s, background 0.3s;
+        }
+        
+        .step:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #e63946;
+            border-radius: 50%;
+            line-height: 30px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(to right, #e63946, #ff6b7a);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .code-explanation {
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Animación de la Letra T</h1>
+        <p class="subtitle">Línea vertical de abajo hacia arriba con transición suave</p>
+        
+        <div class="animation-container">
+            <div class="letter-box">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="glow">
+                    <!-- Línea vertical (de abajo hacia arriba) -->
+                    <line id="vertical-line" x1="100" y1="180" x2="100" y2="40" />
+                    
+                    <!-- Línea horizontal izquierda (gris) -->
+                    <line id="horizontal-left" x1="30" y1="40" x2="100" y2="40" />
+                    
+                    <!-- Línea horizontal derecha (roja) -->
+                    <line id="horizontal-right" x1="100" y1="40" x2="170" y2="40" />
+                </svg>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h2>Secuencia de Animación</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <p>Línea vertical (roja) se dibuja de abajo hacia arriba</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <p>Línea horizontal izquierda (gris) aparece desde el centro</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <p>Línea horizontal derecha (roja) completa la T</p>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button onclick="replayAnimation()">Repetir Animación</button>
+                <button onclick="toggleSlowMotion()">Cámara Lenta</button>
+            </div>
+        </div>
+        
+        <div class="code-explanation">
+            <p>// La animación se logra con stroke-dasharray y stroke-dashoffset</p>
+            <p>// Línea vertical: animación de 2 segundos comenzando desde abajo</p>
+            <p>// Líneas horizontales: animaciones separadas con delays de 2s y 2.8s</p>
+            <p>// Efecto de brillo final con filter: drop-shadow</p>
+        </div>
+        
+        <div class="footer">
+            <p>Animación CSS con SVG - Transiciones suaves y efectos visuales</p>
+        </div>
+    </div>
+
+    <script>
+        function replayAnimation() {
+            const svg = document.querySelector('svg');
+            const lines = document.querySelectorAll('line');
+            
+            // Remover clases de animación
+            svg.classList.remove('glow');
+            lines.forEach(line => {
+                line.style.animation = 'none';
+            });
+            
+            // Pequeño delay para reiniciar
+            setTimeout(() => {
+                lines.forEach(line => {
+                    line.style.animation = '';
+                });
+                svg.classList.add('glow');
+            }, 50);
+        }
+        
+        function toggleSlowMotion() {
+            const lines = document.querySelectorAll('line');
+            const button = document.querySelector('button:nth-child(2)');
+            
+            if (button.textContent === 'Cámara Lenta') {
+                lines.forEach(line => {
+                    line.style.animationDuration = '4s';
+                });
+                button.textContent = 'Velocidad Normal';
+                button.style.background = 'linear-gradient(to right, #4cc9f0, #4361ee)';
+            } else {
+                lines.forEach(line => {
+                    line.style.animationDuration = '';
+                });
+                button.textContent = 'Cámara Lenta';
+                button.style.background = 'linear-gradient(to right, #e63946, #ff6b7a)';
+            }
+        }
+        
+        // Efecto de parallax en el fondo
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+            
+            document.body.style.backgroundPosition = `${50 + moveX}% ${50 + moveY}%`;
+        });
+    </script>
+</body>
+</html>

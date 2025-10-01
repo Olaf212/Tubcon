@@ -1,13 +1,41 @@
-// Configuración
+// ==================== SISTEMA DE CONTEXTO Y MEMORIA ====================
+export const contextoConversacion = new Map();
+
+export const gestionarContexto = (idUsuario, mensaje, respuesta) => {
+    if (!contextoConversacion.has(idUsuario)) {
+        contextoConversacion.set(idUsuario, []);
+    }
+    
+    const historial = contextoConversacion.get(idUsuario);
+    historial.push({ 
+        usuario: mensaje, 
+        bot: respuesta,
+        timestamp: new Date().toISOString()
+    });
+    
+    // Mantener solo los últimos 6 mensajes para no sobrecargar
+    if (historial.length > 6) {
+        historial.shift();
+    }
+};
+
+export const obtenerContexto = (idUsuario) => {
+    return contextoConversacion.get(idUsuario) || [];
+};
+
+export const limpiarContexto = (idUsuario) => {
+    contextoConversacion.delete(idUsuario);
+};
+
+// ==================== CONFIGURACIÓN ====================
 export const WIT_AI_TOKEN = "PU6SJVTN7UBA5TJOAUTVZWBZIHUVNXJF";
 export const WIT_API_VERSION = "20250502";
 export const GEMINI_API_KEY = "AIzaSyD5G2WoPDgnXC9lT4lpPPyPGchb712hg2w";
 export const UNSPLASH_ACCESS_KEY = "wtEzyz_eYhND7kjWxBmLj_DQILUePcx-nxXVdv3t4tc";
-// Configuración WhatsApp
-export const WHATSAPP_NUMERO_EMPRESA = "+5215543225189"; // Tu número de TUBCON
-export const WHATSAPP_ENABLED = true; // Cambiar a false para desactivar
+export const WHATSAPP_NUMERO_EMPRESA = "+5215543225189";
+export const WHATSAPP_ENABLED = true;
 
-// Base de conocimientos local - MEJORADA PARA BÚSQUEDAS PRECISAS
+// ==================== BASE DE CONOCIMIENTOS ====================
 export const knowledgeBase = {
     saludos: [
         "¡Hola! Soy tu asistente de TUBCON. ¿En qué puedo ayudarte hoy?",
@@ -20,7 +48,6 @@ export const knowledgeBase = {
         'ubicación|dónde están|local|dirección|localización|mapa|como llegar|dirección exacta|ubican': "📍 *Nuestra ubicación:*\nAvenida México No., Puxtla 25, Teotihuacan Centro, 55805 Teotihuacán de Arista, Méx.",
         'contacto|teléfono|whatsapp|email|correo': "Puedes contactarnos a través de la sección de contacto o llamarnos al 55-43-22-51-89.",
 
-        // PRODUCTOS PRINCIPALES - CORREGIDO (sin duplicados)
         'pvc|tubos|tuberías|conexiones|accesorios': "Contamos con una amplia variedad de productos de PVC para todos tus proyectos de plomería. Visita nuestra sección de productos para más información.",
 
         // TINACOS Y CISTERNAS
@@ -30,55 +57,24 @@ export const knowledgeBase = {
         'iusa|marca iusa': "IUSA nos ofrece tinacos tricapa de 110 litros, tinacos slim de 1100 litros, y cisternas de 2,500, 5,000 y 10,000 litros.",
         'black plus|blackplus|marca black': "BLACK PLUS tiene tinacos de 1100 litros en colores beige y negro, incluyendo el modelo 'bala' para espacios reducidos.",
         'biodigestor|biodigestores|autolimpiable': "Contamos con biodigestores autolimpiables de 1300 litros, perfectos para tratamiento de aguas residuales.",
-        'tinaco 110|110 litros|tanque pequeño': "Tenemos tinacos IUSA de 110 litros tricapa, disponibles en color negro. Ideales para espacios reducidos.",
-        'tinaco 1100|mil cien|tanque grande': "Ofrecemos tinacos de 1100 litros: ROTOPLAS, IUSA Slim, BLACK PLUS en diferentes colores y modelos horizontales.",
-        'cisterna 2800|dos mil ochocientos': "Cisterna de 2,800 litros con equipo ROTOPLAS incluido. Perfecta para uso residencial.",
-        'cisterna 5000|cinco mil': "Cisternas de 5,000 litros disponibles con o sin accesorios ROTOPLAS, según tus necesidades.",
-        'cisterna 10000|diez mil|cisterna grande': "Cisterna IUSA de 10,000 litros para grandes requerimientos de almacenamiento.",
 
-        // MANCUERAS PARA GAS L.P. - MEJORADO
+        // MANCUERAS PARA GAS L.P.
         'mancueras|mancuera|cable gas|cables de gas|cable de gas|manguera gas|conexión gas|lp gas|características|especificaciones': "En TUBCON manejamos mancueras para gas L.P. de alta calidad con conexión 3/8\" flare/flare en diferentes longitudes.",
         'mancuera gas lp|gas lp|propano': "Mancueras para gas L.P. con características: tuercas de latón, espigas de latón, férulas de acero inoxidable. Temperatura de uso: -2 a 50°C. Presión máxima: 0.07 KCF/CM (7 KPA).",
-        'mancuera reforzada|reforzada|polypropylene': "Mancuera reforzada con tramado de polipropileno, conectores de latón. Temperatura máxima: 60°C. Presión máxima: 7 KPA (71 C/CM2).",
         'longitud mancuera|medidas mancuera|tamaños mancuera': "Longitudes disponibles: 60 cm, 1.0 m, 1.5 m, 2.0 m, 3.0 m, 4.0 m, 5.0 m.",
-        'conexión 3/8|flare flare|3/8 flare|3/8\"': "Todas nuestras mancueras tienen conexión 3/8\" flare/flare estándar.",
-        'mancuera aluminio|aluminum|latón brass': "Mancueras con componentes de aluminio/latón: tuercas de latón, espigas de latón, férulas de acero inoxidable.",
-        'presión gas|presión máxima|7 kpa': "Nuestras mancueras soportan presión máxima de 0.07 KCF/CM (7 KPA) para uso seguro con gas L.P.",
-        'temperatura mancuera|rango temperatura': "Rango de temperatura: -2°C a 50°C (estándar) y hasta 60°C máximo para la versión reforzada.",
-        'miber|marca miber': "Contamos con productos de la marca Miber de alta calidad para instalaciones de gas.",
 
         // REGULADORES DE GAS Y AGUA
         'reguladores|regulador|regulador gas|regulador agua|válvulas reguladoras': "En TUBCON manejamos reguladores de gas y agua de las marcas IUSA y CMS. Tenemos modelos de 1 vía, 2 vías, baja presión y alta presión.",
-        'regulador 1 via|una vía|sencillo': "Contamos con reguladores de 1 vía como: Regulador 102 PSMP L.P., Regulador 102 B000 G.L.P. 1V, Regulador 3001, Regulador M 7000, y Regulador R2001 IUSA.",
-        'regulador 2 vias|dos vías|doble vía': "Tenemos reguladores de 2 vías para baja presión y modelos específicos como el Regulador 2403 en diferentes medidas.",
-        'regulador baja presión|b.p.|low pressure': "Reguladores de baja presión: 102 PSMP L.P., 2403 C2 ¼ X ½ B.P., 2403 C4 ¼ X ½ B.P., y modelos LOBO B.P. en 06X25 y 13X25.",
-        'regulador alta presión|a.p.|high pressure': "Regulador 2403 S4 ½ X ½ A.P. para aplicaciones de alta presión.",
-        'regulador lobo|lobo|cms lobo': "Modelos LOBO: LOBO B.P. S/POOL 06X25, LOBO B.P. S/POOL 13X25, LOBO 19 MM CMS, LOBO CMS 13X25 ROJO.",
-        'regulador sin manómetro|sin medidor': "Regulador 080 sin manómetro y Regulador 1757 sin manómetro CMS.",
-        'regulador con manómetro|con medidor': "Regulador 7000 C/Punta y Maneral 324210.",
         'regulador iusa|marca iusa': "IUSA: Regulador R2001 IUSA 323986, Regulador 102 series, y diversos modelos de la serie 2403.",
         'regulador cms|marca cms': "CMS: Modelos LOBO, Regulador 1757 sin manómetro, y reguladores de diferentes especificaciones.",
-        'regulador 102|modelo 102': "Regulador 102 PSMP L.P. 267368, Regulador 102 B000 G.L.P. 1V 267368, Regulador Sencillo 102 267369.",
-        'regulador 2403|modelo 2403': "Serie 2403: 2403 C2 ¼ X ½ B.P., 2403 C4 ¼ X ½ B.P., 2403 S4 ½ X ½ A.P., 2403 U4 de 1/2\" X1/2\" 311792.",
-        'regulador 7000|modelo 7000': "Regulador M 7000 1 Vía y Regulador 7000 C/Punta y Maneral 324210.",
-        'regulador r7008|modelo r7008': "Regulador R7008 Manual 339313.",
 
-        // BOMBAS IUSA - AGREGADO
+        // BOMBAS IUSA
         'bombas|bomba|bomba agua|bomba iusa|sistema bombeo': "En TUBCON manejamos bombas de agua de la marca IUSA, incluyendo bombas periféricas, centrifugas, presurizadoras, autocebantes y para pozo profundo.",
         'bomba periférica|periférica iusa|1/2 hp periférica': "Bomba periférica IUSA de 1/2 HP, ideal para presurización de agua en hogares y pequeñas instalaciones.",
-        'bomba centrífuga|centrífuga iusa|bomba centrifugal': "Bomba centrífuga IUSA para aplicaciones residenciales e industriales, eficiente en el transporte de agua.",
-        'bomba presurizadora|presurizadora iusa|presurizador agua': "Bombas presurizadoras IUSA disponibles en modelos de 1 servicio y 3 servicios para diferentes necesidades de presión.",
-        'bomba autocebante|autocebante primo|primo 1/2 hp': "Bomba autocebante IUSA Primo de 1/2 HP, perfecta para sistemas que requieren autocebado automático.",
-        'bomba pozo profundo|pozo profundo iusa|sumergible pozo': "Bomba para pozo profundo IUSA, diseñada para extracción de agua desde grandes profundidades.",
-        'bomba sumergible|sumergible alta presión|sumergible iusa': "Bomba sumergible IUSA de alta presión, ideal para cisternas y aplicaciones que requieren mayor fuerza de bombeo.",
-        'motobomba|moto bomba iusa|bomba gasolina': "Moto bomba IUSA para aplicaciones móviles o donde no hay energía eléctrica disponible.",
-        'bomba jet|jet iusa|sistema jet': "Bomba Jet IUSA, eficiente para sistemas de agua potable y aplicaciones residenciales.",
-        'bomba 1 servicio|presurizadora simple': "Bomba presurizadora IUSA de 1 servicio, para aplicaciones básicas de presurización.",
-        'bomba 3 servicios|presurizadora múltiple': "Bomba presurizadora IUSA de 3 servicios, para sistemas con múltiples puntos de uso.",
 
-        // RESPUESTAS GENERALES (sin duplicados)
+        // RESPUESTAS GENERALES
         'precios|costos|cotización|valor': "Para obtener información sobre precios y cotizaciones, te recomendamos contactarnos directamente para brindarte la mejor atención personalizada.",
-        'distribuidor|mayoreo|revender|comerciante': "Si estás interesado en ser distribuidor, contáctanos para brindarte información sobre nuestros programas de distribución.",
+        'distribuidor|mayoreo|revender|comerciante': "Si estás interesado en ser distribuidor, contáctanos para brindarte información sobre nuestros programas de distribution.",
         'gracias|bye|adiós|chao|hasta luego': "¡De nada! Estoy aquí para ayudarte cuando lo necesites. ¡Que tengas un excelente día!",
         'ayuda|soporte|asistencia|problema': "Para soporte técnico puedes contactarnos a través de la sección de contacto.",
         'horario|abren|cierran|horas|hora abren|hora cierran|atención|cuándo abren|cuándo cierran|días abren': "Nuestro horario de atención es de lunes a viernes de 8:30 a 18:00 y sábados de 8:00 a 15:00.",
@@ -86,41 +82,17 @@ export const knowledgeBase = {
         'garantía|devolución|reembolso': "Todos nuestros productos cuentan con garantía del fabricante. Para devoluciones o reembolsos, contáctanos directamente.",
     },
 
-    // MEJORADO: Comandos para detectar solicitudes de imágenes
     comandosImagenes: {
-        'muestra|muéstrame|ver|mostrar|imagen|foto|fotografía|gráfico|diagrama|visual|cómo se ve|aspecto|quiero ver|necesito ver|deseo ver': true
+        'muestra|muéstarme|ver|mostrar|imagen|foto|fotografía|gráfico|diagrama|visual|cómo se ve|aspecto|quiero ver|necesito ver|deseo ver': true
     },
 
-    // CORREGIDO: Mapeo más preciso y eliminación del término predeterminado
     terminosBusquedaImagenes: {
-        // Tuberías y tubos
         'tubos pvc|tuberías pvc|tubo pvc|tubería pvc|pvc tubo|pvc tubería': "PVC pipes plumbing installation",
         'tubos|tuberías|tubería|tubo|caños|cañerías': "water pipes plumbing system",
-        'tubo de agua|tubería de agua|tubos agua|tuberías agua': "water supply pipes installation",
-        'tubo drenaje|tubería drenaje|drenaje pvc': "PVC drainage pipes system",
-
-        // Conexiones y accesorios
         'conexiones pvc|accesorios pvc|conexión pvc|accesorio pvc': "PVC fittings connectors plumbing",
         'codos pvc|codo pvc|codos 90|curvas pvc': "PVC elbows 90 degree fittings",
-        'tes pvc|tee pvc|tes tubería|uniones pvc': "PVC tee fittings plumbing unions",
-        'reducciones pvc|reductores pvc|reducción pvc': "PVC reducers pipe fittings",
-        'tapones pvc|tapón pvc|caps pvc': "PVC caps pipe plugs",
-
-        // Válvulas y controles
         'válvulas pvc|válvula pvc|llaves pvc|válvula agua': "PVC valves water control plumbing",
-        'válvula compuerta|válvula globo|válvula check': "gate valve globe valve check valve plumbing",
-
-        // Instalaciones y sistemas
-        'instalación pvc|instalar tuberías|sistema pvc|instalación tuberías': "PVC plumbing installation system",
-        'sistema drenaje|instalación drenaje|drenaje sanitario': "drainage system installation plumbing",
-
-        // Materiales y herramientas
-        'pegamento pvc|cemento pvc|adhesivo pvc|soldadura pvc': "PVC glue cement solvent welding",
-        'cinta teflón|cinta selladora|teflón pvc': "Teflon tape plumbing sealant",
-
-        // General
         'plomería|fontanería|instalación hidráulica|sistema plomería': "plumbing system installation tools",
-        'material plomería|productos plomería|insumos plomería': "plumbing materials supplies tools"
     },
 
     respuestasGenericas: [
@@ -131,7 +103,391 @@ export const knowledgeBase = {
     ]
 };
 
-// MEJORADA: Función para extraer el término específico del mensaje
+// ==================== SISTEMA AVANZADO DE RECOMENDACIÓN TÉCNICA CON FÓRMULAS ====================
+export const sistemaRecomendacionAvanzado = async (mensaje) => {
+    const input = mensaje.toLowerCase().trim();
+    
+    // 1. SISTEMA DE RECOMENDACIÓN PARA TINACOS CON FÓRMULAS
+    if (/(tinaco|tanque).*(personas|familia|gente|capacidad|recomienda|cuál|qué)/i.test(input)) {
+        return await recomendarTinacoAvanzado(input);
+    }
+    
+    // 2. SISTEMA PARA CISTERNAS CON CÁLCULOS DE CONSUMO
+    if (/(cisterna|depósito|reservorio).*(personas|días|consumo|capacidad)/i.test(input)) {
+        return await recomendarCisternaAvanzado(input);
+    }
+    
+    // 3. SISTEMA PARA BOMBAS CON CÁLCULOS HIDRÁULICOS
+    if (/(bomba|bombas).*(casa|pisos|altura|presión|flujo)/i.test(input)) {
+        return await recomendarBombaAvanzado(input);
+    }
+    
+    // 4. SISTEMA PARA TUBERÍAS CON CÁLCULOS DE CAUDAL
+    if (/(tubo|tubería|pvc).*(casa|baños|diámetro|caudal|presión)/i.test(input)) {
+        return await recomendarTuberiaAvanzado(input);
+    }
+    
+    // 5. COMPARATIVO TÉCNICO ENTRE MARCAS
+    if (/(diferencia|comparar|mejor|cuál).*(iusa|rotoplas|black plus)/i.test(input)) {
+        return await compararMarcasTecnicamente(input);
+    }
+    
+    return null;
+};
+
+// ==================== FÓRMULAS Y CÁLCULOS TÉCNICOS ====================
+export const formulasTecnicas = {
+    // Consumo diario de agua por persona (litros/día)
+    consumoPorPersona: (tipoVivienda) => {
+        const consumos = {
+            'económico': 80,      // Uso básico
+            'estándar': 120,      // Uso normal residencial
+            'confort': 150,       // Uso con jardín/limpieza
+            'lujo': 200          // Uso intensivo
+        };
+        return consumos[tipoVivienda] || 120;
+    },
+    
+    // Cálculo de capacidad de tinaco basado en consumo
+    capacidadTinaco: (personas, diasReserva = 2, tipoVivienda = 'estándar') => {
+        const consumoDiario = formulasTecnicas.consumoPorPersona(tipoVivienda);
+        return Math.ceil(personas * consumoDiario * diasReserva);
+    },
+    
+    // Cálculo de capacidad de cisterna (considerando 5-7 días)
+    capacidadCisterna: (personas, tipoVivienda = 'estándar') => {
+        const consumoDiario = formulasTecnicas.consumoPorPersona(tipoVivienda);
+        return Math.ceil(personas * consumoDiario * 6); // 6 días de reserva
+    },
+    
+    // Cálculo de caballaje de bomba basado en altura y caudal
+    potenciaBomba: (alturaMetros, caudalLPM) => {
+        // Fórmula simplificada: HP = (Altura × Caudal) / (4500 × Eficiencia)
+        const eficiencia = 0.6; // 60% de eficiencia típica
+        return Math.ceil((alturaMetros * caudalLPM) / (4500 * eficiencia) * 10) / 10;
+    },
+    
+    // Cálculo de caudal requerido basado en puntos de uso
+    caudalRequerido: (numBaños, numCocinas, tieneJardín = false) => {
+        let caudal = 0;
+        caudal += numBaños * 15;      // 15 LPM por baño
+        caudal += numCocinas * 10;    // 10 LPM por cocina
+        caudal += tieneJardín ? 20 : 0; // 20 LPM para riego
+        
+        return Math.max(caudal, 25); // Mínimo 25 LPM
+    }
+};
+
+// ==================== RECOMENDACIÓN AVANZADA DE TINACOS ====================
+export const recomendarTinacoAvanzado = async (input) => {
+    const matchPersonas = input.match(/(\d+)\s*personas?/i) || input.match(/para\s*(\d+)/i);
+    const numPersonas = matchPersonas ? parseInt(matchPersonas[1]) : 4; // Default 4 personas
+    
+    // Detectar tipo de vivienda
+    let tipoVivienda = 'estándar';
+    if (input.includes('económico') || input.includes('básico')) tipoVivienda = 'económico';
+    if (input.includes('confort') || input.includes('jardín')) tipoVivienda = 'confort';
+    if (input.includes('lujo') || input.includes('grande')) tipoVivienda = 'lujo';
+    
+    // Calcular capacidad requerida
+    const capacidadRequerida = formulasTecnicas.capacidadTinaco(numPersonas, 2, tipoVivienda);
+    const consumoDiario = formulasTecnicas.consumoPorPersona(tipoVivienda) * numPersonas;
+    
+    // RECOMENDACIONES POR MARCA CON FÓRMULAS ESPECÍFICAS
+    const recomendaciones = [
+        {
+            marca: "IUSA",
+            modelo: capacidadRequerida <= 450 ? "Tricapa 450L" : "Slim 1100L",
+            capacidad: capacidadRequerida <= 450 ? 450 : 1100,
+            ventajaTecnica: "✅ *Capas reforzadas:* 3 capas de polietileno\n✅ *UV Protection:* Resistente 10+ años\n✅ *Precio/Calidad:* Mejor relación del mercado",
+            formula: `Cálculo: ${numPersonas} personas × ${formulasTecnicas.consumoPorPersona(tipoVivienda)}L/día × 2 días = ${capacidadRequerida}L`,
+            duracionEstimada: `Duración: ${Math.round((capacidadRequerida <= 450 ? 450 : 1100) / consumoDiario * 10) / 10} días en uso normal`,
+            precioRelativo: "💲💲 (Económico)"
+        },
+        {
+            marca: "ROTOPLAS",
+            modelo: capacidadRequerida <= 600 ? "Vertical 600L" : "Vertical 1100L",
+            capacidad: capacidadRequerida <= 600 ? 600 : 1100,
+            ventajaTecnica: "✅ *Garantía:* 15 años contra defectos\n✅ *Certificación:* Norma NMX-E-226-CNCP-2019\n✅ *Diseño:* Exclusivo sistema de cierre",
+            formula: `Reserva: ${Math.round((capacidadRequerida <= 600 ? 600 : 1100) / consumoDiario * 10) / 10} días de autonomía`,
+            duracionEstimada: `Vida útil: 15+ años con mantenimiento básico`,
+            precioRelativo: "💲💲💲 (Premium)"
+        },
+        {
+            marca: "BLACK PLUS",
+            modelo: capacidadRequerida <= 550 ? "Compacto 550L" : "Bala 1100L",
+            capacidad: capacidadRequerida <= 550 ? 550 : 1100,
+            ventajaTecnica: "✅ *Compacto:* Ideal espacios reducidos\n✅ *UV Max:* Protección solar reforzada\n✅ *Instalación:* Sistema fácil 4 pasos",
+            formula: `Eficiencia: ${Math.round((capacidadRequerida <= 550 ? 550 : 1100) / numPersonas)}L por persona`,
+            duracionEstimada: `Rendimiento: Optimizado para ${tipoVivienda === 'confort' ? 'uso intensivo' : 'uso residencial'}`,
+            precioRelativo: "💲💲💲 (Intermedio)"
+        }
+    ];
+
+    let respuesta = `🚰 *ANÁLISIS TÉCNICO PARA ${numPersonas} PERSONAS* 🚰\n\n`;
+    respuesta += `📊 *Parámetros calculados:*\n`;
+    respuesta += `• Personas: ${numPersonas}\n`;
+    respuesta += `• Tipo vivienda: ${tipoVivienda}\n`;
+    respuesta += `• Consumo diario: ${consumoDiario}L\n`;
+    respuesta += `• Capacidad recomendada: ${capacidadRequerida}L\n\n`;
+    respuesta += `🏆 *RECOMENDACIONES TÉCNICAS:*\n\n`;
+
+    recomendaciones.forEach((rec, index) => {
+        respuesta += `*${rec.marca} - ${rec.modelo} (${rec.capacidad}L)*\n`;
+        respuesta += `${rec.ventajaTecnica}\n`;
+        respuesta += `🧮 ${rec.formula}\n`;
+        respuesta += `⏱️ ${rec.duracionEstimada}\n`;
+        respuesta += `${rec.precioRelativo}\n`;
+        
+        if (index < recomendaciones.length - 1) {
+            respuesta += `\n${'─'.repeat(40)}\n\n`;
+        }
+    });
+
+    respuesta += `\n💡 *RECOMENDACIÓN FINAL:* `;
+    if (tipoVivienda === 'económico') {
+        respuesta += `IUSA por mejor relación precio-calidad`;
+    } else if (tipoVivienda === 'confort') {
+        respuesta += `BLACK PLUS por diseño y eficiencia`;
+    } else {
+        respuesta += `ROTOPLAS por durabilidad y garantía`;
+    }
+
+    return { tipo: "texto", contenido: respuesta };
+};
+
+// ==================== RECOMENDACIÓN AVANZADA DE CISTERNAS ====================
+export const recomendarCisternaAvanzado = async (input) => {
+    const matchPersonas = input.match(/(\d+)\s*personas?/i) || input.match(/para\s*(\d+)/i);
+    const numPersonas = matchPersonas ? parseInt(matchPersonas[1]) : 4;
+    
+    const capacidadRequerida = formulasTecnicas.capacidadCisterna(numPersonas);
+    const consumoMensual = formulasTecnicas.consumoPorPersona('estándar') * numPersonas * 30;
+
+    const recomendaciones = [
+        {
+            marca: "IUSA",
+            modelo: capacidadRequerida <= 5000 ? "Rectangular 2500L" : "Rectangular 10000L",
+            capacidad: capacidadRequerida <= 5000 ? 2500 : 10000,
+            ventajas: [
+                "✅ *Estructura:* Refuerzos laterales cada 40cm",
+                "✅ *Instalación:* Sistema modular fácil ensamble",
+                "✅ *Mantenimiento:* Tapa de 60cm para acceso fácil"
+            ],
+            calculo: `Autonomía: ${Math.round((capacidadRequerida <= 5000 ? 2500 : 10000) / (numPersonas * 120) * 10) / 10} días`,
+            aplicacion: capacidadRequerida <= 5000 ? "Familiar (4-6 personas)" : "Comercial (10+ personas)"
+        },
+        {
+            marca: "ROTOPLAS",
+            modelo: capacidadRequerida <= 6000 ? "Circular 2800L" : "Circular 10000L",
+            capacidad: capacidadRequerida <= 6000 ? 2800 : 10000,
+            ventajas: [
+                "✅ *Diseño:* Forma circular optimizada",
+                "✅ *Durabilidad:* 20 años de vida útil",
+                "✅ *Tecnología:* Sistema Rotocontrol"
+            ],
+            calculo: `Reserva: ${Math.round((capacidadRequerida <= 6000 ? 2800 : 10000) / consumoMensual * 30)} días mensuales`,
+            aplicacion: capacidadRequerida <= 6000 ? "Residencial estándar" : "Grandes consumos"
+        },
+        {
+            marca: "BLACK PLUS",
+            modelo: capacidadRequerida <= 5500 ? "Horizontal 3000L" : "Horizontal 8000L",
+            capacidad: capacidadRequerida <= 5500 ? 3000 : 8000,
+            ventajas: [
+                "✅ *Espacio:* Diseño bajo para techos bajos",
+                "✅ *UV:* Protección solar integrada",
+                "✅ *Instalación:* 30% más rápida"
+            ],
+            calculo: `Eficiencia: ${Math.round((capacidadRequerida <= 5500 ? 3000 : 8000) / numPersonas)}L/persona`,
+            aplicacion: capacidadRequerida <= 5500 ? "Espacios reducidos" : "Capacidad media"
+        }
+    ];
+
+    let respuesta = `💧 *ANÁLISIS TÉCNICO DE CISTERNAS* 💧\n\n`;
+    respuesta += `📈 *Cálculos para ${numPersonas} personas:*\n`;
+    respuesta += `• Consumo mensual estimado: ${consumoMensual}L\n`;
+    respuesta += `• Capacidad recomendada: ${capacidadRequerida}L\n`;
+    respuesta += `• Autonomía ideal: 5-7 días\n\n`;
+
+    recomendaciones.forEach(rec => {
+        respuesta += `🏷️ *${rec.marca} ${rec.modelo}*\n`;
+        respuesta += `📦 Capacidad: ${rec.capacidad}L\n`;
+        respuesta += `🎯 Aplicación: ${rec.aplicacion}\n`;
+        rec.ventajas.forEach(v => respuesta += `${v}\n`);
+        respuesta += `🧮 ${rec.calculo}\n\n`;
+    });
+
+    respuesta += `⚖️ *TABLA COMPARATIVA:*\n`;
+    respuesta += `\`\`\`\n`;
+    respuesta += `Marca       | Cap. (L) | Vida Útil | Instalación\n`;
+    respuesta += `${'─'.repeat(45)}\n`;
+    respuesta += `IUSA        | 2500-10K | 15 años   | Media (2 personas)\n`;
+    respuesta += `ROTOPLAS    | 2800-10K | 20 años   | Compleja (3 personas)\n`;
+    respuesta += `BLACK PLUS  | 3000-8K  | 15 años   | Fácil (1-2 personas)\n`;
+    respuesta += `\`\`\`\n\n`;
+    respuesta += `💡 *Selección inteligente:* Elige según espacio, presupuesto y tiempo de instalación.`;
+
+    return { tipo: "texto", contenido: respuesta };
+};
+
+// ==================== RECOMENDACIÓN AVANZADA DE BOMBAS ====================
+export const recomendarBombaAvanzado = async (input) => {
+    const matchPisos = input.match(/(\d+)\s*pisos?/i) || input.match(/para\s*(\d+).*piso/i);
+    const numPisos = matchPisos ? parseInt(matchPisos[1]) : 1;
+    
+    const matchBaños = input.match(/(\d+)\s*baños?/i);
+    const numBaños = matchBaños ? parseInt(matchBaños[1]) : 2;
+    
+    // Cálculos técnicos
+    const alturaMetros = numPisos * 3 + 3; // 3m por piso + 3m adicional
+    const caudalRequerido = formulasTecnicas.caudalRequerido(numBaños, 1, input.includes('jardín'));
+    const potenciaRequerida = formulasTecnicas.potenciaBomba(alturaMetros, caudalRequerido);
+
+    const recomendaciones = [
+        {
+            tipo: "Centrífuga",
+            marca: "IUSA",
+            modelo: `C-${potenciaRequerida <= 0.75 ? "075" : "100"}`,
+            potencia: potenciaRequerida <= 0.75 ? "0.75 HP" : "1.0 HP",
+            aplicacion: "Cisterna a tinaco",
+            eficiencia: "75%",
+            calculo: `HP = (${alturaMetros}m × ${caudalRequerido}LPM) / (4500 × 0.6) = ${potenciaRequerida} HP`,
+            ventajas: ["✅ Alto caudal", "✅ Bajo mantenimiento", "✅ Precio competitivo"]
+        },
+        {
+            tipo: "Presurizadora",
+            marca: "IUSA",
+            modelo: `P-${numBaños <= 2 ? "02" : "03"}`,
+            potencia: numBaños <= 2 ? "0.5 HP" : "0.75 HP",
+            aplicacion: "Mejorar presión existente",
+            eficiencia: "80%",
+            calculo: `Caudal: ${numBaños} baños × 15LPM = ${caudalRequerido} LPM`,
+            ventajas: ["✅ Automática", "✅ Silenciosa", "✅ Ahorro energía"]
+        },
+        {
+            tipo: "Periférica",
+            marca: "IUSA",
+            modelo: `PER-${potenciaRequerida <= 1 ? "100" : "150"}`,
+            potencia: potenciaRequerida <= 1 ? "1.0 HP" : "1.5 HP",
+            aplicacion: "Riego y sistemas",
+            eficiencia: "70%",
+            calculo: `Altura máxima: ${alturaMetros + 5}m (incluye succión)`,
+            ventajas: ["✅ Autocebante", "✅ Versátil", "✅ Multiusos"]
+        }
+    ];
+
+    let respuesta = `⚡ *ANÁLISIS TÉCNICO DE BOMBAS* ⚡\n\n`;
+    respuesta += `📐 *Parámetros de diseño:*\n`;
+    respuesta += `• Pisos: ${numPisos} (${alturaMetros}m altura)\n`;
+    respuesta += `• Baños: ${numBaños}\n`;
+    respuesta += `• Caudal requerido: ${caudalRequerido} LPM\n`;
+    respuesta += `• Potencia calculada: ${potenciaRequerida} HP\n\n`;
+
+    respuesta += `🔧 *RECOMENDACIONES IUSA TÉCNICAS:*\n\n`;
+
+    recomendaciones.forEach(rec => {
+        respuesta += `🔹 *${rec.tipo} ${rec.marca} ${rec.modelo}*\n`;
+        respuesta += `⚡ Potencia: ${rec.potencia} | Eficiencia: ${rec.eficiencia}\n`;
+        respuesta += `🎯 Aplicación: ${rec.aplicacion}\n`;
+        rec.ventajas.forEach(v => respuesta += `${v}\n`);
+        respuesta += `🧮 ${rec.calculo}\n\n`;
+    });
+
+    respuesta += `📊 *TABLA DE SELECCIÓN TÉCNICA:*\n`;
+    respuesta += `\`\`\`\n`;
+    respuesta += `Tipo         | Pisos | Baños | HP    | Caudal\n`;
+    respuesta += `${'─'.repeat(50)}\n`;
+    respuesta += `Centrífuga   | 1-2   | 2-3   | 0.75  | 40-60 LPM\n`;
+    respuesta += `Presurizadora| 1-3   | 2-4   | 0.5-1 | 20-35 LPM\n`;
+    respuesta += `Periférica   | 1-4   | 3-6   | 1-2   | 50-80 LPM\n`;
+    respuesta += `\`\`\`\n\n`;
+    respuesta += `💡 *Recomendación final:* Para ${numPisos} pisos y ${numBaños} baños, `;
+    respuesta += `la bomba ${recomendaciones[0].tipo} ${recomendaciones[0].modelo} es óptima.`;
+
+    return { tipo: "texto", contenido: respuesta };
+};
+
+// ==================== COMPARATIVO TÉCNICO ENTRE MARCAS ====================
+export const compararMarcasTecnicamente = async (input) => {
+    let producto = "tinacos";
+    if (input.includes('cisterna')) producto = "cisternas";
+    if (input.includes('bomba')) producto = "bombas";
+    if (input.includes('regulador')) producto = "reguladores";
+
+    const comparativa = {
+        'tinacos': {
+            iusa: {
+                ventajas: ["Precio competitivo", "Amplia distribución", "Garantía 10 años"],
+                especificaciones: ["3 capas de polietileno", "Resistente a UV", "Temperatura -10°C a 50°C"],
+                vidaUtil: "15 años",
+                precio: "$$",
+                eficiencia: "85%"
+            },
+            rotoplas: {
+                ventajas: ["Reconocimiento de marca", "Garantía 15 años", "Sistema exclusivo cierre"],
+                especificaciones: ["4 capas reforzadas", "Certificación NMX", "Auto-limpieza"],
+                vidaUtil: "20 años",
+                precio: "$$$",
+                eficiencia: "90%"
+            },
+            blackplus: {
+                ventajas: ["Diseño compacto", "Instalación fácil", "Protección UV Max"],
+                especificaciones: ["Forma ergonómica", "Bajo perfil", "Optimizado espacios"],
+                vidaUtil: "15 años",
+                precio: "$$",
+                eficiencia: "88%"
+            }
+        },
+        'cisternas': {
+            iusa: {
+                ventajas: ["Sistema modular", "Refuerzos cada 40cm", "Precio accesible"],
+                especificaciones: ["Capacidad 2500-10000L", "Instalación 2 personas", "Mantenimiento fácil"],
+                vidaUtil: "15 años",
+                precio: "$$$",
+                eficiencia: "82%"
+            },
+            rotoplas: {
+                ventajas: ["Diseño circular", "Vida útil extendida", "Tecnología Rotocontrol"],
+                especificaciones: ["Capacidad 2800-10000L", "Estructura optimizada", "Auto-nivelación"],
+                vidaUtil: "20 años",
+                precio: "$$$$",
+                eficiencia: "92%"
+            },
+            blackplus: {
+                ventajas: ["Diseño horizontal", "Para espacios bajos", "Instalación rápida"],
+                especificaciones: ["Capacidad 3000-8000L", "30% más rápido", "UV integrado"],
+                vidaUtil: "15 años",
+                precio: "$$$",
+                eficiencia: "85%"
+            }
+        }
+    };
+
+    const data = comparativa[producto];
+    if (!data) return null;
+
+    let respuesta = `🏆 *COMPARATIVO TÉCNICO - ${producto.toUpperCase()}* 🏆\n\n`;
+
+    Object.entries(data).forEach(([marca, info]) => {
+        respuesta += `🔸 *${marca.toUpperCase()}*\n`;
+        respuesta += `⭐ Ventajas: ${info.ventajas.join(', ')}\n`;
+        respuesta += `📋 Especificaciones:\n`;
+        info.especificaciones.forEach(esp => respuesta += `   • ${esp}\n`);
+        respuesta += `⏱️ Vida útil: ${info.vidaUtil} | Precio: ${info.precio}\n`;
+        respuesta += `📊 Eficiencia: ${info.eficiencia}\n\n`;
+    });
+
+    respuesta += `📈 *ANÁLISIS COMPARATIVO:*\n`;
+    respuesta += `• *Mejor precio:* IUSA\n`;
+    respuesta += `• *Mayor durabilidad:* ROTOPLAS\n`;
+    respuesta += `• *Mejor diseño:* BLACK PLUS\n`;
+    respuesta += `• *Relación precio-calidad:* IUSA\n\n`;
+    respuesta += `💡 *Conclusión técnica:* Selecciona según prioridades de durabilidad, presupuesto y espacio disponible.`;
+
+    return { tipo: "texto", contenido: respuesta };
+};
+
+// ==================== FUNCIONES DE BÚSQUEDA DE IMÁGENES ====================
 export const extraerTerminoEspecifico = (input) => {
     const palabrasClave = [
         'tubos', 'tuberías', 'codos', 'tes', 'válvulas', 'conexiones',
@@ -140,18 +496,14 @@ export const extraerTerminoEspecifico = (input) => {
     ];
 
     const palabras = input.toLowerCase().split(/\s+/);
-
-    // Buscar palabras clave específicas
     for (const palabra of palabras) {
         if (palabrasClave.includes(palabra)) {
             return palabra;
         }
     }
-
     return null;
 };
 
-// MEJORADA: Detección de solicitudes de imágenes
 export const detectarSolicitudImagenes = (input) => {
     const comandos = Object.keys(knowledgeBase.comandosImagenes);
     return comandos.some(cmd => {
@@ -160,11 +512,9 @@ export const detectarSolicitudImagenes = (input) => {
     });
 };
 
-// CORREGIDA: Obtención del término de búsqueda - SIN TÉRMINO PREDETERMINADO
 export const obtenerTerminoBusquedaImagenes = (input) => {
     const terminoEspecifico = extraerTerminoEspecifico(input);
 
-    // Buscar coincidencias exactas primero
     for (const [claves, term] of Object.entries(knowledgeBase.terminosBusquedaImagenes)) {
         const patrones = claves.split('|');
         for (const patron of patrones) {
@@ -174,7 +524,6 @@ export const obtenerTerminoBusquedaImagenes = (input) => {
         }
     }
 
-    // Si hay un término específico, buscar el mapeo más apropiado
     if (terminoEspecifico) {
         for (const [claves, term] of Object.entries(knowledgeBase.terminosBusquedaImagenes)) {
             if (claves.includes(terminoEspecifico)) {
@@ -183,11 +532,9 @@ export const obtenerTerminoBusquedaImagenes = (input) => {
         }
     }
 
-    // NUEVO: Si no se encuentra un término específico, devolver null para evitar búsqueda genérica
     return null;
 };
 
-// MEJORADA: Búsqueda en Unsplash
 export const buscarImagenesUnsplash = async (query) => {
     if (!query) return [];
 
@@ -199,16 +546,11 @@ export const buscarImagenesUnsplash = async (query) => {
                 'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`,
                 'Accept-Version': 'v1'
             }
-        }
-        );
+        });
 
-        if (!response.ok) {
-            console.error("Error Unsplash:", response.status);
-            return [];
-        }
+        if (!response.ok) return [];
 
         const data = await response.json();
-
         if (data.results && data.results.length > 0) {
             return data.results.map(photo => ({
                 url: photo.urls.regular,
@@ -219,73 +561,28 @@ export const buscarImagenesUnsplash = async (query) => {
                 description: photo.alt_description || `Imagen de ${query}`
             }));
         }
-
         return [];
-
     } catch (error) {
         console.error("Error con Unsplash:", error);
         return [];
     }
 };
 
-// CORREGIDA: Función para buscar en ambos servicios (fallback)
 export const buscarImagenesMultiples = async (query) => {
-    // Si no hay query específico, no buscar imágenes
-    if (!query) {
-        return [];
-    }
-
+    if (!query) return [];
     const imagenesUnsplash = await buscarImagenesUnsplash(query);
-
-    // Si Unsplash no encuentra resultados, intentar con términos relacionados
-    if (imagenesUnsplash.length === 0) {
-        // Buscar términos alternativos basados en el query original
-        const terminosAlternativos = obtenerTerminosAlternativos(query);
-
-        for (const termino of terminosAlternativos) {
-            const imagenesAlternativas = await buscarImagenesUnsplash(termino);
-            if (imagenesAlternativas.length > 0) {
-                return imagenesAlternativas.slice(0, 4);
-            }
-        }
-    }
-
     return imagenesUnsplash.slice(0, 4);
 };
 
-// NUEVA: Función para obtener términos alternativos
-export const obtenerTerminosAlternativos = (query) => {
-    const alternativos = [];
-
-    if (query.includes('pvc')) {
-        alternativos.push("plumbing PVC materials");
-        alternativos.push("PVC pipes fittings");
-        alternativos.push("plastic plumbing pipes");
-    } else if (query.includes('plumbing') || query.includes('plomería')) {
-        alternativos.push("plumbing tools materials");
-        alternativos.push("water pipes installation");
-        alternativos.push("plumbing system");
-    } else if (query.includes('pipe') || query.includes('tubo')) {
-        alternativos.push("water pipes");
-        alternativos.push("plumbing pipes");
-        alternativos.push("PVC tubing");
-    }
-
-    return alternativos;
-};
-
-// CORREGIDA: Formateo de respuesta con imágenes - MEJORADO
 export const formatearRespuestaConImagenes = (imagenes, terminoBusqueda, mensajeOriginal) => {
     if (imagenes.length === 0) {
         return {
             tipo: "texto",
-            contenido: `📸 No se encontraron imágenes específicas para "${mensajeOriginal}".\n\n💡 *Sugerencias:*\n- "muestra tubos PVC"\n- "ver conexiones PVC"\n- "imagen de válvulas"\n- "cómo se ven los codos PVC"\n- "foto de instalación de drenaje"`
+            contenido: `📸 No se encontraron imágenes específicas para "${mensajeOriginal}".\n\n💡 *Sugerencias:*\n- "muestra tubos PVC"\n- "ver conexiones PVC"\n- "imagen de válvulas"\n- "cómo se ven los codos PVC"`
         };
     }
 
-    const mensaje = `📸 *Imágenes relacionadas con "${mensajeOriginal}":*\n\n` +
-        `Estas son imágenes de referencia para productos similares:`;
-
+    const mensaje = `📸 *Imágenes relacionadas con "${mensajeOriginal}":*\n\nEstas son imágenes de referencia para productos similares:`;
     return {
         tipo: "imagenes",
         contenido: mensaje,
@@ -295,69 +592,10 @@ export const formatearRespuestaConImagenes = (imagenes, terminoBusqueda, mensaje
     };
 };
 
-// CORRECCIÓN: Función procesarEntidadesWit debe ser exportada
-export const procesarEntidadesWit = (entities) => {
-    if (!entities) return null;
-
-    if (entities.producto) {
-        const producto = entities.producto[0].value.toLowerCase();
-        switch (producto) {
-            case 'tubos':
-            case 'tuberías':
-            case 'tubo':
-                return "Contamos con una amplia variedad de tubos de PVC en diferentes medidas y especificaciones. ¿Te interesa algún diámetro en particular?";
-            case 'conexiones':
-            case 'conexión':
-            case 'accesorios':
-                return "Tenemos todo tipo de conexiones y accesorios de PVC para tus proyectos de plomería. ¿Qué tipo de conexión necesitas?";
-            case 'pvc':
-                return "Trabajamos con los mejores materiales de PVC del mercado. ¿Necesitas información sobre algún producto específico?";
-        }
-    }
-
-    return null;
-};
-
-
-
-// MEJORADO: Renderizado de imágenes en el chat
-export const renderizarRespuestaEnChat = (respuesta) => {
-    if (!respuesta) {
-        return '<div class="chat-response">No se pudo generar una respuesta.</div>';
-    }
-
-    if (respuesta.tipo === "imagenes") {
-        let html = `<div class="chat-response images-response">
-            <div class="response-text">${respuesta.contenido}</div>
-            <div class="images-container">`;
-
-        respuesta.imagenes.forEach((img, index) => {
-            html += `
-                <div class="chat-image" onclick="window.open('${img.original}', '_blank')">
-                    <img src="${img.url}" alt="${img.description || 'Producto PVC'}" loading="lazy">
-                    <div class="image-caption">
-                        <small>Foto: ${img.photographer}</small>
-                    </div>
-                </div>`;
-        });
-
-        html += `</div>
-            <div class="image-note">
-                <em>💡 Imágenes de referencia - Búsqueda: "${respuesta.terminoBusqueda}"</em>
-            </div>
-        </div>`;
-
-        return html;
-    } else {
-        return `<div class="chat-response text-response">${respuesta.contenido}</div>`;
-    }
-};
-
-// FUNCIONES QUE FALTABAN - COMPLETADAS
+// ==================== FUNCIONES DE IA ====================
 export const consultarWitAI = async (mensaje) => {
     try {
         const url = `https://api.wit.ai/message?v=${WIT_API_VERSION}&q=${encodeURIComponent(mensaje)}`;
-
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -367,7 +605,6 @@ export const consultarWitAI = async (mensaje) => {
         });
 
         if (!response.ok) return false;
-
         const data = await response.json();
 
         if (data.intents && data.intents.length > 0) {
@@ -377,32 +614,18 @@ export const consultarWitAI = async (mensaje) => {
             if (confidence > 0.6) {
                 switch (intent) {
                     case 'saludo':
-                        return {
-                            tipo: "texto",
-                            contenido: "¡Hola! Soy tu asistente de TUBCON. ¿En qué puedo ayudarte hoy?"
-                        };
+                        return { tipo: "texto", contenido: "¡Hola! Soy tu asistente de TUBCON. ¿En qué puedo ayudarte hoy?" };
                     case 'despedida':
-                        return {
-                            tipo: "texto",
-                            contenido: "¡Hasta luego! No dudes en volver si necesitas más ayuda con nuestros productos de plomería."
-                        };
+                        return { tipo: "texto", contenido: "¡Hasta luego! No dudes en volver si necesitas más ayuda con nuestros productos de plomería." };
                     case 'ayuda':
-                        return {
-                            tipo: "texto",
-                            contenido: "Puedo ayudarte con información sobre nuestros productos de tubería, conexiones y accesorios de PVC. ¿Qué necesitas saber?"
-                        };
+                        return { tipo: "texto", contenido: "Puedo ayudarte con información sobre nuestros productos de tubería, conexiones y accesorios de PVC. ¿Qué necesitas saber?" };
                     default:
                         const respuestaEntidades = procesarEntidadesWit(data.entities);
-                        return {
-                            tipo: "texto",
-                            contenido: respuestaEntidades || "Entendido. ¿Necesitas algo más específico sobre nuestros productos de plomería?"
-                        };
+                        return { tipo: "texto", contenido: respuestaEntidades || "Entendido. ¿Necesitas algo más específico sobre nuestros productos de plomería?" };
                 }
             }
         }
-
         return false;
-
     } catch (error) {
         console.error("Error con Wit.ai:", error);
         return false;
@@ -412,8 +635,6 @@ export const consultarWitAI = async (mensaje) => {
 export const consultarGemini = async (mensaje) => {
     try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
-
-        // MEJORADO: Prompt más técnico y específico
         const prompt = `Eres un especialista técnico de TUBCON, empresa de materiales de plomería. 
         Responde de manera técnica pero clara sobre productos de PVC, tinacos, cisternas, reguladores de gas, 
         bombas de agua y materiales de plomería. Sé específico y proporciona información técnica útil.
@@ -425,8 +646,8 @@ export const consultarGemini = async (mensaje) => {
         const payload = {
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-                maxOutputTokens: 500,  // Aumentado para respuestas más completas
-                temperature: 0.3,     // Reducido para respuestas más precisas
+                maxOutputTokens: 500,
+                temperature: 0.3,
                 topP: 0.8,
                 topK: 40
             }
@@ -439,110 +660,224 @@ export const consultarGemini = async (mensaje) => {
         });
 
         if (!response.ok) return false;
-
         const data = await response.json();
 
         if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-            return {
-                tipo: "texto",
-                contenido: data.candidates[0].content.parts[0].text
-            };
+            return { tipo: "texto", contenido: data.candidates[0].content.parts[0].text };
         }
-
         return false;
-
     } catch (error) {
         console.error("Error con Gemini:", error);
         return false;
     }
 };
 
-// MODIFICAR LA FUNCIÓN procesarMensaje
-export const procesarMensaje = async (mensaje) => {
-    try {
-        const input = mensaje.toLowerCase().trim();
-        
-        // 1. DETECTAR SI ES UNA PREGUNTA TÉCNICA QUE DEBE IR DIRECTAMENTE A LA IA
-        const esPreguntaTecnica = detectarPreguntaTecnica(input);
-        const esConsultaDefinicion = detectarConsultaDefinicion(input);
-        
-        // 2. SI ES PREGUNTA TÉCNICA O DE DEFINICIÓN, IR DIRECTAMENTE A LAS IAs
-        if (esPreguntaTecnica || esConsultaDefinicion) {
-            console.log("🔍 Pregunta técnica detectada, consultando IAs...");
-            
-            // Intentar primero con Gemini (mejor para respuestas técnicas)
-            const respuestaGemini = await consultarGemini(mensaje);
-            if (respuestaGemini && !esRespuestaMuyGenerica(respuestaGemini.contenido)) {
-                return renderizarRespuestaEnChat(respuestaGemini);
-            }
-            
-            // Si Gemini falla, intentar con Wit.ai
-            const respuestaWit = await consultarWitAI(mensaje);
-            if (respuestaWit) {
-                return renderizarRespuestaEnChat(respuestaWit);
-            }
+export const procesarEntidadesWit = (entities) => {
+    if (!entities) return null;
+    if (entities.producto) {
+        const producto = entities.producto[0].value.toLowerCase();
+        switch (producto) {
+            case 'tubos': case 'tuberías': case 'tubo':
+                return "Contamos con una amplia variedad de tubos de PVC en diferentes medidas y especificaciones. ¿Te interesa algún diámetro en particular?";
+            case 'conexiones': case 'conexión': case 'accesorios':
+                return "Tenemos todo tipo de conexiones y accesorios de PVC para tus proyectos de plomería. ¿Qué tipo de conexión necesitas?";
+            case 'pvc':
+                return "Trabajamos con los mejores materiales de PVC del mercado. ¿Necesitas información sobre algún producto específico?";
         }
-        
-        // 3. PROCESAR LOCALMENTE (solo si no es pregunta técnica)
-        const respuestaLocal = await procesarRespuestaLocal(mensaje);
-        
-        // 4. Si la respuesta local es genérica, consultar IAs
-        const esRespuestaGenerica = knowledgeBase.respuestasGenericas.some(
-            resp => resp === respuestaLocal.contenido
-        );
-
-        if (respuestaLocal.tipo === "texto" && esRespuestaGenerica) {
-            const respuestaGemini = await consultarGemini(mensaje);
-            if (respuestaGemini) {
-                return renderizarRespuestaEnChat(respuestaGemini);
-            }
-            
-            const respuestaWit = await consultarWitAI(mensaje);
-            if (respuestaWit) {
-                return renderizarRespuestaEnChat(respuestaWit);
-            }
-        }
-
-        // 5. Devolver respuesta local
-        return renderizarRespuestaEnChat(respuestaLocal);
-
-    } catch (error) {
-        console.error("Error en procesarMensaje:", error);
-        return '<div class="chat-response">Error al procesar el mensaje. Intenta de nuevo.</div>';
     }
+    return null;
 };
 
-// NUEVAS FUNCIONES DE DETECCIÓN MEJORADAS
+// ==================== FUNCIONES DE DETECCIÓN ====================
 export const detectarPreguntaTecnica = (input) => {
     const patronesTecnicos = [
-        /qu[ée]\s+es\s+/i,
-        /definici[óo]n\s+de\s+/i,
-        /significado\s+de\s+/i,
-        /c[óo]mo\s+funciona\s+/i,
-        /para\s+qu[ée]\s+sirve\s+/i,
-        /caracter[íi]sticas\s+de\s+/i,
-        /especificaciones\s+de\s+/i,
-        /ventajas\s+de\s+/i,
-        /beneficios\s+de\s+/i,
-        /propiedades\s+de\s+/i,
+        /qu[ée]\s+es\s+/i, /definici[óo]n\s+de\s+/i, /significado\s+de\s+/i,
+        /c[óo]mo\s+funciona\s+/i, /para\s+qu[ée]\s+sirve\s+/i,
+        /caracter[íi]sticas\s+de\s+/i, /especificaciones\s+de\s+/i,
+        /ventajas\s+de\s+/i, /beneficios\s+de\s+/i, /propiedades\s+de\s+/i,
         /qu[ée]\s+significa\s+/i
     ];
-    
     return patronesTecnicos.some(patron => patron.test(input));
 };
 
 export const detectarConsultaDefinicion = (input) => {
-    // Palabras que indican que buscan una definición/explicación
     const palabrasDefinicion = [
         'qué es', 'que es', 'definición', 'definicion', 'significado',
         'qué significa', 'que significa', 'explica', 'explicación',
         'qué son', 'que son', 'definir', 'concepto'
     ];
-    
     return palabrasDefinicion.some(palabra => input.includes(palabra));
 };
 
-// MEJORAR LA FUNCIÓN procesarRespuestaLocal para IGNORAR ciertas coincidencias
+export const debeIgnorarBaseLocal = (input) => {
+    const preguntasParaIA = [
+        /qu[ée]\s+es\s+.+/i, /definici[óo]n\s+de\s+.+/i,
+        /c[óo]mo\s+funciona\s+.+/i, /para\s+qu[ée]\s+sirve\s+.+/i,
+        /explica\s+.+/i, /qu[ée]\s+significa\s+.+/i
+    ];
+    return preguntasParaIA.some(patron => patron.test(input));
+};
+
+export const esRespuestaMuyGenerica = (contenido) => {
+    const respuestasGenericas = [
+        "entendido", "puedo ayudarte", "qué necesitas saber",
+        "en qué te puedo ayudar", "contamos con", "visita nuestra sección",
+        "te recomendamos contactarnos", "tenemos una amplia variedad"
+    ];
+    const contenidoLower = contenido.toLowerCase();
+    return respuestasGenericas.some(resp => contenidoLower.includes(resp));
+};
+
+// ==================== SISTEMA DE FLUJOS CONVERSACIONALES ====================
+export const flujosConversacion = {
+    cotizacion: {
+        pasos: [
+            { 
+                pregunta: "📋 *Paso 1 de 4:* ¿Para qué tipo de proyecto necesitas los materiales?\n\n💡 *Ejemplos:* residencial, comercial, industrial, reparación, construcción nueva", 
+                campo: "tipoProyecto" 
+            },
+            { 
+                pregunta: "📋 *Paso 2 de 4:* ¿Qué productos específicamente necesitas?\n\n💡 *Ejemplos:* tubos PVC 1/2\", tinaco 1100L, conexiones para drenaje", 
+                campo: "productos" 
+            },
+            { 
+                pregunta: "📋 *Paso 3 de 4:* ¿Qué cantidades aproximadas requieres?\n\n💡 *Ejemplos:* 10 metros, 5 piezas, 1 tinaco", 
+                campo: "cantidades" 
+            },
+            { 
+                pregunta: "📋 *Paso 4 de 4:* ¿Para cuándo necesitas los materiales?", 
+                campo: "fecha" 
+            }
+        ],
+        estado: new Map(),
+        completado: "¡Gracias por la información! 📞 Te contactaremos en breve para brindarte una cotización personalizada. ¿Necesitas ayuda con algo más?"
+    }
+};
+
+export const gestionarFlujoConversacional = (idUsuario, mensaje) => {
+    // Verificar si estamos en medio de algún flujo
+    for (const [nombreFlujo, config] of Object.entries(flujosConversacion)) {
+        if (config.estado.has(idUsuario)) {
+            return procesarPasoFlujo(idUsuario, mensaje, nombreFlujo);
+        }
+    }
+    
+    // Si no hay flujo activo, detectar si debemos iniciar uno
+    const intencion = detectarIntencionMejorada(mensaje);
+    
+    if (intencion === 'solicitudCotizacion') {
+        return iniciarFlujo(idUsuario, 'cotizacion');
+    }
+    
+    return null;
+};
+
+export const iniciarFlujo = (idUsuario, nombreFlujo) => {
+    const flujo = flujosConversacion[nombreFlujo];
+    flujo.estado.set(idUsuario, {
+        pasoActual: 0,
+        datos: {},
+        flujo: nombreFlujo
+    });
+    
+    return flujo.pasos[0].pregunta;
+};
+
+export const procesarPasoFlujo = (idUsuario, mensaje, nombreFlujo) => {
+    const flujo = flujosConversacion[nombreFlujo];
+    const estado = flujo.estado.get(idUsuario);
+    
+    // Guardar respuesta del paso actual
+    const pasoActual = estado.pasoActual;
+    const campo = flujo.pasos[pasoActual].campo;
+    estado.datos[campo] = mensaje;
+    
+    // Avanzar al siguiente paso
+    estado.pasoActual++;
+    
+    if (estado.pasoActual < flujo.pasos.length) {
+        return flujo.pasos[estado.pasoActual].pregunta;
+    } else {
+        // Flujo completado
+        flujo.estado.delete(idUsuario);
+        console.log(`📦 Flujo ${nombreFlujo} completado:`, estado.datos);
+        return flujo.completado;
+    }
+};
+
+export const cancelarFlujo = (idUsuario) => {
+    for (const [nombreFlujo, config] of Object.entries(flujosConversacion)) {
+        if (config.estado.has(idUsuario)) {
+            config.estado.delete(idUsuario);
+            return `❌ Hemos cancelado la solicitud. ¿En qué más puedo ayudarte?`;
+        }
+    }
+    return null;
+};
+
+// ==================== DETECCIÓN MEJORADA DE INTENCIONES ====================
+export const detectarIntencionMejorada = (input) => {
+    const intenciones = {
+        consultaProducto: {
+            patrones: [
+                /(?:quiero|necesito|busco|deseo|me interesa).*(?:tubo|tubería|conexión|válvula|tinaco|cisterna|bomba|regulador|mancuera|pvc)/i,
+                /(?:qué|cuál).*(?:tienen|ofrecen|venden|manejan).*(?:para|de)/i,
+            ],
+            prioridad: 1
+        },
+        solicitudCotizacion: {
+            patrones: [
+                /(?:precio|costo|cotizaci[óo]n|valor|cu[áa]nto).*(?:tubo|tubería|producto|material)/i,
+                /(?:cu[áa]nto cuesta|qu[ée] precio|qu[ée] valor).*/i,
+                /(?:presupuesto|cotizar|presupuestar).*/i,
+            ],
+            prioridad: 2
+        },
+        solicitudTecnica: {
+            patrones: [
+                /(?:c[óo]mo|de qu[ée] manera).*(?:instalar|funciona|usar|aplicar)/i,
+                /(?:caracter[íi]sticas|especificaciones|medidas|dimensiones).*/i,
+                /(?:para qu[ée] sirve|qu[ée] es|funcionamiento).*/i,
+            ],
+            prioridad: 1
+        }
+    };
+
+    let mejorIntencion = null;
+    let mejorPuntaje = 0;
+
+    for (const [intencion, config] of Object.entries(intenciones)) {
+        for (const patron of config.patrones) {
+            if (patron.test(input)) {
+                if (config.prioridad > mejorPuntaje) {
+                    mejorPuntaje = config.prioridad;
+                    mejorIntencion = intencion;
+                }
+                break;
+            }
+        }
+    }
+
+    return mejorIntencion;
+};
+
+// ==================== ANÁLISIS DE SENTIMIENTO ====================
+export const analizarSentimiento = (texto) => {
+    const positivos = ['gracias', 'excelente', 'bueno', 'perfecto', 'genial', 'ayuda', 'buen', 'agradecido', 'agradezco'];
+    const negativos = ['problema', 'error', 'mal', 'terrible', 'horrible', 'queja', 'molesto', 'enojado', 'pésimo'];
+    
+    let puntaje = 0;
+    const palabras = texto.toLowerCase().split(/\s+/);
+    
+    palabras.forEach(palabra => {
+        if (positivos.includes(palabra)) puntaje++;
+        if (negativos.includes(palabra)) puntaje--;
+    });
+    
+    return puntaje > 0 ? 'positivo' : puntaje < 0 ? 'negativo' : 'neutral';
+};
+
+// ==================== PROCESAMIENTO LOCAL MEJORADO ====================
 export const procesarRespuestaLocal = async (mensaje) => {
     const input = mensaje.toLowerCase().trim();
 
@@ -550,11 +885,10 @@ export const procesarRespuestaLocal = async (mensaje) => {
     if (debeIgnorarBaseLocal(input)) {
         return {
             tipo: "texto",
-            contenido: knowledgeBase.respuestasGenericas[0] // Forzar respuesta genérica
+            contenido: knowledgeBase.respuestasGenericas[0]
         };
     }
 
-    // ... el resto del código de procesarRespuestaLocal se mantiene igual ...
     // 2. Verificar si el usuario pide imágenes
     if (detectarSolicitudImagenes(input)) {
         const terminoBusqueda = obtenerTerminoBusquedaImagenes(input);
@@ -607,13 +941,8 @@ export const procesarRespuestaLocal = async (mensaje) => {
         }
     }
 
-    // 5. Búsqueda normal en el conocimiento base (EXCLUYENDO PVC para preguntas técnicas)
+    // 5. Búsqueda normal en el conocimiento base
     for (const [claves, respuesta] of Object.entries(knowledgeBase.respuestas)) {
-        // Excluir la respuesta de PVC si es una pregunta técnica
-        if (claves.includes('pvc|tubos') && detectarConsultaDefinicion(input)) {
-            continue; // Saltar esta respuesta
-        }
-        
         const patrones = claves.split('|');
         for (const patron of patrones) {
             if (new RegExp(patron, 'i').test(input)) {
@@ -634,34 +963,150 @@ export const procesarRespuestaLocal = async (mensaje) => {
     };
 };
 
-// NUEVA FUNCIÓN para determinar cuándo ignorar la base local
-export const debeIgnorarBaseLocal = (input) => {
-    const preguntasParaIA = [
-        /qu[ée]\s+es\s+.+/i,
-        /definici[óo]n\s+de\s+.+/i,
-        /c[óo]mo\s+funciona\s+.+/i,
-        /para\s+qu[ée]\s+sirve\s+.+/i,
-        /explica\s+.+/i,
-        /qu[ée]\s+significa\s+.+/i
-    ];
-    
-    return preguntasParaIA.some(patron => patron.test(input));
+// ==================== FUNCIÓN PRINCIPAL MEJORADA ====================
+export const procesarMensaje = async (mensaje, idUsuario = 'default') => {
+    try {
+        const input = mensaje.toLowerCase().trim();
+        
+        // 1. Detectar cancelación de flujo
+        if (/(cancelar|detener|parar|no quiero|olvídalo)/i.test(input)) {
+            const respuestaCancelacion = cancelarFlujo(idUsuario);
+            if (respuestaCancelacion) {
+                gestionarContexto(idUsuario, mensaje, respuestaCancelacion);
+                return renderizarRespuestaEnChat({ tipo: "texto", contenido: respuestaCancelacion });
+            }
+        }
+        
+        // 2. Gestionar flujos conversacionales
+        const respuestaFlujo = gestionarFlujoConversacional(idUsuario, mensaje);
+        if (respuestaFlujo) {
+            gestionarContexto(idUsuario, mensaje, respuestaFlujo);
+            return renderizarRespuestaEnChat({ tipo: "texto", contenido: respuestaFlujo });
+        }
+        
+        // 3. NUEVO: Verificar si es solicitud de recomendación técnica avanzada
+        const recomendacionAvanzada = await sistemaRecomendacionAvanzado(mensaje);
+        if (recomendacionAvanzada) {
+            gestionarContexto(idUsuario, mensaje, recomendacionAvanzada.contenido);
+            return renderizarRespuestaEnChat(recomendacionAvanzada);
+        }
+        
+        // 4. Detectar saludos
+        if (/(hola|buen|saludos|qué tal|buenas|hello|hi)/i.test(input)) {
+            const contexto = obtenerContexto(idUsuario);
+            const saludo = contexto.length > 0 
+                ? "¡Hola de nuevo! ¿En qué más puedo ayudarte?"
+                : knowledgeBase.saludos[Math.floor(Math.random() * knowledgeBase.saludos.length)];
+            
+            gestionarContexto(idUsuario, mensaje, saludo);
+            return renderizarRespuestaEnChat({ tipo: "texto", contenido: saludo });
+        }
+        
+        // 5. Detectar despedidas
+        if (/(gracias|adi[óo]s|chao|bye|hasta luego|nos vemos|chao)/i.test(input)) {
+            const sentimiento = analizarSentimiento(input);
+            let despedida = "¡De nada! Estoy aquí para ayudarte cuando lo necesites. ¡Que tengas un excelente día! 🌟";
+            
+            if (sentimiento === 'positivo') {
+                despedida = "¡Gracias a ti! 😊 Fue un gusto ayudarte. ¡Vuelve pronto!";
+            } else if (sentimiento === 'negativo') {
+                despedida = "Lamento no haber podido ayudarte mejor. 😔 ¿Hay algo más en lo que pueda asistirte?";
+            }
+            
+            gestionarContexto(idUsuario, mensaje, despedida);
+            return renderizarRespuestaEnChat({ tipo: "texto", contenido: despedida });
+        }
+        
+        // 6. DETECTAR SI ES UNA PREGUNTA TÉCNICA QUE DEBE IR DIRECTAMENTE A LA IA
+        const esPreguntaTecnica = detectarPreguntaTecnica(input);
+        const esConsultaDefinicion = detectarConsultaDefinicion(input);
+        
+        if (esPreguntaTecnica || esConsultaDefinicion) {
+            console.log("🔍 Pregunta técnica detectada, consultando IAs...");
+            
+            // Intentar primero con Gemini (mejor para respuestas técnicas)
+            const respuestaGemini = await consultarGemini(mensaje);
+            if (respuestaGemini && !esRespuestaMuyGenerica(respuestaGemini.contenido)) {
+                gestionarContexto(idUsuario, mensaje, respuestaGemini.contenido);
+                return renderizarRespuestaEnChat(respuestaGemini);
+            }
+            
+            // Si Gemini falla, intentar con Wit.ai
+            const respuestaWit = await consultarWitAI(mensaje);
+            if (respuestaWit) {
+                gestionarContexto(idUsuario, mensaje, respuestaWit.contenido);
+                return renderizarRespuestaEnChat(respuestaWit);
+            }
+        }
+        
+        // 7. PROCESAR LOCALMENTE (solo si no es pregunta técnica)
+        const respuestaLocal = await procesarRespuestaLocal(mensaje);
+        
+        // 8. Si la respuesta local es genérica, consultar IAs
+        const esRespuestaGenerica = knowledgeBase.respuestasGenericas.some(
+            resp => resp === respuestaLocal.contenido
+        );
+
+        if (respuestaLocal.tipo === "texto" && esRespuestaGenerica) {
+            const respuestaGemini = await consultarGemini(mensaje);
+            if (respuestaGemini) {
+                gestionarContexto(idUsuario, mensaje, respuestaGemini.contenido);
+                return renderizarRespuestaEnChat(respuestaGemini);
+            }
+            
+            const respuestaWit = await consultarWitAI(mensaje);
+            if (respuestaWit) {
+                gestionarContexto(idUsuario, mensaje, respuestaWit.contenido);
+                return renderizarRespuestaEnChat(respuestaWit);
+            }
+        }
+
+        // 9. Devolver respuesta local
+        gestionarContexto(idUsuario, mensaje, respuestaLocal.contenido);
+        return renderizarRespuestaEnChat(respuestaLocal);
+
+    } catch (error) {
+        console.error("Error en procesarMensaje:", error);
+        const errorMsg = '<div class="chat-response">Error al procesar el mensaje. Intenta de nuevo.</div>';
+        gestionarContexto(idUsuario, mensaje, errorMsg);
+        return errorMsg;
+    }
 };
 
-// MEJORAR LA FUNCIÓN esRespuestaMuyGenerica
-export const esRespuestaMuyGenerica = (contenido) => {
-    const respuestasGenericas = [
-        "entendido", "puedo ayudarte", "qué necesitas saber",
-        "en qué te puedo ayudar", "contamos con", "visita nuestra sección",
-        "te recomendamos contactarnos", "tenemos una amplia variedad"
-    ];
-    
-    const contenidoLower = contenido.toLowerCase();
-    return respuestasGenericas.some(resp => contenidoLower.includes(resp));
+// ==================== RENDERIZADO Y ESTILOS ====================
+export const renderizarRespuestaEnChat = (respuesta) => {
+    if (!respuesta) {
+        return '<div class="chat-response">No se pudo generar una respuesta.</div>';
+    }
+
+    if (respuesta.tipo === "imagenes") {
+        let html = `<div class="chat-response images-response">
+            <div class="response-text">${respuesta.contenido}</div>
+            <div class="images-container">`;
+
+        respuesta.imagenes.forEach((img, index) => {
+            html += `
+                <div class="chat-image" onclick="window.open('${img.original}', '_blank')">
+                    <img src="${img.url}" alt="${img.description || 'Producto PVC'}" loading="lazy">
+                    <div class="image-caption">
+                        <small>Foto: ${img.photographer}</small>
+                    </div>
+                </div>`;
+        });
+
+        html += `</div>
+            <div class="image-note">
+                <em>💡 Imágenes de referencia - Búsqueda: "${respuesta.terminoBusqueda}"</em>
+            </div>
+        </div>`;
+
+        return html;
+    } else {
+        return `<div class="chat-response text-response">${respuesta.contenido}</div>`;
+    }
 };
 
 export const estilosImagenesChat = `
-
 <style>
 .images-response {
     margin: 15px 0;
@@ -672,7 +1117,7 @@ export const estilosImagenesChat = `
 
 .images-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     margin: 12px 0;
 }
@@ -684,10 +1129,10 @@ export const estilosImagenesChat = `
     cursor: pointer;
     transition: all 0.3s ease;
     background: white;
-    max-width: 100%; /* Asegura que el contenedor no exceda el 100% del ancho disponible */
-    width: 150px; /* Controla el tamaño del contenedor de la imagen */
-    height: auto; /* Mantiene la relación de aspecto */
-    margin: 0 auto;  /* Centra las imágenes dentro del contenedor */
+    max-width: 100%;
+    width: 150px;
+    height: auto;
+    margin: 0 auto;
 }
 
 .chat-image:hover {
@@ -697,9 +1142,9 @@ export const estilosImagenesChat = `
 }
 
 .chat-image img {
-    width: 100%; /* Asegura que la imagen ocupe el 100% del contenedor */
-    height: auto; /* Mantiene la proporción correcta */
-    object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+    width: 100%;
+    height: auto;
+    object-fit: cover;
     display: block;
 }
 
@@ -739,45 +1184,18 @@ export const estilosImagenesChat = `
 </style>
 `;
 
-// Función auxiliar para inicializar el chatbot
+// ==================== INICIALIZACIÓN ====================
 export const inicializarChatbot = () => {
-    console.log('✅ Chatbot TUBCON inicializado correctamente');
+    console.log('🚀 Chatbot TUBCON Mejorado inicializado correctamente');
     console.log('🔍 Funciones disponibles:');
-    console.log('   - procesarMensaje(mensaje)');
-    console.log('   - buscarImagenesUnsplash(query)');
-    console.log('   - procesarRespuestaLocal(mensaje)');
-    console.log('   - renderizarRespuestaEnChat(respuesta)');
-};
-
-const procesarMensajeBot = async (mensaje, idUsuario) => {
-    const contexto = contextosDeConversacion[idUsuario].map(interaccion => {
-        if (interaccion.usuario) return `Usuario: ${interaccion.usuario}`;
-        if (interaccion.bot) return `Bot: ${interaccion.bot}`;
-    }).join('\n'); // Unir las interacciones previas
-
-    const url = `https://api.wit.ai/message?v=20230910&q=${encodeURIComponent(mensaje)}&context=${encodeURIComponent(contexto)}`;
-
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${WIT_AI_TOKEN}`,
-            'Content-Type': 'application/json',
-        },
-    });
-
-    if (!response.ok) {
-        return 'Lo siento, hubo un error al procesar tu mensaje.';
-    }
-
-    const data = await response.json();
-    const respuesta = data?.intents?.[0]?.name || "No entendí bien tu pregunta.";
-    return respuesta;
+    console.log('   - Sistema de contexto y memoria');
+    console.log('   - Flujos conversacionales para cotizaciones');
+    console.log('   - Detección mejorada de intenciones');
+    console.log('   - Análisis de sentimiento');
+    console.log('   - Búsqueda de imágenes mejorada');
+    console.log('   - Sistema avanzado de recomendación técnica');
+    console.log('   - Fórmulas y cálculos técnicos integrados');
 };
 
 // Inicializar automáticamente
 inicializarChatbot();
-
-
-
-
-

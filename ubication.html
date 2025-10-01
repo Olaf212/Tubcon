@@ -15,6 +15,48 @@
   <link rel="stylesheet" href="src/chatbot.css">
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  
+  <style>
+    /* Estilos para controlar la visibilidad del chatbot */
+    .chatbot-bubble {
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .chatbot-bubble {
+        display: flex;
+      }
+      .chatbot-container {
+        display: none;
+      }
+    }
+    
+    @media (min-width: 769px) {
+      .chatbot-bubble {
+        display: none;
+      }
+      .chatbot-container {
+        display: block;
+      }
+    }
+    
+    /* Mejoras para la burbuja de WhatsApp */
+    .whatsapp-float {
+      z-index: 9998;
+    }
+    
+    .chatbot-container {
+      z-index: 9999;
+    }
+    
+    .chatbot-bubble {
+      z-index: 9999;
+    }
+    
+    .chatbot-mobile-window {
+      z-index: 10000;
+    }
+  </style>
 </head>
 
 <body>
@@ -320,6 +362,16 @@
     </div>
   </div>
 
+  <!-- Burbuja de WhatsApp -->
+  <div class="whatsapp-float" id="whatsappFloat">
+    <a href="https://wa.me/525543225189" id="whatsappLink" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <div class="whatsapp-tooltip">
+        ¿Necesitas ayuda? Chatea con nosotros por WhatsApp
+    </div>
+  </div>
+
   <!-- Leaflet -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
@@ -403,6 +455,10 @@
     import { knowledgeBase, procesarMensaje } from './chatbot.js';
 
     document.addEventListener('DOMContentLoaded', function () {
+      // Estado del chatbot
+      let isDesktopChatOpen = false;
+      let isMobileChatOpen = false;
+
       // Mensaje inicial
       const saludo = knowledgeBase.saludos[Math.floor(Math.random() * knowledgeBase.saludos.length)];
       ["chatbotMessages", "mobileChatbotMessages"].forEach(id => {
@@ -412,16 +468,27 @@
         document.getElementById(id).appendChild(msg);
       });
 
-      // Desktop
+      // Desktop Chatbot
       document.getElementById('chatbotToggle').addEventListener('click', () => {
-        document.getElementById('chatbotBody').classList.toggle('active');
+        const chatBody = document.getElementById('chatbotBody');
+        isDesktopChatOpen = !isDesktopChatOpen;
+        
+        if (isDesktopChatOpen) {
+          chatBody.classList.add('active');
+          // Ocultar WhatsApp cuando el chatbot está abierto en desktop
+          document.getElementById('whatsappFloat').classList.add('hidden');
+        } else {
+          chatBody.classList.remove('active');
+          document.getElementById('whatsappFloat').classList.remove('hidden');
+        }
       });
+
       document.getElementById('sendButton').addEventListener('click', () => sendMessage('userInput', 'chatbotMessages'));
       document.getElementById('userInput').addEventListener('keydown', e => {
         if (e.key === 'Enter') sendMessage('userInput', 'chatbotMessages');
       });
 
-      // Móvil
+      // Móvil Chatbot
       document.getElementById('mobileSendButton').addEventListener('click', () => sendMessage('mobileUserInput', 'mobileChatbotMessages'));
       document.getElementById('mobileUserInput').addEventListener('keydown', e => {
         if (e.key === 'Enter') sendMessage('mobileUserInput', 'mobileChatbotMessages');
@@ -431,24 +498,89 @@
       const bubble = document.getElementById('mobileChatbotBubble');
       const windowChat = document.getElementById('mobileChatbotWindow');
       const closeMobile = document.getElementById('closeMobileChat');
+      
       bubble.addEventListener('click', () => {
+        isMobileChatOpen = true;
         windowChat.classList.add('active');
         document.body.style.overflow = 'hidden';
+        // Ocultar burbuja cuando el chat está abierto
+        bubble.classList.add('hidden');
+        // Ocultar WhatsApp cuando el chatbot móvil está abierto
+        document.getElementById('whatsappFloat').classList.add('hidden');
       });
+      
       closeMobile.addEventListener('click', () => {
+        isMobileChatOpen = false;
         windowChat.classList.remove('active');
         document.body.style.overflow = '';
+        // Mostrar burbuja cuando el chat se cierra
+        bubble.classList.remove('hidden');
+        document.getElementById('whatsappFloat').classList.remove('hidden');
       });
+
+      // Manejo de redimensionamiento
+      window.addEventListener('resize', function() {
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+          // En móvil: mostrar solo burbuja, ocultar chatbot desktop
+          document.getElementById('mobileChatbotBubble').style.display = 'flex';
+          document.getElementById('desktopChatbot').style.display = 'none';
+          
+          if (isDesktopChatOpen) {
+            // Si el chatbot desktop estaba abierto, cerrarlo
+            document.getElementById('chatbotBody').classList.remove('active');
+            isDesktopChatOpen = false;
+          }
+        } else {
+          // En desktop: mostrar solo chatbot desktop, ocultar burbuja móvil
+          document.getElementById('mobileChatbotBubble').style.display = 'none';
+          document.getElementById('desktopChatbot').style.display = 'block';
+          
+          if (isMobileChatOpen) {
+            // Si el chatbot móvil estaba abierto, cerrarlo
+            document.getElementById('mobileChatbotWindow').classList.remove('active');
+            document.body.style.overflow = '';
+            isMobileChatOpen = false;
+          }
+        }
+        
+        // Actualizar visibilidad de WhatsApp
+        updateWhatsAppVisibility();
+      });
+
+      function updateWhatsAppVisibility() {
+        const isMobile = window.innerWidth <= 768;
+        const whatsappFloat = document.getElementById('whatsappFloat');
+        
+        if (isMobile) {
+          // En móvil: ocultar WhatsApp solo si el chatbot móvil está abierto
+          if (isMobileChatOpen) {
+            whatsappFloat.classList.add('hidden');
+          } else {
+            whatsappFloat.classList.remove('hidden');
+          }
+        } else {
+          // En desktop: ocultar WhatsApp solo si el chatbot desktop está abierto
+          if (isDesktopChatOpen) {
+            whatsappFloat.classList.add('hidden');
+          } else {
+            whatsappFloat.classList.remove('hidden');
+          }
+        }
+      }
 
       async function sendMessage(inputId, messagesId) {
         const input = document.getElementById(inputId);
         const text = input.value.trim();
         if (!text) return;
+        
         const userMsg = document.createElement('div');
         userMsg.className = 'message user-message';
         userMsg.textContent = text;
         document.getElementById(messagesId).appendChild(userMsg);
         input.value = '';
+        
         const messages = document.getElementById(messagesId);
         messages.scrollTop = messages.scrollHeight;
 
@@ -456,6 +588,7 @@
         typing.className = 'message bot-message typing-indicator';
         typing.innerHTML = '<span></span><span></span><span></span>';
         messages.appendChild(typing);
+        messages.scrollTop = messages.scrollHeight;
 
         try {
           const respuesta = await procesarMensaje(text);
@@ -475,21 +608,20 @@
         messages.appendChild(botMsg);
         messages.scrollTop = messages.scrollHeight;
       }
+
+      // Configuración inicial de visibilidad
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        document.getElementById('mobileChatbotBubble').style.display = 'flex';
+        document.getElementById('desktopChatbot').style.display = 'none';
+      } else {
+        document.getElementById('mobileChatbotBubble').style.display = 'none';
+        document.getElementById('desktopChatbot').style.display = 'block';
+      }
     });
   </script>
-<!-- Burbuja de WhatsApp -->
-<div class="whatsapp-float" id="whatsappFloat">
-    <a href="https://wa.me/525543225189" id="whatsappLink" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-    <div class="whatsapp-tooltip">
-        ¿Necesitas ayuda? Chatea con nosotros por WhatsApp
-    </div>
-</div>
 
-
-
-<script>
+  <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Detectar si es dispositivo móvil
         function isMobileDevice() {
@@ -507,6 +639,6 @@
             whatsappLink.href = "https://web.whatsapp.com/send?phone=525543225189";
         }
     });
-</script>
+  </script>
 </body>
 </html>
