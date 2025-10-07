@@ -3,358 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Letra T - Animación Mejorada</title>
+    <title>Cargando...</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body {
+
+        .holder {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            bottom: 0px;
+            right: 0px;
+            width: 100%;
+            height: 100%;
+            background-color: #1f1c1c;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .preloader-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin-bottom: 30px;
+        }
+
+        .preloader {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: rotatePreloader 2s infinite ease-in;
+        }
+
+        .center-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1a2a3a, #0d1b2a);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #fff;
-            overflow-x: hidden;
+            z-index: 10;
+            background: transparent;
         }
-        
-        .container {
-            text-align: center;
-            max-width: 900px;
-            padding: 30px;
+
+        .center-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
-        
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #e63946, #f1faee);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 2px 10px rgba(230, 57, 70, 0.3);
+
+        @keyframes rotatePreloader {
+            0% {
+                transform: rotateZ(0deg);
+            }
+            100% {
+                transform: rotateZ(-360deg);
+            }
         }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 40px;
-            color: #a8dadc;
-            font-weight: 300;
-        }
-        
-        .animation-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 40px 0;
-            perspective: 1000px;
-        }
-        
-        .letter-box {
-            width: 350px;
-            height: 350px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transform-style: preserve-3d;
-            transition: transform 0.5s;
-        }
-        
-        .letter-box:hover {
-            transform: rotateY(5deg) rotateX(5deg);
-        }
-        
-        svg {
-            width: 80%;
-            height: 80%;
-            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
-        }
-        
-        /* Estilos para las líneas */
-        line {
-            stroke-width: 8;
-            fill: none;
-            stroke-linecap: round;
+
+        .preloader div {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             opacity: 0;
         }
-        
-        /* Línea vertical (roja) */
-        #vertical-line {
-            stroke: #e63946;
-            stroke-dasharray: 320;
-            stroke-dashoffset: 320;
-            animation: drawVertical 2s ease-out forwards;
-        }
-        
-        /* Línea horizontal izquierda (gris) */
-        #horizontal-left {
-            stroke: #adb5bd;
-            stroke-dasharray: 150;
-            stroke-dashoffset: 150;
-            animation: drawLeft 1.2s ease-out forwards;
-            animation-delay: 2s;
-        }
-        
-        /* Línea horizontal derecha (roja) */
-        #horizontal-right {
-            stroke: #e63946;
-            stroke-dasharray: 150;
-            stroke-dashoffset: 150;
-            animation: drawRight 1.2s ease-out forwards;
-            animation-delay: 2.8s;
-        }
-        
-        /* Animaciones */
-        @keyframes drawVertical {
-            0% {
-                opacity: 1;
-                stroke-dashoffset: 320;
-            }
-            100% {
-                opacity: 1;
-                stroke-dashoffset: 0;
-            }
-        }
-        
-        @keyframes drawLeft {
-            0% {
-                opacity: 1;
-                stroke-dashoffset: 150;
-            }
-            100% {
-                opacity: 1;
-                stroke-dashoffset: 0;
-            }
-        }
-        
-        @keyframes drawRight {
-            0% {
-                opacity: 1;
-                stroke-dashoffset: 150;
-            }
-            100% {
-                opacity: 1;
-                stroke-dashoffset: 0;
-            }
-        }
-        
-        /* Efecto de brillo al completar la animación */
-        .glow {
-            animation: glow 0.5s ease-out forwards;
-            animation-delay: 4s;
-        }
-        
-        @keyframes glow {
-            0% {
-                filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
-            }
-            100% {
-                filter: drop-shadow(0 0 20px rgba(230, 57, 70, 0.7));
-            }
-        }
-        
-        /* Información y controles */
-        .info-panel {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 30px;
-            text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        h2 {
-            color: #a8dadc;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-        
-        .steps {
-            display: flex;
-            justify-content: space-between;
-            margin: 25px 0;
-        }
-        
-        .step {
-            text-align: center;
-            flex: 1;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            margin: 0 10px;
-            transition: transform 0.3s, background 0.3s;
-        }
-        
-        .step:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .step-number {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            background: #e63946;
+
+        .preloader div:before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0%;
+            width: 16px;
+            height: 16px;
+            background-color: #ffffff;
+            transform: translateX(-50%);
             border-radius: 50%;
-            line-height: 30px;
-            margin-bottom: 10px;
-            font-weight: bold;
         }
-        
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
+
+        /* Animaciones para cada círculo */
+        .preloader div:nth-child(1) {
+            transform: rotateZ(0deg);
+            animation: rotateCircle1 2s infinite linear;
+            z-index: 9;
         }
-        
-        button {
-            padding: 12px 25px;
-            background: linear-gradient(to right, #e63946, #ff6b7a);
-            border: none;
-            border-radius: 50px;
+
+        .preloader div:nth-child(2) {
+            transform: rotateZ(36deg);
+            animation: rotateCircle2 2s infinite linear;
+            z-index: 8;
+        }
+
+        .preloader div:nth-child(3) {
+            transform: rotateZ(72deg);
+            animation: rotateCircle3 2s infinite linear;
+            z-index: 7;
+        }
+
+        .preloader div:nth-child(4) {
+            transform: rotateZ(108deg);
+            animation: rotateCircle4 2s infinite linear;
+            z-index: 6;
+        }
+
+        .preloader div:nth-child(5) {
+            transform: rotateZ(144deg);
+            animation: rotateCircle5 2s infinite linear;
+            z-index: 5;
+        }
+
+        .preloader div:nth-child(6) {
+            transform: rotateZ(180deg);
+            animation: rotateCircle6 2s infinite linear;
+            z-index: 4;
+        }
+
+        .preloader div:nth-child(7) {
+            transform: rotateZ(216deg);
+            animation: rotateCircle7 2s infinite linear;
+            z-index: 3;
+        }
+
+        .preloader div:nth-child(8) {
+            transform: rotateZ(252deg);
+            animation: rotateCircle8 2s infinite linear;
+            z-index: 2;
+        }
+
+        .preloader div:nth-child(9) {
+            transform: rotateZ(288deg);
+            animation: rotateCircle9 2s infinite linear;
+            z-index: 1;
+        }
+
+        .preloader div:nth-child(10) {
+            transform: rotateZ(324deg);
+            animation: rotateCircle10 2s infinite linear;
+            z-index: 0;
+        }
+
+        /* Definición de keyframes para cada círculo */
+        @keyframes rotateCircle1 {
+            0% { opacity: 0; }
+            5% { opacity: 1; transform: rotateZ(0deg); }
+            52% { transform: rotateZ(0deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        @keyframes rotateCircle2 {
+            0% { opacity: 0; }
+            10% { opacity: 1; transform: rotateZ(-36deg); }
+            52% { transform: rotateZ(-36deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        @keyframes rotateCircle3 {
+            0% { opacity: 0; }
+            15% { opacity: 1; transform: rotateZ(-72deg); }
+            52% { transform: rotateZ(-72deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        @keyframes rotateCircle4 {
+            0% { opacity: 0; }
+            20% { opacity: 1; transform: rotateZ(-108deg); }
+            52% { transform: rotateZ(-108deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        @keyframes rotateCircle5 {
+            0% { opacity: 0; }
+            25% { opacity: 1; transform: rotateZ(-144deg); }
+            52% { transform: rotateZ(-144deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        @keyframes rotateCircle6 {
+            0% { opacity: 0; }
+            30% { opacity: 1; transform: rotateZ(-180deg); }
+            52% { transform: rotateZ(-180deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        @keyframes rotateCircle7 {
+            0% { opacity: 0; }
+            35% { opacity: 1; transform: rotateZ(-216deg); }
+            52% { transform: rotateZ(-216deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        @keyframes rotateCircle8 {
+            0% { opacity: 0; }
+            40% { opacity: 1; transform: rotateZ(-252deg); }
+            52% { transform: rotateZ(-252deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        @keyframes rotateCircle9 {
+            0% { opacity: 0; }
+            45% { opacity: 1; transform: rotateZ(-288deg); }
+            52% { transform: rotateZ(-288deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        @keyframes rotateCircle10 {
+            0% { opacity: 0; }
+            50% { opacity: 1; transform: rotateZ(-324deg); }
+            52% { transform: rotateZ(-324deg); }
+            100% { transform: rotateZ(-324deg); opacity: 1; }
+        }
+
+        .loading-text {
             color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.4);
+            font-size: 1.3rem;
+            font-family: Arial, sans-serif;
+            margin-top: 25px;
+            text-align: center;
         }
-        
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.6);
+
+        /* Responsive para celulares */
+        @media (max-width: 768px) {
+            .preloader-container {
+                width: 180px;
+                height: 180px;
+            }
+
+            .center-image {
+                width: 90px;
+                height: 90px;
+            }
+
+            .preloader div:before {
+                width: 14px;
+                height: 14px;
+            }
+
+            .loading-text {
+                font-size: 1.1rem;
+                margin-top: 20px;
+            }
         }
-        
-        button:active {
-            transform: translateY(1px);
-        }
-        
-        .code-explanation {
-            margin-top: 30px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        
-        .footer {
-            margin-top: 40px;
-            color: #adb5bd;
-            font-size: 0.9rem;
+
+        @media (max-width: 480px) {
+            .preloader-container {
+                width: 150px;
+                height: 150px;
+            }
+
+            .center-image {
+                width: 70px;
+                height: 70px;
+            }
+
+            .preloader div:before {
+                width: 12px;
+                height: 12px;
+            }
+
+            .loading-text {
+                font-size: 1rem;
+                margin-top: 15px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Animación de la Letra T</h1>
-        <p class="subtitle">Línea vertical de abajo hacia arriba con transición suave</p>
-        
-        <div class="animation-container">
-            <div class="letter-box">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="glow">
-                    <!-- Línea vertical (de abajo hacia arriba) -->
-                    <line id="vertical-line" x1="100" y1="180" x2="100" y2="40" />
-                    
-                    <!-- Línea horizontal izquierda (gris) -->
-                    <line id="horizontal-left" x1="30" y1="40" x2="100" y2="40" />
-                    
-                    <!-- Línea horizontal derecha (roja) -->
-                    <line id="horizontal-right" x1="100" y1="40" x2="170" y2="40" />
-                </svg>
+    <div class="holder">
+        <div class="preloader-container">
+            <div class="preloader">
+                <div></div><div></div><div></div><div></div><div></div>
+                <div></div><div></div><div></div><div></div><div></div>
+            </div>
+            <div class="center-image">
+                <img src="public/images/logo.png" alt="Logo">
             </div>
         </div>
-        
-        <div class="info-panel">
-            <h2>Secuencia de Animación</h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <p>Línea vertical (roja) se dibuja de abajo hacia arriba</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <p>Línea horizontal izquierda (gris) aparece desde el centro</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <p>Línea horizontal derecha (roja) completa la T</p>
-                </div>
-            </div>
-            
-            <div class="controls">
-                <button onclick="replayAnimation()">Repetir Animación</button>
-                <button onclick="toggleSlowMotion()">Cámara Lenta</button>
-            </div>
-        </div>
-        
-        <div class="code-explanation">
-            <p>// La animación se logra con stroke-dasharray y stroke-dashoffset</p>
-            <p>// Línea vertical: animación de 2 segundos comenzando desde abajo</p>
-            <p>// Líneas horizontales: animaciones separadas con delays de 2s y 2.8s</p>
-            <p>// Efecto de brillo final con filter: drop-shadow</p>
-        </div>
-        
-        <div class="footer">
-            <p>Animación CSS con SVG - Transiciones suaves y efectos visuales</p>
-        </div>
+        <div class="loading-text">Cargando...</div>
     </div>
 
     <script>
-        function replayAnimation() {
-            const svg = document.querySelector('svg');
-            const lines = document.querySelectorAll('line');
-            
-            // Remover clases de animación
-            svg.classList.remove('glow');
-            lines.forEach(line => {
-                line.style.animation = 'none';
-            });
-            
-            // Pequeño delay para reiniciar
-            setTimeout(() => {
-                lines.forEach(line => {
-                    line.style.animation = '';
-                });
-                svg.classList.add('glow');
-            }, 50);
-        }
-        
-        function toggleSlowMotion() {
-            const lines = document.querySelectorAll('line');
-            const button = document.querySelector('button:nth-child(2)');
-            
-            if (button.textContent === 'Cámara Lenta') {
-                lines.forEach(line => {
-                    line.style.animationDuration = '4s';
-                });
-                button.textContent = 'Velocidad Normal';
-                button.style.background = 'linear-gradient(to right, #4cc9f0, #4361ee)';
-            } else {
-                lines.forEach(line => {
-                    line.style.animationDuration = '';
-                });
-                button.textContent = 'Cámara Lenta';
-                button.style.background = 'linear-gradient(to right, #e63946, #ff6b7a)';
-            }
-        }
-        
-        // Efecto de parallax en el fondo
-        document.addEventListener('mousemove', (e) => {
-            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
-            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
-            
-            document.body.style.backgroundPosition = `${50 + moveX}% ${50 + moveY}%`;
+        // Ocultar el preloader cuando la página cargue
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.querySelector('.holder').style.display = 'none';
+                // Aquí puedes mostrar el contenido principal de tu página
+            }, 3000);
+        });
+
+        // En caso de error al cargar la imagen
+        document.querySelector('.center-image img').addEventListener('error', function() {
+            console.log('Error al cargar la imagen del logo');
         });
     </script>
 </body>
