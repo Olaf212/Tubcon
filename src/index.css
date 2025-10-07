@@ -620,3 +620,25 @@ footer {
                 display: none;
             }
         }
+
+
+
+         #preloader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 9999;
+            transition: opacity 5.0s ease-out;
+        }
+        
+        #preloader-container.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        #preloader-container iframe {
+            border: none;
+        }

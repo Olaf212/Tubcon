@@ -1,4 +1,29 @@
-  /* Reset básico */
+ /* ESTILOS PARA PRELOADER */
+#preloader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#preloader-container.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+/* Estilos para el iframe del preloader */
+#preloader-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+ /* Reset básico */
     * {
       margin: 0;
       padding: 0;
