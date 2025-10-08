@@ -15,190 +15,7 @@
   <!-- Estilos -->
   <link rel="stylesheet" href="src/email.css">
   <link rel="stylesheet" href="src/chatbot.css">
-  <style>
-    /* ESTILOS PARA PRELOADER */
-    #preloader-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white;
-        z-index: 9999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
 
-    #preloader-container.fade-out {
-        opacity: 0;
-        transition: opacity 0.5s ease-out;
-    }
-
-    #preloader-container iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-    }
-
-    /* ESTILOS PARA OCULTAR HEADER SOLO EN MÓVIL CUANDO CHATBOT ESTÉ ABIERTO */
-    @media (max-width: 768px) {
-        header {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        
-        body.chatbot-active header {
-            opacity: 0;
-            visibility: hidden;
-        }
-    }
-    
-    .chatbot-mobile-window.active {
-        z-index: 1003;
-    }
-    
-    /* Burbuja de WhatsApp */
-    .whatsapp-float {
-        position: fixed;
-        bottom: 105px;
-        right: 25px;
-        z-index: 1000;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    
-    .whatsapp-float.hidden {
-        opacity: 0;
-        transform: scale(0.8);
-        pointer-events: none;
-    }
-    
-    .whatsapp-float a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 60px;
-        height: 60px;
-        background-color: #25D366;
-        border-radius: 50%;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
-        text-decoration: none;
-    }
-    
-    .whatsapp-float a:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    }
-    
-    .whatsapp-float i {
-        font-size: 32px;
-        color: white;
-    }
-    
-    .whatsapp-tooltip {
-        position: absolute;
-        bottom: 70px;
-        right: 0;
-        background: #333;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 4px;
-        font-size: 12px;
-        white-space: nowrap;
-        opacity: 0;
-        transform: translateY(10px);
-        transition: all 0.3s ease;
-        pointer-events: none;
-    }
-    
-    .whatsapp-float:hover .whatsapp-tooltip {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    
-    /* Ajustes para móvil */
-    @media (max-width: 768px) {
-        .whatsapp-float {
-            bottom: 20px;
-            right: 20px;
-            z-index: 1004;
-        }
-        
-        .whatsapp-float a {
-            width: 55px;
-            height: 55px;
-        }
-        
-        .whatsapp-float i {
-            font-size: 28px;
-        }
-        
-        .chatbot-bubble.hidden {
-            opacity: 0;
-            transform: scale(0.8);
-            pointer-events: none;
-        }
-
-        body.chatbot-active .whatsapp-float {
-            opacity: 0;
-            transform: scale(0.8);
-            pointer-events: none;
-        }
-        
-        .chatbot-container {
-            display: none;
-        }
-    }
-    
-    /* Mostrar chatbot desktop solo en desktop */
-    @media (min-width: 769px) {
-        .chatbot-bubble, .chatbot-mobile-window {
-            display: none;
-        }
-    }
-
-    /* ESTILOS PARA EL FORMULARIO */
-    .form-status {
-      margin: 15px 0;
-      padding: 12px;
-      border-radius: 4px;
-      display: none;
-    }
-    
-    .success-message {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      display: block;
-    }
-    
-    .error-message {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      display: block;
-    }
-    
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #3498db;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .submit-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  </style>
 </head>
 
 <body>
@@ -209,9 +26,12 @@
   
   <!-- Header -->
   <header>
-    <div class="logo">
-      <img src="public/images/logo.png" class="logo" alt="TUBCON S.A. de C.V." />
-    </div>
+   <div class="logo">
+            <a href="index.html">
+                <img src="public/images/logo.png" class="logo" alt="TUBCON S.A. de C.V." />
+            </a>
+        </div>
+
     <nav class="menu-desktop">
       <ul>
         <li><a href="index.html">Inicio</a></li>
@@ -250,7 +70,7 @@
 
       <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
         <!-- Web3Forms Configuration -->
-        <input type="hidden" name="access_key" value="ea54c96b-2462-4325-ace3-af86bb185790">
+        <input type="hidden" name="access_key" value="7812e1bd-765a-4ec1-a659-a9808d0922cd">
         <input type="hidden" name="subject" value="Nueva solicitud de asesoría - TUBCON">
         <input type="hidden" name="from_name" value="Sitio Web TUBCON">
         <input type="checkbox" name="botcheck" style="display: none;">
@@ -365,7 +185,7 @@
       <i class="fab fa-whatsapp"></i>
     </a>
     <div class="whatsapp-tooltip">
-      ¿Necesitas ayuda? Chatea con nosotros por WhatsApp
+      ¿Necesitas ayuda?
     </div>
   </div>
 
@@ -445,7 +265,7 @@
     });
   </script>
 
-  <!-- Chatbot -->
+  <!-- Chatbot CORREGIDO -->
   <script type="module">
     import { knowledgeBase, procesarMensaje } from './chatbot.js';
     let isDesktopChatOpen = false;
@@ -576,23 +396,32 @@
     function updateElementVisibility() {
       const isMobile = window.innerWidth <= 768;
       const whatsappLink = document.getElementById('whatsappLink');
+      const whatsappFloat = document.getElementById('whatsappFloat');
       
       if (isMobile) {
         whatsappLink.href = "https://wa.me/525543225189";
         
+        // En móvil: ocultar burbuja de WhatsApp cuando el chatbot está abierto
         if (isMobileChatOpen) {
           mobileBubble.style.display = 'none';
+          whatsappFloat.style.display = 'none';
         } else {
           mobileBubble.style.display = 'flex';
+          whatsappFloat.style.display = 'block';
         }
         
-        document.getElementById('whatsappFloat').style.display = 'block';
         document.getElementById('desktopChatbot').style.display = 'none';
       } else {
         whatsappLink.href = "https://web.whatsapp.com/send?phone=525543225189";
         mobileBubble.style.display = 'none';
-        document.getElementById('whatsappFloat').style.display = 'block';
         document.getElementById('desktopChatbot').style.display = 'block';
+        
+        // En desktop: ocultar burbuja de WhatsApp cuando el chatbot está abierto
+        if (isDesktopChatOpen) {
+          whatsappFloat.style.display = 'none';
+        } else {
+          whatsappFloat.style.display = 'block';
+        }
       }
     }
     

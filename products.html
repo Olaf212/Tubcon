@@ -195,10 +195,185 @@
                 font-size: 16px;
             }
         }
+        
+        /* NUEVOS ESTILOS PARA LA SECCIÓN DE PRODUCTOS */
+        .products-section {
+            padding: 40px 20px;
+            background-color: #f8f8f8;
+            text-align: center;
+        }
+        
+        .products-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .products-section p {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            color: #666;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .product-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #EF0315;
+        }
+        
+        .catalog-button {
+            display: inline-block;
+            background-color: #EF0315;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .catalog-button:hover {
+            background-color: #d0021b;
+        }
+        
+        /* MODAL DEL CATÁLOGO */
+        .catalog-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow: auto;
+        }
+        
+        .catalog-modal.active {
+            display: block;
+        }
+        
+        .catalog-content {
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px auto;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .catalog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+        }
+        
+        .catalog-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        
+        .close-catalog {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close-catalog:hover {
+            color: #EF0315;
+        }
+        
+        .catalog-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .catalog-iframe {
+            width: 100%;
+            height: 70vh;
+            border: none;
+        }
+        
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            
+            .catalog-content {
+                width: 95%;
+                margin: 20px auto;
+            }
+            
+            .catalog-body {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <body>
     <!-- PRELOADER EXTERNO -->
     <div id="preloader-container">
         <iframe src="preloader.html" frameborder="0" style="width:100%; height:100%;"></iframe>
@@ -280,6 +455,216 @@
         </div>
     </div>
 
+    <!-- SECCIONES DE PRODUCTOS POR CATEGORÍA CON CARRUSELES -->
+    
+    <!-- Sección Productos para Agua -->
+    <section class="products-section" id="agua">
+        <div class="section-header">
+            <h2 class="section-title">Productos para Agua</h2>
+            <p class="section-description">Soluciones especializadas para sistemas de agua potable, riego y tratamiento de agua.</p>
+        </div>
+        
+        <div class="products-carousel">
+            <button class="carousel-btn prev" data-carousel="agua">&#10094;</button>
+            <button class="carousel-btn next" data-carousel="agua">&#10095;</button>
+            
+            <div class="carousel-track" id="carousel-agua">
+                <!-- Producto 1 -->
+                <div class="product-card">
+                    <img src="public/images/producto-agua1.jpg" alt="Tubería PVC para agua" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Tubería PVC para Agua</h3>
+                        <p class="product-description">Tubería de PVC de alta resistencia para sistemas de agua potable.</p>
+                        <p class="product-price">$85.00</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 2 -->
+                <div class="product-card">
+                    <img src="public/images/producto-agua2.jpg" alt="Válvula de compuerta" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Válvula de Compuerta</h3>
+                        <p class="product-description">Válvula de compuerta para control de flujo en sistemas de agua.</p>
+                        <p class="product-price">$120.50</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 3 -->
+                <div class="product-card">
+                    <img src="public/images/producto-agua3.jpg" alt="Bomba centrífuga" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Bomba Centrífuga</h3>
+                        <p class="product-description">Bomba centrífuga para sistemas de bombeo de agua potable.</p>
+                        <p class="product-price">$450.00</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 4 -->
+                <div class="product-card">
+                    <img src="public/images/producto-agua4.jpg" alt="Filtro de agua" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Filtro de Agua Industrial</h3>
+                        <p class="product-description">Filtro para tratamiento de agua en sistemas industriales.</p>
+                        <p class="product-price">$320.75</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 5 -->
+                <div class="product-card">
+                    <img src="public/images/producto-agua5.jpg" alt="Medidor de flujo" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Medidor de Flujo</h3>
+                        <p class="product-description">Medidor de flujo para control y medición de caudal de agua.</p>
+                        <p class="product-price">$180.25</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="carousel-dots" id="dots-agua">
+                <!-- Los puntos se generarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sección Productos para Gas -->
+    <section class="products-section" id="gas">
+        <div class="section-header">
+            <h2 class="section-title">Productos para Gas</h2>
+            <p class="section-description">Tuberías, válvulas y accesorios especializados para sistemas de gas LP y natural.</p>
+        </div>
+        
+        <div class="products-carousel">
+            <button class="carousel-btn prev" data-carousel="gas">&#10094;</button>
+            <button class="carousel-btn next" data-carousel="gas">&#10095;</button>
+            
+            <div class="carousel-track" id="carousel-gas">
+                <!-- Producto 1 -->
+                <div class="product-card">
+                    <img src="public/images/producto-gas1.jpg" alt="Tubería de cobre para gas" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Tubería de Cobre para Gas</h3>
+                        <p class="product-description">Tubería de cobre de alta calidad para instalaciones de gas.</p>
+                        <p class="product-price">$150.00</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 2 -->
+                <div class="product-card">
+                    <img src="public/images/producto-gas2.jpg" alt="Válvula de seguridad" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Válvula de Seguridad</h3>
+                        <p class="product-description">Válvula de seguridad para sistemas de gas a alta presión.</p>
+                        <p class="product-price">$95.80</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 3 -->
+                <div class="product-card">
+                    <img src="public/images/producto-gas3.jpg" alt="Regulador de presión" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Regulador de Presión</h3>
+                        <p class="product-description">Regulador de presión para sistemas de gas domésticos e industriales.</p>
+                        <p class="product-price">$75.40</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 4 -->
+                <div class="product-card">
+                    <img src="public/images/producto-gas4.jpg" alt="Conector flexible" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Conector Flexible</h3>
+                        <p class="product-description">Conector flexible para instalaciones de gas con certificación.</p>
+                        <p class="product-price">$45.20</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 5 -->
+                <div class="product-card">
+                    <img src="public/images/producto-gas5.jpg" alt="Detector de gas" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Detector de Gas</h3>
+                        <p class="product-description">Detector de fugas de gas con alarma sonora y visual.</p>
+                        <p class="product-price">$210.00</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="carousel-dots" id="dots-gas">
+                <!-- Los puntos se generarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sección Productos Industriales -->
+    <section class="products-section" id="industrial">
+        <div class="section-header">
+            <h2 class="section-title">Productos Industriales</h2>
+            <p class="section-description">Componentes y sistemas para aplicaciones industriales de alta exigencia.</p>
+        </div>
+        
+        <div class="products-carousel">
+            <button class="carousel-btn prev" data-carousel="industrial">&#10094;</button>
+            <button class="carousel-btn next" data-carousel="industrial">&#10095;</button>
+            
+            <div class="carousel-track" id="carousel-industrial">
+                <!-- Producto 1 -->
+                <div class="product-card">
+                    <img src="public/images/producto-industrial1.jpg" alt="Tubería de acero inoxidable" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Tubería Acero Inoxidable</h3>
+                        <p class="product-description">Tubería de acero inoxidable para aplicaciones industriales críticas.</p>
+                        <p class="product-price">$320.00</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 2 -->
+                <div class="product-card">
+                    <img src="public/images/producto-industrial2.jpg" alt="Válvula de bola industrial" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Válvula de Bola Industrial</h3>
+                        <p class="product-description">Válvula de bola de alta presión para procesos industriales.</p>
+                        <p class="product-price">$180.75</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 3 -->
+                <div class="product-card">
+                    <img src="public/images/producto-industrial3.jpg" alt="Bomba de vacío" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Bomba de Vacío</h3>
+                        <p class="product-description">Bomba de vacío para sistemas industriales de alta eficiencia.</p>
+                        <p class="product-price">$850.00</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 4 -->
+                <div class="product-card">
+                    <img src="public/images/producto-industrial4.jpg" alt="Compresor de aire" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Compresor de Aire</h3>
+                        <p class="product-description">Compresor de aire industrial para sistemas neumáticos.</p>
+                        <p class="product-price">$1,200.00</p>
+                    </div>
+                </div>
+                
+                <!-- Producto 5 -->
+                <div class="product-card">
+                    <img src="public/images/producto-industrial5.jpg" alt="Sistema de filtración" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Sistema de Filtración</h3>
+                        <p class="product-description">Sistema de filtración para procesos industriales complejos.</p>
+                        <p class="product-price">$950.50</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="carousel-dots" id="dots-industrial">
+                <!-- Los puntos se generarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CATÁLOGO COMPLETO -->
     <section id="quienes-somos">
         <div class="flippingbook-container">
             <!-- Iframe modificado para deshabilitar sonido -->
@@ -292,6 +677,19 @@
     <footer>
           <p>© 2025 TUBCON S.A. de C.V. </p>
     </footer>
+
+    <!-- MODAL DEL CATÁLOGO -->
+    <div class="catalog-modal" id="catalogModal">
+        <div class="catalog-content">
+            <div class="catalog-header">
+                <h2>Catálogo Completo TUBCON</h2>
+                <button class="close-catalog" id="closeCatalog">&times;</button>
+            </div>
+            <div class="catalog-body">
+                <iframe src="https://online.flippingbook.com/view/729924485/" class="catalog-iframe" allow="clipboard-write"></iframe>
+            </div>
+        </div>
+    </div>
 
     <!-- CHATBOT DESKTOP -->
     <div class="chatbot-container" id="desktopChatbot">
@@ -331,7 +729,7 @@
             <i class="fab fa-whatsapp"></i>
         </a>
         <div class="whatsapp-tooltip">
-            ¿Necesitas ayuda? Chatea con nosotros por WhatsApp
+            ¿Necesitas ayuda?
         </div>
     </div>
 
@@ -361,7 +759,7 @@
             document.body.style.overflow = '';
         });
         
-        // Funcionalidad del carrusel
+        // Funcionalidad del carrusel de banners
         let slideIndex = 1;
         showSlides(slideIndex);
         
@@ -396,6 +794,143 @@
             
             slides[slideIndex-1].classList.add("active");
             dots[slideIndex-1].className += " active";
+        }
+        
+        // Funcionalidad del catálogo modal
+        const openCatalogBtn = document.getElementById('openCatalog');
+        const catalogModal = document.getElementById('catalogModal');
+        const closeCatalogBtn = document.getElementById('closeCatalog');
+        
+        if (openCatalogBtn) {
+            openCatalogBtn.addEventListener('click', function() {
+                catalogModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+        
+        if (closeCatalogBtn) {
+            closeCatalogBtn.addEventListener('click', function() {
+                catalogModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+        
+        // Cerrar modal al hacer clic fuera del contenido
+        if (catalogModal) {
+            catalogModal.addEventListener('click', function(e) {
+                if (e.target === catalogModal) {
+                    catalogModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        // Inicializar carruseles de productos
+        document.addEventListener('DOMContentLoaded', function() {
+            initCarousels();
+        });
+
+        // Función para inicializar todos los carruseles
+        function initCarousels() {
+            const carousels = [
+                { id: 'agua', track: 'carousel-agua', dots: 'dots-agua' },
+                { id: 'gas', track: 'carousel-gas', dots: 'dots-gas' },
+                { id: 'industrial', track: 'carousel-industrial', dots: 'dots-industrial' }
+            ];
+
+            carousels.forEach(carousel => {
+                initCarousel(carousel.id, carousel.track, carousel.dots);
+            });
+        }
+
+        // Función para inicializar un carrusel específico
+        function initCarousel(carouselId, trackId, dotsId) {
+            const track = document.getElementById(trackId);
+            const dotsContainer = document.getElementById(dotsId);
+            const products = track.querySelectorAll('.product-card');
+            const prevBtn = document.querySelector(`.carousel-btn.prev[data-carousel="${carouselId}"]`);
+            const nextBtn = document.querySelector(`.carousel-btn.next[data-carousel="${carouselId}"]`);
+            
+            let currentIndex = 0;
+            let productsPerView = getProductsPerView();
+            
+            // Crear puntos de navegación
+            createDots();
+            updateDots();
+            
+            // Configurar eventos de navegación
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarousel();
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < products.length - productsPerView) {
+                    currentIndex++;
+                    updateCarousel();
+                }
+            });
+            
+            // Actualizar carrusel al cambiar tamaño de ventana
+            window.addEventListener('resize', () => {
+                productsPerView = getProductsPerView();
+                updateCarousel();
+            });
+            
+            // Función para obtener cuántos productos mostrar según el ancho de pantalla
+            function getProductsPerView() {
+                if (window.innerWidth < 768) return 1;
+                if (window.innerWidth < 992) return 2;
+                return 3;
+            }
+            
+            // Función para actualizar la posición del carrusel
+            function updateCarousel() {
+                const productWidth = products[0].offsetWidth + 20; // Ancho + margen
+                track.style.transform = `translateX(-${currentIndex * productWidth}px)`;
+                updateDots();
+            }
+            
+            // Función para crear los puntos de navegación
+            function createDots() {
+                const totalDots = Math.max(1, products.length - productsPerView + 1);
+                
+                for (let i = 0; i < totalDots; i++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('dot');
+                    if (i === 0) dot.classList.add('active');
+                    
+                    dot.addEventListener('click', () => {
+                        currentIndex = i;
+                        updateCarousel();
+                    });
+                    
+                    dotsContainer.appendChild(dot);
+                }
+            }
+            
+            // Función para actualizar el estado de los puntos
+            function updateDots() {
+                const dots = dotsContainer.querySelectorAll('.dot');
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentIndex);
+                });
+            }
+            
+            // Inicializar posición del carrusel
+            updateCarousel();
+            
+            // Configurar cambio automático cada 5 segundos
+            setInterval(() => {
+                if (currentIndex < products.length - productsPerView) {
+                    currentIndex++;
+                } else {
+                    currentIndex = 0;
+                }
+                updateCarousel();
+            }, 5000);
         }
     </script>
 
