@@ -196,7 +196,7 @@
             }
         }
         
-        /* NUEVOS ESTILOS PARA LA SECCIÓN DE PRODUCTOS */
+        /* NUEVOS ESTILOS PARA LA SECCIÓN DE PRODUCTOS CON CARRUSELES HORIZONTALES */
         .products-section {
             padding: 40px 20px;
             background-color: #f8f8f8;
@@ -218,27 +218,90 @@
             margin-right: auto;
         }
         
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
+        /* ESTILOS PARA CARRUSELES HORIZONTALES DE PRODUCTOS */
+        .products-carousel {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            margin: 0 auto;
             max-width: 1200px;
-            margin: 0 auto 40px;
         }
-        
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease;
+            gap: 20px;
+            padding: 10px 0;
+        }
+
         .product-card {
+            flex: 0 0 auto;
+            width: 280px;
             background-color: white;
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
+
         .product-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
-        
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s;
+            z-index: 10;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-btn:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .carousel-btn.prev {
+            left: 10px;
+        }
+
+        .carousel-btn.next {
+            right: 10px;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 8px;
+        }
+
+        .dot {
+            cursor: pointer;
+            height: 12px;
+            width: 12px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .dot.active, .dot:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
         .product-image {
             width: 100%;
             height: 200px;
@@ -354,26 +417,33 @@
             border: none;
         }
         
+        /* Responsividad para móviles */
         @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 20px;
+            .product-card {
+                width: 250px;
             }
             
-            .catalog-content {
-                width: 95%;
-                margin: 20px auto;
-            }
-            
-            .catalog-body {
+            .carousel-btn {
                 padding: 10px;
+                font-size: 16px;
+                width: 40px;
+                height: 40px;
             }
+        }
+
+        /* Ocultar scrollbar en navegadores Webkit */
+        .carousel-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-track {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
     </style>
 </head>
 
 <body>
-    <body>
     <!-- PRELOADER EXTERNO -->
     <div id="preloader-container">
         <iframe src="preloader.html" frameborder="0" style="width:100%; height:100%;"></iframe>
@@ -458,217 +528,227 @@
     <!-- SECCIONES DE PRODUCTOS POR CATEGORÍA CON CARRUSELES -->
     
     <!-- Sección Productos para Agua -->
-    <section class="products-section" id="agua">
-        <div class="section-header">
-            <h2 class="section-title">Productos para Agua</h2>
-            <p class="section-description">Soluciones especializadas para sistemas de agua potable, riego y tratamiento de agua.</p>
-        </div>
-        
-        <div class="products-carousel">
-            <button class="carousel-btn prev" data-carousel="agua">&#10094;</button>
-            <button class="carousel-btn next" data-carousel="agua">&#10095;</button>
-            
-            <div class="carousel-track" id="carousel-agua">
-                <!-- Producto 1 -->
-                <div class="product-card">
-                    <img src="public/images/producto-agua1.jpg" alt="Tubería PVC para agua" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Tubería PVC para Agua</h3>
-                        <p class="product-description">Tubería de PVC de alta resistencia para sistemas de agua potable.</p>
-                        <p class="product-price">$85.00</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 2 -->
-                <div class="product-card">
-                    <img src="public/images/producto-agua2.jpg" alt="Válvula de compuerta" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Válvula de Compuerta</h3>
-                        <p class="product-description">Válvula de compuerta para control de flujo en sistemas de agua.</p>
-                        <p class="product-price">$120.50</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 3 -->
-                <div class="product-card">
-                    <img src="public/images/producto-agua3.jpg" alt="Bomba centrífuga" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Bomba Centrífuga</h3>
-                        <p class="product-description">Bomba centrífuga para sistemas de bombeo de agua potable.</p>
-                        <p class="product-price">$450.00</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 4 -->
-                <div class="product-card">
-                    <img src="public/images/producto-agua4.jpg" alt="Filtro de agua" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Filtro de Agua Industrial</h3>
-                        <p class="product-description">Filtro para tratamiento de agua en sistemas industriales.</p>
-                        <p class="product-price">$320.75</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 5 -->
-                <div class="product-card">
-                    <img src="public/images/producto-agua5.jpg" alt="Medidor de flujo" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Medidor de Flujo</h3>
-                        <p class="product-description">Medidor de flujo para control y medición de caudal de agua.</p>
-                        <p class="product-price">$180.25</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="carousel-dots" id="dots-agua">
-                <!-- Los puntos se generarán dinámicamente con JavaScript -->
-            </div>
-        </div>
-    </section>
+<section class="products-section" id="agua">
+    <div class="section-header">
+        <h2 class="section-title">Productos para Agua</h2>
+        <p class="section-description">Soluciones especializadas para sistemas de agua potable, riego y tratamiento de agua.</p>
+    </div>
     
-    <!-- Sección Productos para Gas -->
-    <section class="products-section" id="gas">
-        <div class="section-header">
-            <h2 class="section-title">Productos para Gas</h2>
-            <p class="section-description">Tuberías, válvulas y accesorios especializados para sistemas de gas LP y natural.</p>
+    <div class="products-carousel">
+        <button class="carousel-btn prev" data-carousel="agua">&#10094;</button>
+        <button class="carousel-btn next" data-carousel="agua">&#10095;</button>
+        
+        <div class="carousel-track" id="carousel-agua">
+            <!-- Producto 1 -->
+            <div class="product-card">
+                <img src="public/images/productos/centrifuga.png" alt="Bomba Centrífuga" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Bomba Centrífuga</h3>
+                    <p class="product-description">Bomba centrífuga para llenar tinacos a alturas menores de 15 metros. Flujo máximo 100-150 L/min.</p>
+                    <p class="product-model">Modelos: 1/2 HP a 2 HP</p>
+                </div>
+            </div>
+            
+            <!-- Producto 2 -->
+            <div class="product-card">
+                <img src="public/images/productos/peri.png"  alt="Bomba Periférica" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Bomba Periférica</h3>
+                    <p class="product-description">Mayor presión, menor flujo. Ideal para alturas mayores de 15 metros y sistemas hidroneumáticos.</p>
+                    <p class="product-model">Modelo: Periférica Primo 1/2 HP</p>
+                </div>
+            </div>
+            
+            <!-- Producto 3 -->
+            <div class="product-card">
+                <img src="public/images/productos/pre.png"  alt="Bomba Presurizadora" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Bomba Presurizadora</h3>
+                    <p class="product-description">Aumenta la presión del agua en toda la instalación. Encendido automático al detectar demanda.</p>
+                    <p class="product-model">Modelos: 1/6 HP y 1/3 HP</p>
+                </div>
+            </div>
+            
+            <!-- Producto 4 -->
+            <div class="product-card">
+                <img src="public/images/productos/tinaco.png"  alt="Tinaco IUSA" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Tinaco IUSA 1100 LTS</h3>
+                    <p class="product-description">Tinaco tricapa con capacidad de 1,100 litros. Incluye válvula, multiconector y filtro.</p>
+                    <p class="product-model">Capacidad: 1,100 litros</p>
+                </div>
+            </div>
+            
+            <!-- Producto 5 -->
+            <div class="product-card">
+                <img src="public/images/productos/cisterna.png"  alt="Cisterna IUSA" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Cisterna IUSA</h3>
+                    <p class="product-description">Cisternas de 2,500 a 10,000 litros. Tapa robusta de 54cm para sellado hermético.</p>
+                    <p class="product-model">Capacidades: 2,500L - 10,000L</p>
+                </div>
+            </div>
+
+            <!-- Producto 6 -->
+            <div class="product-card">
+                <img src="public/images/productos/bomba.png"  alt="Bomba Sumergible" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Bomba Sumergible</h3>
+                    <p class="product-description">Bomba sumergible de alta presión para pozos y sistemas de extracción de agua.</p>
+                    <p class="product-model">Modelos: 1.2" y 1.5"</p>
+                </div>
+            </div>
         </div>
         
-        <div class="products-carousel">
-            <button class="carousel-btn prev" data-carousel="gas">&#10094;</button>
-            <button class="carousel-btn next" data-carousel="gas">&#10095;</button>
-            
-            <div class="carousel-track" id="carousel-gas">
-                <!-- Producto 1 -->
-                <div class="product-card">
-                    <img src="public/images/producto-gas1.jpg" alt="Tubería de cobre para gas" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Tubería de Cobre para Gas</h3>
-                        <p class="product-description">Tubería de cobre de alta calidad para instalaciones de gas.</p>
-                        <p class="product-price">$150.00</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 2 -->
-                <div class="product-card">
-                    <img src="public/images/producto-gas2.jpg" alt="Válvula de seguridad" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Válvula de Seguridad</h3>
-                        <p class="product-description">Válvula de seguridad para sistemas de gas a alta presión.</p>
-                        <p class="product-price">$95.80</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 3 -->
-                <div class="product-card">
-                    <img src="public/images/producto-gas3.jpg" alt="Regulador de presión" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Regulador de Presión</h3>
-                        <p class="product-description">Regulador de presión para sistemas de gas domésticos e industriales.</p>
-                        <p class="product-price">$75.40</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 4 -->
-                <div class="product-card">
-                    <img src="public/images/producto-gas4.jpg" alt="Conector flexible" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Conector Flexible</h3>
-                        <p class="product-description">Conector flexible para instalaciones de gas con certificación.</p>
-                        <p class="product-price">$45.20</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 5 -->
-                <div class="product-card">
-                    <img src="public/images/producto-gas5.jpg" alt="Detector de gas" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Detector de Gas</h3>
-                        <p class="product-description">Detector de fugas de gas con alarma sonora y visual.</p>
-                        <p class="product-price">$210.00</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="carousel-dots" id="dots-gas">
-                <!-- Los puntos se generarán dinámicamente con JavaScript -->
-            </div>
+        <div class="carousel-dots" id="dots-agua">
+            <!-- Los puntos se generarán dinámicamente con JavaScript -->
         </div>
-    </section>
+    </div>
+</section>
+
+<!-- Sección Productos para Gas -->
+<section class="products-section" id="gas">
+    <div class="section-header">
+        <h2 class="section-title">Productos para Gas</h2>
+        <p class="section-description">Reguladores, mangueras y accesorios especializados para sistemas de gas LP y natural.</p>
+    </div>
     
-    <!-- Sección Productos Industriales -->
-    <section class="products-section" id="industrial">
-        <div class="section-header">
-            <h2 class="section-title">Productos Industriales</h2>
-            <p class="section-description">Componentes y sistemas para aplicaciones industriales de alta exigencia.</p>
+    <div class="products-carousel">
+        <button class="carousel-btn prev" data-carousel="gas">&#10094;</button>
+        <button class="carousel-btn next" data-carousel="gas">&#10095;</button>
+        
+        <div class="carousel-track" id="carousel-gas">
+            <!-- Producto 1 -->
+            <div class="product-card">
+                <img src="public/images/productos/7000.png" alt="Regulador R7000" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Regulador R7000</h3>
+                    <p class="product-description">Regulador de 1 vía para alta presión. Ideal para cilindro o tanque estacionario.</p>
+                    <p class="product-model">Modelo: R7000</p>
+                </div>
+            </div>
+            
+            <!-- Producto 2 -->
+            <div class="product-card">
+                <img src="public/images/productos/R2001.png" alt="Regulador R2001" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Regulador 2 Vías</h3>
+                    <p class="product-description">Regulador de 2 vías baja presión. Permite conectar dos cilindros a una misma línea.</p>
+                    <p class="product-model">Modelo: R2001 IUSA</p>
+                </div>
+            </div>
+            
+            <!-- Producto 3 -->
+            <div class="product-card">
+                <img src="public/images/productos/lobo.png" alt="Regulador Lobo" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Regulador Lobo</h3>
+                    <p class="product-description">Regulador 2da etapa baja presión alto consumo. Para uso comercial e industrial.</p>
+                    <p class="product-model">Modelos: RL06, RL13, RL19</p>
+                </div>
+            </div>
+            
+            <!-- Producto 4 -->
+            <div class="product-card">
+                <img src="public/images/productos/maguera.png" alt="Manguera para Gas" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Manguera para Gas L.P.</h3>
+                    <p class="product-description">Mangueras reforzadas para gas LP. Tuercas de latón, férulas de acero inoxidable.</p>
+                    <p class="product-model">Longitudes: 60cm - 5m</p>
+                </div>
+            </div>
+            
+            <!-- Producto 5 -->
+            <div class="product-card">
+                <img src="public/images/productos/102.png" alt="Regulador 102" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Regulador Sencillo 102</h3>
+                    <p class="product-description">Regulador de gas LP 2 vías baja presión. Flujo de 1 m³/hr garantiza presión constante.</p>
+                    <p class="product-model">Modelo: R102</p>
+                </div>
+            </div>
         </div>
         
-        <div class="products-carousel">
-            <button class="carousel-btn prev" data-carousel="industrial">&#10094;</button>
-            <button class="carousel-btn next" data-carousel="industrial">&#10095;</button>
-            
-            <div class="carousel-track" id="carousel-industrial">
-                <!-- Producto 1 -->
-                <div class="product-card">
-                    <img src="public/images/producto-industrial1.jpg" alt="Tubería de acero inoxidable" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Tubería Acero Inoxidable</h3>
-                        <p class="product-description">Tubería de acero inoxidable para aplicaciones industriales críticas.</p>
-                        <p class="product-price">$320.00</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 2 -->
-                <div class="product-card">
-                    <img src="public/images/producto-industrial2.jpg" alt="Válvula de bola industrial" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Válvula de Bola Industrial</h3>
-                        <p class="product-description">Válvula de bola de alta presión para procesos industriales.</p>
-                        <p class="product-price">$180.75</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 3 -->
-                <div class="product-card">
-                    <img src="public/images/producto-industrial3.jpg" alt="Bomba de vacío" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Bomba de Vacío</h3>
-                        <p class="product-description">Bomba de vacío para sistemas industriales de alta eficiencia.</p>
-                        <p class="product-price">$850.00</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 4 -->
-                <div class="product-card">
-                    <img src="public/images/producto-industrial4.jpg" alt="Compresor de aire" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Compresor de Aire</h3>
-                        <p class="product-description">Compresor de aire industrial para sistemas neumáticos.</p>
-                        <p class="product-price">$1,200.00</p>
-                    </div>
-                </div>
-                
-                <!-- Producto 5 -->
-                <div class="product-card">
-                    <img src="public/images/producto-industrial5.jpg" alt="Sistema de filtración" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">Sistema de Filtración</h3>
-                        <p class="product-description">Sistema de filtración para procesos industriales complejos.</p>
-                        <p class="product-price">$950.50</p>
-                    </div>
+        <div class="carousel-dots" id="dots-gas">
+            <!-- Los puntos se generarán dinámicamente con JavaScript -->
+        </div>
+    </div>
+</section>
+
+<!-- Sección Accesorios y Grifería -->
+<section class="products-section" id="accesorios">
+    <div class="section-header">
+        <h2 class="section-title">Accesorios y Grifería</h2>
+        <p class="section-description">Mezcladoras, llaves, regaderas y accesorios de baño de alta calidad.</p>
+    </div>
+    
+    <div class="products-carousel">
+        <button class="carousel-btn prev" data-carousel="accesorios">&#10094;</button>
+        <button class="carousel-btn next" data-carousel="accesorios">&#10095;</button>
+        
+        <div class="carousel-track" id="carousel-accesorios">
+            <!-- Producto 1 -->
+            <div class="product-card">
+                <img src="public/images/productos/Mezcladoras.png"alt="Mezcladora Lavabo" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Mezcladoras para Lavabo</h3>
+                    <p class="product-description">Cartucho cerámico 1/4 de vuelta. Funcionamiento óptimo y ecológico.</p>
+                    <p class="product-model">Series: 4000, 5000</p>
                 </div>
             </div>
             
-            <div class="carousel-dots" id="dots-industrial">
-                <!-- Los puntos se generarán dinámicamente con JavaScript -->
+            <!-- Producto 2 -->
+            <div class="product-card">
+                <img src="public/images/productos/Monomandos.png" alt="Monomando Lavabo" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Monomando para Lavabo</h3>
+                    <p class="product-description">Control de una o dos temperaturas. Funcionamiento en baja, media y alta presión.</p>
+                    <p class="product-model">Series: 4400, 4600</p>
+                </div>
+            </div>
+            
+            <!-- Producto 3 -->
+            <div class="product-card">
+                <img src="public/images/productos/tarja.png" alt="Mezcladora Tarja" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Mezcladoras para Tarja</h3>
+                    <p class="product-description">Cartucho cerámico 1/4 de vuelta. Diseños modernos y clásicos.</p>
+                    <p class="product-model">Series: 4300, 3200</p>
+                </div>
+            </div>
+            
+            <!-- Producto 4 -->
+            <div class="product-card">
+                <img src="public/images/productos/Regaderas.png"alt="Regaderas" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Regaderas y Accesorios</h3>
+                    <p class="product-description">Sistema "Limpia Fácil", múltiples funciones. Materiales ABS y acero inoxidable.</p>
+                    <p class="product-model">Series: 3000, 4500</p>
+                </div>
+            </div>
+            
+            <!-- Producto 5 -->
+            <div class="product-card">
+                <img src="public/images/productos/Baño.png" alt="Accesorios Baño" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Accesorios de Baño</h3>
+                    <p class="product-description">Toalleros, portarrollos, jaboneras y dispensadores. Acabados cromo y negro.</p>
+                    <p class="product-model">Series: 1500, 3000, 4000</p>
+                </div>
             </div>
         </div>
-    </section>
+        
+        <div class="carousel-dots" id="dots-accesorios">
+            <!-- Los puntos se generarán dinámicamente con JavaScript -->
+        </div>
+    </div>
+</section>
 
     <!-- CATÁLOGO COMPLETO -->
     <section id="quienes-somos">
         <div class="flippingbook-container">
             <!-- Iframe modificado para deshabilitar sonido -->
-            <iframe src="https://online.flippingbook.com/view/729924485/" allow="clipboard-write"></iframe>
+            <iframe src="https://simplebooklet.com/catalogochico" allow="clipboard-write"></iframe>
         </div>
         
         <div class="instructions">Utiliza los controles para navegar por nuestro catálogo</div>
@@ -686,7 +766,7 @@
                 <button class="close-catalog" id="closeCatalog">&times;</button>
             </div>
             <div class="catalog-body">
-                <iframe src="https://online.flippingbook.com/view/729924485/" class="catalog-iframe" allow="clipboard-write"></iframe>
+                <iframe src="https://simplebooklet.com/catalogochico" class="catalog-iframe" allow="clipboard-write"></iframe>
             </div>
         </div>
     </div>
@@ -1099,7 +1179,6 @@
                     preloader.style.display = 'none';
                 }, 500);
             }, 1000);
-        });
+       }
+        );
     </script>
-</body>
-</html>
