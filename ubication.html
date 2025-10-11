@@ -15,21 +15,61 @@
   <link rel="stylesheet" href="src/chatbot.css">
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
+  <style>
+    /* VIDEO COMO FONDO DE LA SECCIÓN */
+    .video-background-section {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    .video-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+    
+    /* Asegurar que la sección del carrusel ocupe toda la altura disponible */
+    .carousel-section {
+      height: 70vh;
+      min-height: 500px;
+      position: relative;
+    }
+    
+    /* Ajustes responsivos */
+    @media (max-width: 768px) {
+      .carousel-section {
+        height: 60vh;
+        min-height: 400px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .carousel-section {
+        height: 50vh;
+        min-height: 350px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-     <!-- PRELOADER EXTERNO -->
+  <!-- PRELOADER EXTERNO -->
   <div id="preloader-container">
     <iframe src="preloader.html" frameborder="0" style="width:100%; height:100%;"></iframe>
   </div>
+  
   <header>
-  <div class="logo">
-            <a href="index.html">
-                <img src="public/images/logo.png" class="logo" alt="TUBCON S.A. de C.V." />
-            </a>
-        </div>
-
+    <div class="logo">
+      <a href="index.html">
+        <img src="public/images/logo.png" class="logo" alt="TUBCON S.A. de C.V." />
+      </a>
+    </div>
 
     <!-- Menú normal (solo desktop) -->
     <nav class="menu-desktop">
@@ -77,164 +117,30 @@
   <div class="carousel-container">
     <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
     <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
- 
-     <!-- Modal para visualización de imagen -->
+
+    <!-- Modal para visualización de imagen -->
     <div class="modal">
-       <span class="close-modal">&times;</span>
-        <img class="modal-content" alt="">
-        <div class="caption"></div>
-        <div class="zoom-controls">
-            <button class="zoom-btn" id="zoom-in">+</button>
-            <button class="zoom-btn" id="zoom-out">-</button>
-        </div>
+      <span class="close-modal">&times;</span>
+      <img class="modal-content" alt="">
+      <div class="caption"></div>
+      <div class="zoom-controls">
+        <button class="zoom-btn" id="zoom-in">+</button>
+        <button class="zoom-btn" id="zoom-out">-</button>
+      </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos del DOM
-            const gallery = document.querySelector('.gallery');
-            const modal = document.querySelector('.modal');
-            const modalImg = document.querySelector('.modal-content');
-            const caption = document.querySelector('.caption');
-            const closeBtn = document.querySelector('.close-modal');
-            const zoomInBtn = document.getElementById('zoom-in');
-            const zoomOutBtn = document.getElementById('zoom-out');
-            
-            // Variables para controlar el estado del zoom
-            let currentZoom = 1;
-            const ZOOM_INCREMENT = 0.5;
-            const MAX_ZOOM = 3;
-            const MIN_ZOOM = 1;
-            
-            // Variables para el arrastre en móvil
-            let isDragging = false;
-            let startX, startY, scrollLeft, scrollTop;
-            let initialTouchX, initialTouchY;
-            
-            // Abrir modal al hacer clic en una imagen
-            gallery.querySelectorAll('img').forEach(img => {
-                img.addEventListener('click', function() {
-                    modal.style.display = 'block';
-                    modalImg.src = this.src;
-                    caption.textContent = this.alt;
-                    currentZoom = 1;
-                    modalImg.classList.remove('zoomed');
-                    modalImg.style.transform = 'translate(-50%, -50%) scale(1)';
-                });
-            });
-            
-            // Cerrar modal
-            closeBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
-            
-            // Cerrar modal al hacer clic fuera de la imagen
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-            
-            // Zoom in
-            zoomInBtn.addEventListener('click', function() {
-                if (currentZoom < MAX_ZOOM) {
-                    currentZoom += ZOOM_INCREMENT;
-                    updateZoom();
-                }
-            });
-            
-            // Zoom out
-            zoomOutBtn.addEventListener('click', function() {
-                if (currentZoom > MIN_ZOOM) {
-                    currentZoom -= ZOOM_INCREMENT;
-                    updateZoom();
-                }
-            });
-            
-            // Zoom con la rueda del ratón (solo desktop)
-            modalImg.addEventListener('wheel', function(e) {
-                e.preventDefault();
-                
-                if (e.deltaY < 0 && currentZoom < MAX_ZOOM) {
-                    // Zoom in
-                    currentZoom += ZOOM_INCREMENT * 0.5;
-                } else if (e.deltaY > 0 && currentZoom > MIN_ZOOM) {
-                    // Zoom out
-                    currentZoom -= ZOOM_INCREMENT * 0.5;
-                }
-                
-                updateZoom();
-            });
-            
-            // Zoom con doble clic o doble tap
-            modalImg.addEventListener('dblclick', function() {
-                if (currentZoom === MIN_ZOOM) {
-                    currentZoom = MAX_ZOOM;
-                } else {
-                    currentZoom = MIN_ZOOM;
-                }
-                updateZoom();
-            });
-            
-            // Funcionalidad de arrastre para móvil
-            modalImg.addEventListener('touchstart', function(e) {
-                if (currentZoom > MIN_ZOOM) {
-                    isDragging = true;
-                    initialTouchX = e.touches[0].clientX;
-                    initialTouchY = e.touches[0].clientY;
-                    modalImg.style.cursor = 'grabbing';
-                }
-            });
-            
-            modalImg.addEventListener('touchmove', function(e) {
-                if (!isDragging) return;
-                
-                e.preventDefault();
-                
-                const touchX = e.touches[0].clientX;
-                const touchY = e.touches[0].clientY;
-                
-                const deltaX = touchX - initialTouchX;
-                const deltaY = touchY - initialTouchY;
-                
-                // Obtener la transformación actual
-                const transformValue = modalImg.style.transform;
-                const matrix = new DOMMatrixReadOnly(transformValue);
-                
-                // Aplicar el desplazamiento
-                modalImg.style.transform = `translate(${matrix.m41 + deltaX}px, ${matrix.m42 + deltaY}px) scale(${currentZoom})`;
-                
-                initialTouchX = touchX;
-                initialTouchY = touchY;
-            });
-            
-            modalImg.addEventListener('touchend', function() {
-                isDragging = false;
-                modalImg.style.cursor = 'grab';
-            });
-            
-            // Función para actualizar el zoom
-            function updateZoom() {
-                modalImg.style.transform = `translate(-50%, -50%) scale(${currentZoom})`;
-                
-                if (currentZoom > MIN_ZOOM) {
-                    modalImg.classList.add('zoomed');
-                    modalImg.style.cursor = 'grab';
-                } else {
-                    modalImg.classList.remove('zoomed');
-                    modalImg.style.cursor = 'zoom-in';
-                }
-            }
-            
-            // Cerrar con la tecla Escape
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal.style.display === 'block') {
-                    modal.style.display = 'none';
-                }
-            });
-        });
-    </script>
     <div class="carousel-slides">
+      <!-- Sección Video de Presentación -->
+      <section id="video-presentacion" class="carousel-section">
+        <div class="video-background-section">
+          <video class="video-background" autoplay muted loop playsinline>
+            <source src="/public/video/presentacion.mp4" type="video/mp4">
+            <source src="/public/video/presentacion.webm" type="video/webm">
+            Tu navegador no soporta el elemento de video.
+          </video>
+        </div>
+      </section>
+
       <!-- Sección Instalaciones -->
       <section id="instalaciones" class="carousel-section">
         <h2>Instalaciones</h2>
@@ -257,26 +163,6 @@
         </div>
       </section>
 
-      <!-- Sección Equipo -->
-      <section id="equipo" class="carousel-section">
-        <h2>Nuestro Equipo</h2>
-        <p>Profesionales altamente capacitados para brindarte el mejor servicio.</p>
-        <div class="team-grid">
-          <div class="team-member">
-            <img src="https://via.placeholder.com/150?text=Director" alt="Director">
-          
-          </div>
-          <div class="team-member">
-            <img src="https://via.placeholder.com/150?text=Ingeniera" alt="Ingeniera">
-            
-          </div>
-          <div class="team-member">
-            <img src="https://via.placeholder.com/150?text=Técnico" alt="Técnico">
-           
-          </div>
-        </div>
-      </section>
-
       <!-- Sección Mapa -->
       <section id="ubicacion" class="carousel-section">
         <h2>Ubicación</h2>
@@ -293,7 +179,7 @@
   </div>
 
   <footer>
-      <p>© 2025 TUBCON S.A. de C.V. </p>
+    <p>© 2025 TUBCON S.A. de C.V. </p>
   </footer>
 
   <!-- CHATBOT DESKTOP -->
@@ -331,10 +217,10 @@
   <!-- WHATSAPP FLOAT -->
   <div class="whatsapp-float" id="whatsappFloat">
     <a href="https://wa.me/525543225189" id="whatsappLink" target="_blank">
-        <i class="fab fa-whatsapp"></i>
+      <i class="fab fa-whatsapp"></i>
     </a>
     <div class="whatsapp-tooltip">
-        ¿Necesitas ayuda?
+      ¿Necesitas ayuda?
     </div>
   </div>
 
@@ -413,6 +299,71 @@
         }
       }
       updateCarousel();
+      
+      // Modal para imágenes
+      const gallery = document.querySelector('.gallery');
+      const modal = document.querySelector('.modal');
+      const modalImg = document.querySelector('.modal-content');
+      const caption = document.querySelector('.caption');
+      const closeBtnModal = document.querySelector('.close-modal');
+      const zoomInBtn = document.getElementById('zoom-in');
+      const zoomOutBtn = document.getElementById('zoom-out');
+      
+      let currentZoom = 1;
+      const ZOOM_INCREMENT = 0.5;
+      const MAX_ZOOM = 3;
+      const MIN_ZOOM = 1;
+      
+      // Abrir modal al hacer clic en una imagen
+      gallery.querySelectorAll('img').forEach(img => {
+        img.addEventListener('click', function() {
+          modal.style.display = 'block';
+          modalImg.src = this.src;
+          caption.textContent = this.alt;
+          currentZoom = 1;
+          modalImg.style.transform = 'translate(-50%, -50%) scale(1)';
+        });
+      });
+      
+      // Cerrar modal
+      closeBtnModal.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+      
+      // Cerrar modal al hacer clic fuera de la imagen
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+      
+      // Zoom in
+      zoomInBtn.addEventListener('click', function() {
+        if (currentZoom < MAX_ZOOM) {
+          currentZoom += ZOOM_INCREMENT;
+          updateZoom();
+        }
+      });
+      
+      // Zoom out
+      zoomOutBtn.addEventListener('click', function() {
+        if (currentZoom > MIN_ZOOM) {
+          currentZoom -= ZOOM_INCREMENT;
+          updateZoom();
+        }
+      });
+      
+      // Función para actualizar el zoom
+      function updateZoom() {
+        modalImg.style.transform = `translate(-50%, -50%) scale(${currentZoom})`;
+      }
+      
+      // Cerrar con la tecla Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'block') {
+          modal.style.display = 'none';
+        }
+      });
     });
   </script>
 

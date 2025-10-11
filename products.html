@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="src/products.css">
     <link rel="stylesheet" href="src/chatbot.css">
+    <link rel="icon" type="image/png" href="public/images/iconoa.ico">
     <style>
         /* ESTILOS PARA EL CHATBOT Y WHATSAPP - IGUAL QUE INDEX.HTML */
         .whatsapp-float.hidden {
@@ -302,10 +303,28 @@
             background-color: rgba(0, 0, 0, 0.7);
         }
 
-        .product-image {
+        /* MEJORAS PARA LAS IMÁGENES DE PRODUCTOS */
+        .product-image-container {
             width: 100%;
             height: 200px;
-            object-fit: cover;
+            overflow: hidden;
+            position: relative;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            padding: 10px;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.05);
         }
         
         .product-info {
@@ -324,6 +343,13 @@
             color: #666;
             margin-bottom: 15px;
             line-height: 1.4;
+        }
+        
+        .product-model {
+            font-size: 0.85rem;
+            color: #888;
+            font-style: italic;
+            margin-bottom: 10px;
         }
         
         .product-price {
@@ -429,6 +455,10 @@
                 width: 40px;
                 height: 40px;
             }
+            
+            .product-image-container {
+                height: 180px;
+            }
         }
 
         /* Ocultar scrollbar en navegadores Webkit */
@@ -439,6 +469,37 @@
         .carousel-track {
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
+        }
+        
+        /* Estilos para secciones */
+        .section-header {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 2.2rem;
+            color: #333;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: #EF0315;
+        }
+        
+        .section-description {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -521,7 +582,6 @@
         <div class="carousel-dots">
             <span class="dot active" onclick="currentSlide(1)"></span>
             <span class="dot" onclick="currentSlide(2)"></span>
-            <span class="dot" onclick="currentSlide(3)"></span>
         </div>
     </div>
 
@@ -541,7 +601,9 @@
         <div class="carousel-track" id="carousel-agua">
             <!-- Producto 1 -->
             <div class="product-card">
-                <img src="public/images/productos/centrifuga.png" alt="Bomba Centrífuga" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/centrifuga.png" alt="Bomba Centrífuga" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Bomba Centrífuga</h3>
                     <p class="product-description">Bomba centrífuga para llenar tinacos a alturas menores de 15 metros. Flujo máximo 100-150 L/min.</p>
@@ -551,7 +613,9 @@
             
             <!-- Producto 2 -->
             <div class="product-card">
-                <img src="public/images/productos/peri.png"  alt="Bomba Periférica" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/peri.png"  alt="Bomba Periférica" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Bomba Periférica</h3>
                     <p class="product-description">Mayor presión, menor flujo. Ideal para alturas mayores de 15 metros y sistemas hidroneumáticos.</p>
@@ -561,7 +625,9 @@
             
             <!-- Producto 3 -->
             <div class="product-card">
-                <img src="public/images/productos/pre.png"  alt="Bomba Presurizadora" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/pre.png"  alt="Bomba Presurizadora" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Bomba Presurizadora</h3>
                     <p class="product-description">Aumenta la presión del agua en toda la instalación. Encendido automático al detectar demanda.</p>
@@ -571,7 +637,9 @@
             
             <!-- Producto 4 -->
             <div class="product-card">
-                <img src="public/images/productos/tinaco.png"  alt="Tinaco IUSA" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/tinaco.png"  alt="Tinaco IUSA" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Tinaco IUSA 1100 LTS</h3>
                     <p class="product-description">Tinaco tricapa con capacidad de 1,100 litros. Incluye válvula, multiconector y filtro.</p>
@@ -581,7 +649,9 @@
             
             <!-- Producto 5 -->
             <div class="product-card">
-                <img src="public/images/productos/cisterna.png"  alt="Cisterna IUSA" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/cisterna.png"  alt="Cisterna IUSA" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Cisterna IUSA</h3>
                     <p class="product-description">Cisternas de 2,500 a 10,000 litros. Tapa robusta de 54cm para sellado hermético.</p>
@@ -591,7 +661,9 @@
 
             <!-- Producto 6 -->
             <div class="product-card">
-                <img src="public/images/productos/bomba.png"  alt="Bomba Sumergible" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/bomba.png"  alt="Bomba Sumergible" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Bomba Sumergible</h3>
                     <p class="product-description">Bomba sumergible de alta presión para pozos y sistemas de extracción de agua.</p>
@@ -620,7 +692,9 @@
         <div class="carousel-track" id="carousel-gas">
             <!-- Producto 1 -->
             <div class="product-card">
-                <img src="public/images/productos/7000.png" alt="Regulador R7000" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/7000.png" alt="Regulador R7000" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Regulador R7000</h3>
                     <p class="product-description">Regulador de 1 vía para alta presión. Ideal para cilindro o tanque estacionario.</p>
@@ -630,7 +704,9 @@
             
             <!-- Producto 2 -->
             <div class="product-card">
-                <img src="public/images/productos/R2001.png" alt="Regulador R2001" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/R2001.png" alt="Regulador R2001" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Regulador 2 Vías</h3>
                     <p class="product-description">Regulador de 2 vías baja presión. Permite conectar dos cilindros a una misma línea.</p>
@@ -640,7 +716,9 @@
             
             <!-- Producto 3 -->
             <div class="product-card">
-                <img src="public/images/productos/lobo.png" alt="Regulador Lobo" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/lobo.png" alt="Regulador Lobo" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Regulador Lobo</h3>
                     <p class="product-description">Regulador 2da etapa baja presión alto consumo. Para uso comercial e industrial.</p>
@@ -650,7 +728,9 @@
             
             <!-- Producto 4 -->
             <div class="product-card">
-                <img src="public/images/productos/maguera.png" alt="Manguera para Gas" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/maguera.png" alt="Manguera para Gas" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Manguera para Gas L.P.</h3>
                     <p class="product-description">Mangueras reforzadas para gas LP. Tuercas de latón, férulas de acero inoxidable.</p>
@@ -660,7 +740,9 @@
             
             <!-- Producto 5 -->
             <div class="product-card">
-                <img src="public/images/productos/102.png" alt="Regulador 102" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/102.png" alt="Regulador 102" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Regulador Sencillo 102</h3>
                     <p class="product-description">Regulador de gas LP 2 vías baja presión. Flujo de 1 m³/hr garantiza presión constante.</p>
@@ -689,7 +771,9 @@
         <div class="carousel-track" id="carousel-accesorios">
             <!-- Producto 1 -->
             <div class="product-card">
-                <img src="public/images/productos/Mezcladoras.png"alt="Mezcladora Lavabo" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/Mezcladoras.png"alt="Mezcladora Lavabo" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Mezcladoras para Lavabo</h3>
                     <p class="product-description">Cartucho cerámico 1/4 de vuelta. Funcionamiento óptimo y ecológico.</p>
@@ -699,7 +783,9 @@
             
             <!-- Producto 2 -->
             <div class="product-card">
-                <img src="public/images/productos/Monomandos.png" alt="Monomando Lavabo" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/Monomandos.png" alt="Monomando Lavabo" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Monomando para Lavabo</h3>
                     <p class="product-description">Control de una o dos temperaturas. Funcionamiento en baja, media y alta presión.</p>
@@ -709,7 +795,9 @@
             
             <!-- Producto 3 -->
             <div class="product-card">
-                <img src="public/images/productos/tarja.png" alt="Mezcladora Tarja" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/tarja.png" alt="Mezcladora Tarja" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Mezcladoras para Tarja</h3>
                     <p class="product-description">Cartucho cerámico 1/4 de vuelta. Diseños modernos y clásicos.</p>
@@ -719,7 +807,9 @@
             
             <!-- Producto 4 -->
             <div class="product-card">
-                <img src="public/images/productos/Regaderas.png"alt="Regaderas" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/Regaderas.png"alt="Regaderas" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Regaderas y Accesorios</h3>
                     <p class="product-description">Sistema "Limpia Fácil", múltiples funciones. Materiales ABS y acero inoxidable.</p>
@@ -729,7 +819,9 @@
             
             <!-- Producto 5 -->
             <div class="product-card">
-                <img src="public/images/productos/Baño.png" alt="Accesorios Baño" class="product-image">
+                <div class="product-image-container">
+                    <img src="public/images/productos/Baño.png" alt="Accesorios Baño" class="product-image">
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">Accesorios de Baño</h3>
                     <p class="product-description">Toalleros, portarrollos, jaboneras y dispensadores. Acabados cromo y negro.</p>
@@ -915,7 +1007,7 @@
             const carousels = [
                 { id: 'agua', track: 'carousel-agua', dots: 'dots-agua' },
                 { id: 'gas', track: 'carousel-gas', dots: 'dots-gas' },
-                { id: 'industrial', track: 'carousel-industrial', dots: 'dots-industrial' }
+                { id: 'accesorios', track: 'carousel-accesorios', dots: 'dots-accesorios' }
             ];
 
             carousels.forEach(carousel => {
@@ -1179,6 +1271,7 @@
                     preloader.style.display = 'none';
                 }, 500);
             }, 1000);
-       }
-        );
+        });
     </script>
+</body>
+</html>
