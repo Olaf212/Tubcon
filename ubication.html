@@ -41,11 +41,153 @@
       position: relative;
     }
     
+    /* Video en pantalla completa */
+    .fullscreen-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 9999;
+      display: none;
+    }
+    
+    .fullscreen-video.active {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .fullscreen-video video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    .video-controls {
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      z-index: 10000;
+      padding: 0 20px;
+    }
+    
+    .video-controls button {
+      background: rgba(0,0,0,0.8);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    
+    .video-controls button:hover {
+      background: rgba(239, 3, 21, 0.8);
+      transform: scale(1.1);
+    }
+    
+    .close-fullscreen {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    
+    .close-fullscreen:hover {
+      background: rgba(239, 3, 21, 0.8);
+      transform: scale(1.1);
+    }
+    
+    .video-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      background: rgba(0,0,0,0.3);
+    }
+    
+    .play-fullscreen-btn {
+      background: rgba(239, 3, 21, 0.9);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      font-size: 32px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    
+    .play-fullscreen-btn:hover {
+      background: rgba(239, 3, 21, 1);
+      transform: scale(1.1);
+    }
+    
     /* Ajustes responsivos */
     @media (max-width: 768px) {
       .carousel-section {
         height: 60vh;
         min-height: 400px;
+      }
+      
+      .video-controls {
+        bottom: 20px;
+        gap: 15px;
+      }
+      
+      .video-controls button {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+      
+      .close-fullscreen {
+        top: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+      }
+      
+      .play-fullscreen-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
       }
     }
     
@@ -53,6 +195,31 @@
       .carousel-section {
         height: 50vh;
         min-height: 350px;
+      }
+      
+      .video-controls {
+        bottom: 15px;
+        gap: 10px;
+      }
+      
+      .video-controls button {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+      }
+      
+      .close-fullscreen {
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+      
+      .play-fullscreen-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
       }
     }
   </style>
@@ -62,6 +229,26 @@
   <!-- PRELOADER EXTERNO -->
   <div id="preloader-container">
     <iframe src="preloader.html" frameborder="0" style="width:100%; height:100%;"></iframe>
+  </div>
+  
+  <!-- VIDEO EN PANTALLA COMPLETA -->
+  <div class="fullscreen-video" id="fullscreenVideo">
+    <button class="close-fullscreen" id="closeFullscreen">✕</button>
+    <video id="fullscreenVideoPlayer" controls>
+      <source src="/public/video/presentacion.mp4" type="video/mp4">
+      <source src="/public/video/presentacion.webm" type="video/webm">
+      Tu navegador no soporta el elemento de video.
+    </video>
+    <div class="video-controls">
+      <button id="playPauseBtn">
+        <i class="fas fa-play" id="playIcon"></i>
+        <i class="fas fa-pause" id="pauseIcon" style="display: none;"></i>
+      </button>
+      <button id="muteBtn">
+        <i class="fas fa-volume-up" id="volumeIcon"></i>
+        <i class="fas fa-volume-mute" id="muteIcon" style="display: none;"></i>
+      </button>
+    </div>
   </div>
   
   <header>
@@ -132,12 +319,17 @@
     <div class="carousel-slides">
       <!-- Sección Video de Presentación -->
       <section id="video-presentacion" class="carousel-section">
-        <div class="video-background-section">
-          <video class="video-background" autoplay muted loop playsinline>
+        <div class="video-background-section" id="videoSection">
+          <video class="video-background" id="mainVideo" autoplay muted loop playsinline>
             <source src="/public/video/presentacion.mp4" type="video/mp4">
             <source src="/public/video/presentacion.webm" type="video/webm">
             Tu navegador no soporta el elemento de video.
           </video>
+          <div class="video-overlay">
+            <button class="play-fullscreen-btn" id="playFullscreenBtn">
+              <i class="fas fa-expand"></i>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -234,6 +426,22 @@
       const sidebar = document.getElementById('sidebar');
       const closeBtn = document.getElementById('close');
       const overlay = document.getElementById('overlay');
+      
+      // Elementos del video
+      const fullscreenVideo = document.getElementById('fullscreenVideo');
+      const fullscreenVideoPlayer = document.getElementById('fullscreenVideoPlayer');
+      const closeFullscreenBtn = document.getElementById('closeFullscreen');
+      const playFullscreenBtn = document.getElementById('playFullscreenBtn');
+      const playPauseBtn = document.getElementById('playPauseBtn');
+      const muteBtn = document.getElementById('muteBtn');
+      const playIcon = document.getElementById('playIcon');
+      const pauseIcon = document.getElementById('pauseIcon');
+      const volumeIcon = document.getElementById('volumeIcon');
+      const muteIcon = document.getElementById('muteIcon');
+
+      // Variables de control
+      let isFirstVisit = !localStorage.getItem('videoVisited');
+      let isFullscreenActive = false;
 
       // Menú móvil
       function closeMenu() {
@@ -260,16 +468,129 @@
         carouselSlides.style.transform = `translateX(-${currentSlide * 33.33}%)`;
         dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
         initMapIfNeeded();
+        
+        // Activar pantalla completa automática solo la primera vez
+        if (window.innerWidth <= 768 && currentSlide === 0 && isFirstVisit && !isFullscreenActive) {
+          setTimeout(() => {
+            activateVideoFullscreen();
+          }, 1500);
+        }
       }
+      
       window.moveSlide = dir => {
         currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
         updateCarousel();
       };
+      
       window.goToSlide = i => {
         currentSlide = i;
         updateCarousel();
       };
 
+      // Funciones para pantalla completa del video
+      function activateVideoFullscreen() {
+        fullscreenVideo.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        isFullscreenActive = true;
+        
+        // Ocultar controles nativos y mostrar los nuestros
+        fullscreenVideoPlayer.controls = false;
+        
+        // Intentar reproducir el video con sonido
+        fullscreenVideoPlayer.play().then(() => {
+          console.log('Video reproduciéndose con sonido');
+          // Actualizar iconos
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+          fullscreenVideoPlayer.muted = false;
+          volumeIcon.style.display = 'block';
+          muteIcon.style.display = 'none';
+        }).catch(e => {
+          console.log('Error reproduciendo video:', e);
+          // Si falla, mostrar controles nativos
+          fullscreenVideoPlayer.controls = true;
+        });
+        
+        // Marcar que ya se visitó para no mostrar pantalla completa automáticamente
+        localStorage.setItem('videoVisited', 'true');
+        isFirstVisit = false;
+      }
+      
+      function deactivateVideoFullscreen() {
+        fullscreenVideo.classList.remove('active');
+        document.body.style.overflow = '';
+        isFullscreenActive = false;
+        fullscreenVideoPlayer.pause();
+        fullscreenVideoPlayer.currentTime = 0;
+        
+        // Reiniciar iconos
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      }
+      
+      // Eventos para controles de video
+      playFullscreenBtn.addEventListener('click', activateVideoFullscreen);
+      
+      closeFullscreenBtn.addEventListener('click', deactivateVideoFullscreen);
+      
+      // Cerrar pantalla completa al presionar Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && fullscreenVideo.classList.contains('active')) {
+          deactivateVideoFullscreen();
+        }
+      });
+      
+      // Cerrar al hacer clic fuera del video
+      fullscreenVideo.addEventListener('click', function(e) {
+        if (e.target === fullscreenVideo) {
+          deactivateVideoFullscreen();
+        }
+      });
+      
+      // Controles de reproducción
+      playPauseBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (fullscreenVideoPlayer.paused) {
+          fullscreenVideoPlayer.play();
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+        } else {
+          fullscreenVideoPlayer.pause();
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+        }
+      });
+      
+      // Controles de volumen
+      muteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (fullscreenVideoPlayer.muted) {
+          fullscreenVideoPlayer.muted = false;
+          volumeIcon.style.display = 'block';
+          muteIcon.style.display = 'none';
+        } else {
+          fullscreenVideoPlayer.muted = true;
+          volumeIcon.style.display = 'none';
+          muteIcon.style.display = 'block';
+        }
+      });
+      
+      // Actualizar iconos según estado del video
+      fullscreenVideoPlayer.addEventListener('play', function() {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+      });
+      
+      fullscreenVideoPlayer.addEventListener('pause', function() {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      });
+      
+      // Prevenir que los clics en el video cierren el reproductor
+      fullscreenVideoPlayer.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      
       // Mapa
       let mapInitialized = false;
       function initMapIfNeeded() {
@@ -367,7 +688,7 @@
     });
   </script>
 
-  <!-- Chatbot - ACTUALIZADO PARA SER IGUAL QUE INDEX.HTML -->
+  <!-- Resto del código del chatbot se mantiene igual -->
   <script type="module">
     import { knowledgeBase, procesarMensaje } from './chatbot.js';
     let isDesktopChatOpen = false;
