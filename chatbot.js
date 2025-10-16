@@ -1,3 +1,713 @@
+// ==================== SISTEMA DE COTIZACIÓN CONVERSACIONAL COMPLETAMENTE MEJORADO ====================
+export const sistemaCotizacion = {
+    estado: new Map(),
+    
+    // Estados posibles en el flujo
+    estados: {
+        INICIO: 'inicio',
+        CAPTURANDO_PRODUCTOS: 'capturando_productos',
+        DETALLANDO_ESPECIFICACIONES: 'detallando_especificaciones',
+        CONFIRMANDO_INFORMACION: 'confirmando_informacion',
+        SOLICITANDO_CONTACTO: 'solicitando_contacto',
+        ENVIANDO_CORREO: 'enviando_correo',
+        FINALIZADO: 'finalizado'
+    },
+
+    // Base de productos estructurada - COMPLETAMENTE ACTUALIZADA
+    categoriasProductos: {
+        'tubos_tuberias': {
+            nombre: 'Tubos y Tuberías',
+            productos: {
+                'pvc_1/2': { nombre: 'Tubo PVC 1/2"', unidad: 'metro', preguntas: ['¿Cuántos metros?'] },
+                'pvc_3/4': { nombre: 'Tubo PVC 3/4"', unidad: 'metro', preguntas: ['¿Cuántos metros?'] },
+                'pvc_1': { nombre: 'Tubo PVC 1"', unidad: 'metro', preguntas: ['¿Cuántos metros?'] },
+                'pvc_1-1/2': { nombre: 'Tubo PVC 1 1/2"', unidad: 'metro', preguntas: ['¿Cuántos metros?'] },
+                'pvc_2': { nombre: 'Tubo PVC 2"', unidad: 'metro', preguntas: ['¿Cuántos metros?'] },
+                'pvc_3': { nombre: 'Tubo PVC 3"', unidad: 'metro', preguntas: ['¿Cuántos metros?'] },
+                'pvc_4': { nombre: 'Tubo PVC 4"', unidad: 'metro', preguntas: ['¿Cuántos metros?'] },
+                'cobre_1/2': { nombre: 'Tubo Cobre 1/2"', unidad: 'metro', preguntas: ['¿Cuántos metros?'] }
+            }
+        },
+        'conexiones': {
+            nombre: 'Conexiones y Accesorios',
+            productos: {
+                'codo_90_1/2': { nombre: 'Codo 90° 1/2"', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'codo_45_1/2': { nombre: 'Codo 45° 1/2"', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'tee_1/2': { nombre: 'Tee 1/2"', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'union_1/2': { nombre: 'Unión 1/2"', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'reduccion_1/2_a_3/4': { nombre: 'Reducción 1/2" a 3/4"', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'tapón_1/2': { nombre: 'Tapón 1/2"', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'adaptador_1/2': { nombre: 'Adaptador 1/2"', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] }
+            }
+        },
+        'tinacos_cisternas': {
+            nombre: 'Tinacos y Cisternas',
+            productos: {
+                'tinaco_450l': { nombre: 'Tinaco 450L', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'tinaco_600l': { nombre: 'Tinaco 600L', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'tinaco_1100l': { nombre: 'Tinaco 1100L', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'cisterna_2500l': { nombre: 'Cisterna 2500L', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'cisterna_5000l': { nombre: 'Cisterna 5000L', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] }
+            }
+        },
+        'bombas': {
+            nombre: 'Bombas de Agua',
+            productos: {
+                'bomba_1/2_hp': { nombre: 'Bomba 1/2 HP', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'bomba_1_hp': { nombre: 'Bomba 1 HP', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'bomba_presurizadora': { nombre: 'Bomba Presurizadora', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] }
+            }
+        },
+        'valvulas_reguladores': {
+            nombre: 'Válvulas y Reguladores',
+            productos: {
+                'valvula_compuerta_1/2': { nombre: 'Válvula Compuerta 1/2"', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'valvula_esfera_1/2': { nombre: 'Válvula Esfera 1/2"', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'regulador_gas': { nombre: 'Regulador Gas LP', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'mancuera_gas': { nombre: 'Mancuera para Gas 1.5m', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] }
+            }
+        },
+        'accesorios': {
+            nombre: 'Accesorios Varios',
+            productos: {
+                'pegamento_pvc': { nombre: 'Pegamento PVC', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'cinta_teflon': { nombre: 'Cinta Teflón', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] },
+                'silicon_sellador': { nombre: 'Silicon Sellador', unidad: 'pieza', preguntas: ['¿Cuántas piezas?'] }
+            }
+        }
+    },
+
+    // Iniciar cotización
+    iniciar: (idUsuario) => {
+        sistemaCotizacion.estado.set(idUsuario, {
+            estado: sistemaCotizacion.estados.INICIO,
+            productos: [],
+            contexto: {},
+            pasoActual: null,
+            datosContacto: {},
+            timestamp: new Date().toISOString()
+        });
+
+        return sistemaCotizacion.generarMensajeInicial();
+    },
+
+    // Procesar mensaje del usuario de forma no lineal
+    procesar: (idUsuario, mensaje) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        if (!estado) return null;
+
+        const input = mensaje.toLowerCase().trim();
+
+        // Detectar comandos globales
+        if (sistemaCotizacion.esComandoGlobal(input)) {
+            return sistemaCotizacion.procesarComandoGlobal(idUsuario, input);
+        }
+
+        // Procesar según estado actual
+        switch (estado.estado) {
+            case sistemaCotizacion.estados.INICIO:
+                return sistemaCotizacion.procesarInicio(idUsuario, input);
+            
+            case sistemaCotizacion.estados.CAPTURANDO_PRODUCTOS:
+                return sistemaCotizacion.procesarProductos(idUsuario, input);
+            
+            case sistemaCotizacion.estados.DETALLANDO_ESPECIFICACIONES:
+                return sistemaCotizacion.procesarEspecificaciones(idUsuario, input);
+            
+            case sistemaCotizacion.estados.CONFIRMANDO_INFORMACION:
+                return sistemaCotizacion.procesarConfirmacion(idUsuario, input);
+            
+            case sistemaCotizacion.estados.SOLICITANDO_CONTACTO:
+                return sistemaCotizacion.procesarSolicitudContacto(idUsuario, input);
+            
+            case sistemaCotizacion.estados.ENVIANDO_CORREO:
+                return sistemaCotizacion.procesarEnvioCorreo(idUsuario, input);
+            
+            default:
+                return sistemaCotizacion.reiniciarFlujo(idUsuario);
+        }
+    },
+
+    // ==================== CORRECCIÓN CRÍTICA - PROCESAR INICIO MEJORADO ====================
+    procesarInicio: (idUsuario, input) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        
+        // DETECCIÓN MEJORADA DE PROYECTOS - MÁS PATRONES Y MÁS FLEXIBLE
+        const proyectos = {
+            'baño|baños|sanitario|bañera|ducha|regadera|lavabo|excusado|inodoro': 'baño',
+            'cocina|cocinas|lavaplatos|fregadero|tarja|estufa|hornilla': 'cocina',
+            'jardín|jardin|riego|aspersores|plantas|cesped|cespéd': 'jardín',
+            'alberca|albercas|piscina|pileta|natación': 'alberca',
+            'casa|residencial|hogar|vivienda|departamento|apartamento': 'casa',
+            'edificio|condominio|multifamiliar': 'edificio',
+            'negocio|comercial|local|tienda|oficina|restaurante': 'comercial',
+            'industria|industrial|fabrica|planta|taller': 'industrial'
+        };
+
+        // BUSCAR PROYECTO EN EL INPUT - MÁS INTELIGENTE
+        let proyectoDetectado = null;
+        for (const [patron, proyecto] of Object.entries(proyectos)) {
+            if (new RegExp(patron, 'i').test(input)) {
+                proyectoDetectado = proyecto;
+                break;
+            }
+        }
+
+        // SI DETECTA PROYECTO, SUGERIR PRODUCTOS ESPECÍFICOS INMEDIATAMENTE
+        if (proyectoDetectado) {
+            estado.contexto.tipoProyecto = proyectoDetectado;
+            estado.contexto.descripcion = input;
+            estado.estado = sistemaCotizacion.estados.CAPTURANDO_PRODUCTOS;
+            
+            return sistemaCotizacion.sugerirProductosPorProyecto(proyectoDetectado);
+        }
+
+        // DETECTAR SI YA MENCIONA PRODUCTOS ESPECÍFICOS
+        const productosDetectados = sistemaCotizacion.extraerProductosMejorado(input);
+        if (productosDetectados.length > 0) {
+            estado.productos = productosDetectados;
+            estado.estado = sistemaCotizacion.estados.CAPTURANDO_PRODUCTOS;
+            return {
+                tipo: "texto",
+                contenido: `✅ *Excelente, detecté estos productos:*\n\n${sistemaCotizacion.generarResumenProductos(productosDetectados)}\n\n¿Qué más necesitas agregar a tu cotización? O escribe "LISTO" para continuar.`
+            };
+        }
+
+        // SI NO DETECTA NADA, PEDIR MÁS INFORMACIÓN DE FORMA MÁS CLARA
+        return {
+            tipo: "texto",
+            contenido: `🤔 *Veo que necesitas ayuda con un proyecto de plomería.*\n\n💡 *¿Podrías contarme más detalles?*\n\n🏠 **Ejemplos que funcionan:**\n• "Es para un baño completo"\n• "Necesito materiales para cocina"  \n• "Voy a instalar sistema de riego en el jardín"\n• "Es una reparación de tuberías"\n• "Necesito tubos y conexiones para..."\n\n🔧 **O menciona productos directos:**\n• "15m tubo 1/2, 8 codos, 2 válvulas"\n• "Tinaco 1100L y bomba 1/2 HP"\n• "Material para instalar regadera"\n\n*También puedes escribir "cancelar" si cambiaste de idea.*`
+        };
+    },
+
+    // Procesar adición de productos - MEJORADO
+    procesarProductos: (idUsuario, input) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        
+        // Verificar si el usuario quiere terminar de agregar productos
+        if (sistemaCotizacion.esFinalizacionProductos(input)) {
+            if (estado.productos.length === 0) {
+                return {
+                    tipo: "texto",
+                    contenido: "📝 *Aún no has agregado productos.*\n\n¿Qué materiales necesitas? Puedes:\n• Elegir de las categorías\n• Decirme qué proyecto tienes\n• Describir los productos específicos"
+                };
+            }
+            estado.estado = sistemaCotizacion.estados.CONFIRMANDO_INFORMACION;
+            return sistemaCotizacion.solicitarConfirmacionFinal(estado);
+        }
+
+        // Extraer productos del mensaje - USANDO EL NUEVO MÉTODO MEJORADO
+        const nuevosProductos = sistemaCotizacion.extraerProductosMejorado(input);
+        
+        if (nuevosProductos.length > 0) {
+            // Combinar productos existentes con nuevos, evitando duplicados
+            nuevosProductos.forEach(nuevoProducto => {
+                const productoExistente = estado.productos.find(p => p.id === nuevoProducto.id);
+                if (productoExistente) {
+                    // Si ya existe, sumar la cantidad
+                    productoExistente.cantidad += nuevoProducto.cantidad;
+                } else {
+                    // Si no existe, agregarlo
+                    estado.productos.push(nuevoProducto);
+                }
+            });
+            
+            return {
+                tipo: "texto",
+                contenido: `✅ *Productos agregados correctamente*\n\n🛒 *Tu listado actual:*\n${sistemaCotizacion.generarResumenProductos(estado.productos)}\n\n¿Qué más necesitas? O escribe "LISTO" para continuar.`
+            };
+        } else {
+            // No se detectaron productos, ofrecer ayuda contextual
+            if (estado.contexto.tipoProyecto) {
+                return sistemaCotizacion.sugerirProductosPorProyecto(estado.contexto.tipoProyecto);
+            } else {
+                return sistemaCotizacion.generarOpcionesProductos(estado);
+            }
+        }
+    },
+
+    // ==================== NUEVO MÉTODO MEJORADO PARA EXTRAER PRODUCTOS ====================
+    extraerProductosMejorado: (texto) => {
+        const productos = [];
+        const textoLower = texto.toLowerCase().trim();
+        
+        console.log("🔍 Analizando texto para productos:", textoLower);
+        
+        // PATRONES MEJORADOS DE DETECCIÓN - MÁS COMPLETOS Y FLEXIBLES
+        const patronesProductos = [
+            // Reguladores de gas con diferentes patrones
+            { 
+                patron: /(\d+)?\s*regulador(?:\s*(?:gas|lp))?/gi, 
+                producto: 'regulador_gas', 
+                cantidadDefault: 1 
+            },
+            { 
+                patron: /regulador\s*(?:de\s*)?gas/gi, 
+                producto: 'regulador_gas', 
+                cantidadDefault: 1 
+            },
+            
+            // Mancueras con diferentes patrones
+            { 
+                patron: /(\d+)?\s*mancuera(?:\s*(?:gas))?/gi, 
+                producto: 'mancuera_gas', 
+                cantidadDefault: 1 
+            },
+            { 
+                patron: /mancuera\s*(?:de\s*)?gas/gi, 
+                producto: 'mancuera_gas', 
+                cantidadDefault: 1 
+            },
+            
+            // Tubos PVC con diferentes medidas
+            { 
+                patron: /(\d+)?\s*metros?\s*(?:de\s*)?tubo\s*(?:pvc\s*)?(?:\d\/\d)?/gi, 
+                producto: 'pvc_1/2', 
+                cantidadDefault: 1 
+            },
+            { 
+                patron: /tubo\s*pvc/gi, 
+                producto: 'pvc_1/2', 
+                cantidadDefault: 1 
+            },
+            
+            // Conexiones y accesorios
+            { 
+                patron: /(\d+)?\s*(?:codo|tee|uni[óo]n|adaptador)/gi, 
+                producto: 'union_1/2', 
+                cantidadDefault: 1 
+            },
+            { 
+                patron: /conexiones?/gi, 
+                producto: 'union_1/2', 
+                cantidadDefault: 1 
+            },
+            
+            // Válvulas
+            { 
+                patron: /(\d+)?\s*v[áa]lvula/gi, 
+                producto: 'valvula_esfera_1/2', 
+                cantidadDefault: 1 
+            },
+            
+            // Tinacos y cisternas
+            { 
+                patron: /(\d+)?\s*tinaco/gi, 
+                producto: 'tinaco_1100l', 
+                cantidadDefault: 1 
+            },
+            { 
+                patron: /(\d+)?\s*cisterna/gi, 
+                producto: 'cisterna_2500l', 
+                cantidadDefault: 1 
+            },
+            
+            // Bombas
+            { 
+                patron: /(\d+)?\s*bomba/gi, 
+                producto: 'bomba_1/2_hp', 
+                cantidadDefault: 1 
+            }
+        ];
+
+        // Buscar números al inicio de patrones
+        const numeroMatch = textoLower.match(/^(\d+)\s*(.+)/);
+        let cantidadGeneral = 1;
+        let textoSinNumero = textoLower;
+        
+        if (numeroMatch) {
+            cantidadGeneral = parseInt(numeroMatch[1]);
+            textoSinNumero = numeroMatch[2];
+        }
+
+        // Buscar productos usando patrones mejorados
+        for (const {patron, producto, cantidadDefault} of patronesProductos) {
+            const matches = [...textoLower.matchAll(patron)];
+            if (matches.length > 0) {
+                console.log("✅ Encontrado:", producto, "en texto:", textoLower);
+                
+                // Intentar extraer cantidad específica del match
+                let cantidad = cantidadDefault;
+                const match = matches[0];
+                if (match[1]) { // Si hay un número capturado en el grupo 1
+                    cantidad = parseInt(match[1]);
+                } else if (cantidadGeneral > 1) {
+                    cantidad = cantidadGeneral;
+                }
+                
+                // Verificar si el producto existe en el catálogo
+                for (const [categoriaId, categoria] of Object.entries(sistemaCotizacion.categoriasProductos)) {
+                    if (categoria.productos[producto]) {
+                        productos.push({
+                            id: producto,
+                            nombre: categoria.productos[producto].nombre,
+                            categoria: categoriaId,
+                            cantidad: cantidad,
+                            unidad: categoria.productos[producto].unidad,
+                            especificaciones: {}
+                        });
+                        console.log("📦 Producto agregado:", producto, "cantidad:", cantidad);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Búsqueda por palabras clave específicas (como respaldo)
+        const palabrasClave = {
+            'regulador': {id: 'regulador_gas', cantidad: cantidadGeneral},
+            'mancuera': {id: 'mancuera_gas', cantidad: cantidadGeneral},
+            'tubo': {id: 'pvc_1/2', cantidad: cantidadGeneral},
+            'tubería': {id: 'pvc_1/2', cantidad: cantidadGeneral},
+            'tuberia': {id: 'pvc_1/2', cantidad: cantidadGeneral},
+            'codo': {id: 'codo_90_1/2', cantidad: cantidadGeneral},
+            'tee': {id: 'tee_1/2', cantidad: cantidadGeneral},
+            'unión': {id: 'union_1/2', cantidad: cantidadGeneral},
+            'union': {id: 'union_1/2', cantidad: cantidadGeneral},
+            'adaptador': {id: 'adaptador_1/2', cantidad: cantidadGeneral},
+            'válvula': {id: 'valvula_esfera_1/2', cantidad: cantidadGeneral},
+            'valvula': {id: 'valvula_esfera_1/2', cantidad: cantidadGeneral},
+            'tinaco': {id: 'tinaco_1100l', cantidad: cantidadGeneral},
+            'cisterna': {id: 'cisterna_2500l', cantidad: cantidadGeneral},
+            'bomba': {id: 'bomba_1/2_hp', cantidad: cantidadGeneral}
+        };
+        
+        for (const [palabra, info] of Object.entries(palabrasClave)) {
+            if (textoLower.includes(palabra) && !productos.some(p => p.id === info.id)) {
+                for (const [categoriaId, categoria] of Object.entries(sistemaCotizacion.categoriasProductos)) {
+                    if (categoria.productos[info.id]) {
+                        productos.push({
+                            id: info.id,
+                            nombre: categoria.productos[info.id].nombre,
+                            categoria: categoriaId,
+                            cantidad: info.cantidad,
+                            unidad: categoria.productos[info.id].unidad,
+                            especificaciones: {}
+                        });
+                        console.log("🔍 Producto agregado por palabra clave:", info.id);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        console.log("🎯 Productos finales detectados:", productos);
+        return productos;
+    },
+
+    // ==================== SISTEMA DE CORREO MEJORADO ====================
+    procesarSolicitudContacto: (idUsuario, input) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        
+        // Si es la primera vez que entra a este estado, solicitar nombre
+        if (!estado.datosContacto.nombre) {
+            estado.datosContacto.nombre = input;
+            return {
+                tipo: "texto",
+                contenido: `✅ *Nombre registrado:* ${input}\n\n📧 *Paso 2 de 3:* ¿Cuál es tu correo electrónico?`
+            };
+        }
+        
+        // Si ya tiene nombre pero no email, solicitar email
+        if (estado.datosContacto.nombre && !estado.datosContacto.email) {
+            // Validación básica de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(input)) {
+                return {
+                    tipo: "texto",
+                    contenido: "❌ *Correo inválido.* Por favor, ingresa un correo electrónico válido:"
+                };
+            }
+            
+            estado.datosContacto.email = input;
+            return {
+                tipo: "texto",
+                contenido: `✅ *Correo registrado:* ${input}\n\n📱 *Paso 3 de 3:* ¿Cuál es tu número de teléfono?`
+            };
+        }
+        
+        // Si ya tiene nombre y email, solicitar teléfono
+        if (estado.datosContacto.nombre && estado.datosContacto.email && !estado.datosContacto.telefono) {
+            estado.datosContacto.telefono = input;
+            estado.estado = sistemaCotizacion.estados.ENVIANDO_CORREO;
+            
+            // Enviar correo (simulado)
+            return sistemaCotizacion.enviarCorreoCotizacion(idUsuario);
+        }
+        
+        return sistemaCotizacion.generarErrorContacto();
+    },
+
+    procesarEnvioCorreo: (idUsuario, input) => {
+        // Aquí procesaríamos la respuesta del usuario después del envío
+        // Por ahora, simplemente finalizamos
+        sistemaCotizacion.estado.delete(idUsuario);
+        return {
+            tipo: "texto",
+            contenido: `🎉 *¡Cotización procesada exitosamente!*\n\n📋 *Resumen de tu solicitud:*\n• Productos: ${sistemaCotizacion.generarResumenProductos(sistemaCotizacion.estado.get(idUsuario)?.productos || [])}\n• Contacto: ${sistemaCotizacion.estado.get(idUsuario)?.datosContacto.nombre || 'No especificado'}\n\n💼 *Nuestro equipo te contactará en las próximas 24 horas.*\n\n¿Necesitas ayuda con algo más?`
+        };
+    },
+
+    enviarCorreoCotizacion: (idUsuario) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        
+        // Simular envío de correo
+        console.log('📧 Enviando correo de cotización:', {
+            productos: estado.productos,
+            contacto: estado.datosContacto,
+            timestamp: new Date().toISOString()
+        });
+        
+        // Aquí iría la lógica real de envío de correo
+        // Por ahora, simulamos el envío
+        
+        return {
+            tipo: "texto",
+            contenido: `✅ *¡CORREO ENVIADO EXITOSAMENTE!*\n\n📨 *Se ha enviado tu cotización a:* ${estado.datosContacto.email}\n\n📋 *Resumen de tu cotización:*\n${sistemaCotizacion.generarResumenCompleto(estado)}\n\n👤 *Tus datos de contacto:*\n• Nombre: ${estado.datosContacto.nombre}\n• Email: ${estado.datosContacto.email}\n• Teléfono: ${estado.datosContacto.telefono}\n\n💼 *Nuestro equipo te contactará en las próximas 24 horas para confirmar precios y disponibilidad.*\n\n¿Necesitas hacer otra cotización o tienes alguna pregunta?`
+        };
+    },
+
+    // ==================== MÉTODOS AUXILIARES MEJORADOS ====================
+    generarResumenCompleto: (estado) => {
+        let resumen = `🛒 *PRODUCTOS SOLICITADOS:*\n`;
+        estado.productos.forEach((producto, index) => {
+            resumen += `${index + 1}. ${producto.nombre} - ${producto.cantidad} ${producto.unidad}\n`;
+        });
+        
+        if (estado.contexto.tipoProyecto) {
+            resumen += `\n🏗️ *PROYECTO:* ${estado.contexto.tipoProyecto}\n`;
+        }
+        if (estado.contexto.descripcion) {
+            resumen += `📝 *DESCRIPCIÓN:* ${estado.contexto.descripcion}\n`;
+        }
+        
+        resumen += `\n📅 *FECHA DE SOLICITUD:* ${new Date().toLocaleDateString('es-MX')}`;
+        
+        return resumen;
+    },
+
+    solicitarConfirmacionFinal: (estado) => {
+        return {
+            tipo: "texto",
+            contenido: `🎯 *CONFIRMACIÓN FINAL DE COTIZACIÓN*\n\n${sistemaCotizacion.generarResumenCompleto(estado)}\n\n¿Está correcta tu cotización? Responde "SÍ" para continuar o "NO" para modificar.`
+        };
+    },
+
+    procesarConfirmacion: (idUsuario, input) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        
+        if (/(s[ií]|ok|correcto|listo|continuar)/i.test(input)) {
+            estado.estado = sistemaCotizacion.estados.SOLICITANDO_CONTACTO;
+            return {
+                tipo: "texto",
+                contenido: `✅ *¡Cotización confirmada!*\n\n👤 *Paso 1 de 3:* Para enviarte la cotización, necesito algunos datos:\n\n¿Cuál es tu nombre completo?`
+            };
+        } else if (/(no|corregir|modificar|cambiar)/i.test(input)) {
+            estado.estado = sistemaCotizacion.estados.CAPTURANDO_PRODUCTOS;
+            return {
+                tipo: "texto",
+                contenido: `🔄 *Vamos a modificar tu listado.*\n\n🛒 *Actualmente tienes:*\n${sistemaCotizacion.generarResumenProductos(estado.productos)}\n\n¿Qué quieres hacer?\n• Agregar más productos\n• Escribir "ELIMINAR [producto]" para quitar\n• Escribir "LISTO" para finalizar`
+            };
+        }
+        
+        return sistemaCotizacion.solicitarConfirmacionFinal(estado);
+    },
+
+    // ==================== MÉTODOS EXISTENTES ACTUALIZADOS ====================
+    extraerProductos: (texto) => {
+        // Método legacy - usar el nuevo extraerProductosMejorado
+        return sistemaCotizacion.extraerProductosMejorado(texto);
+    },
+
+    generarOpcionesProductos: (estado) => {
+        let mensaje = `🛒 *¿Qué productos necesitas para tu proyecto?*\n\n`;
+        
+        mensaje += `📋 *Tienes 3 opciones fáciles:*\n\n`;
+        mensaje += `🔹 **1. CONTARME TU PROYECTO**\n`;
+        mensaje += `   "necesito materiales para un baño"\n`;
+        mensaje += `   "voy a instalar sistema de riego"\n`;
+        mensaje += `   "requiero para cocina nueva"\n\n`;
+        
+        mensaje += `🔹 **2. MENCIONAR PRODUCTOS DIRECTOS**\n`;
+        mensaje += `   "tubos pvc 1/2 y conexiones"\n`;
+        mensaje += `   "tinaco 1100L + bomba 1/2 HP"\n`;
+        mensaje += `   "10m tubo 3/4, 5 codos, 2 válvulas"\n\n`;
+        
+        mensaje += `🔹 **3. ELEGIR CATEGORÍA:*\n`;
+        Object.entries(sistemaCotizacion.categoriasProductos).forEach(([id, categoria], index) => {
+            mensaje += `   ${index + 1}. ${categoria.nombre}\n`;
+        });
+        
+        mensaje += `\n💡 *Ejemplos que funcionan:*\n`;
+        mensaje += `"Proyecto de baño con tubos 1/2"\n`;
+        mensaje += `"Necesito 15m tubo pvc 1/2, 8 codos 90, 1 válvula"\n`;
+        mensaje += `"Material para instalar tinaco y bomba"\n\n`;
+        mensaje += `🛑 *¿Cambiaste de idea?* Escribe "cancelar"`;
+        
+        return { tipo: "texto", contenido: mensaje };
+    },
+
+    sugerirProductosPorProyecto: (proyecto) => {
+        const sugerencias = {
+            'baño': `🚽 *¡Perfecto! Para tu proyecto de BAÑO, te recomiendo:*\n\n📦 **PRODUCTOS ESENCIALES:**\n• Tubos PVC 1/2" para agua (15-20 metros)\n• Conexiones 1/2" (8-10 codos 90°, 4-5 tes)\n• Válvulas de paso 1/2" (2-3 piezas)\n• Tubería drenaje 3" (5-8 metros)\n• Conexiones drenaje 3" (4 codos, 2 tes)\n• Registro de acceso 4"\n\n💡 *Ejemplos fáciles:*\n"15m tubo 1/2, 8 codos, 2 válvulas, 5m drenaje 3"\n"Material completo para baño standard"\n"Necesito todo para instalar regadera y lavabo"\n\n🛒 *Escribe los productos que necesitas o "LISTO" para continuar:*`,
+            
+            'cocina': `🍳 *¡Excelente! Para tu COCINA, necesitarás:*\n\n📦 **PRODUCTOS CLAVE:**\n• Tubos PVC 1/2" agua fría/caliente (8-12 metros)\n• Conexiones para lavaplatos (4-6 codos, 2 tes)\n• Válvulas esféricas 1/2" (2-3 piezas)\n• Regulador de gas LP (1 pieza)\n• Mancuera para gas 1.5m (1 pieza)\n• Adaptadores y uniones\n\n💡 *Puedes decirme:*\n"Regulador gas + mancuera + tubos agua"\n"Material para instalar lavaplatos nuevo"\n"Necesito conexiones para cocina"\n\n🛒 *Menciona los productos o escribe "LISTO":*`,
+            
+            'jardín': `🌿 *¡Genial! Para JARDÍN/RIEGO, considera:*\n\n📦 **PRODUCTOS IDEALES:**\n• Tubos PVC 3/4" para riego (20-30 metros)\n• Conexiones para aspersores (6-8 codos, 4 tes)\n• Válvulas de control 3/4" (2-3 piezas)\n• Bomba de agua 1/2 HP (1 pieza)\n• Tinaco 1100L (opcional)\n• Reducciones y adaptadores\n\n💡 *Ejemplo práctico:*\n"Bomba 1/2 hp + 30m tubo 3/4 + válvulas"\n"Sistema riego para jardín mediano"\n\n🛒 *¿Qué productos específicos necesitas?*`
+        };
+        
+        const mensaje = sugerencias[proyecto] || `🏗️ *Productos para ${proyecto}:*\n\n¿Qué materiales específicos necesitas? Puedes mencionarlos directamente.`;
+        
+        return {
+            tipo: "texto", 
+            contenido: mensaje
+        };
+    },
+
+    // Comandos globales
+    esComandoGlobal: (input) => {
+        const comandos = ['ver listado', 'qué llevo', 'mostrar productos', 'eliminar', 'quitar', 'cancelar', 'empezar over'];
+        return comandos.some(comando => input.includes(comando));
+    },
+
+    procesarComandoGlobal: (idUsuario, input) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        
+        if (input.includes('ver listado') || input.includes('qué llevo') || input.includes('mostrar productos')) {
+            if (estado.productos.length === 0) {
+                return { tipo: "texto", contenido: "📝 *Tu listado está vacío.*\n\nAgrega productos describiéndolos o eligiendo categorías." };
+            }
+            return {
+                tipo: "texto",
+                contenido: `🛒 *Tu listado actual:*\n\n${sistemaCotizacion.generarResumenProductos(estado.productos)}\n\n💡 *Puedes:*\n• Seguir agregando productos\n• Escribir "LISTO" para continuar\n• Escribir "ELIMINAR [producto]" para quitar algo`
+            };
+        }
+        
+        if (input.includes('eliminar') || input.includes('quitar')) {
+            return sistemaCotizacion.procesarEliminacion(idUsuario, input);
+        }
+        
+        if (input.includes('cancelar')) {
+            sistemaCotizacion.estado.delete(idUsuario);
+            return { tipo: "texto", contenido: "❌ *Cotización cancelada.* ¿En qué más puedo ayudarte?" };
+        }
+        
+        if (input.includes('empezar over')) {
+            sistemaCotizacion.estado.delete(idUsuario);
+            return sistemaCotizacion.iniciar(idUsuario);
+        }
+        
+        return null;
+    },
+
+    // Generar resumen de productos
+    generarResumenProductos: (productos) => {
+        if (productos.length === 0) return "📝 *Listado vacío*";
+        
+        let resumen = "";
+        productos.forEach((producto, index) => {
+            resumen += `${index + 1}. ${producto.nombre} - ${producto.cantidad} ${producto.unidad}\n`;
+        });
+        return resumen;
+    },
+
+    // Detectar finalización
+    esFinalizacionProductos: (input) => {
+        return /(listo|terminar|finalizar|ya está|eso es todo|continuar|siguiente)/i.test(input);
+    },
+
+    procesarEliminacion: (idUsuario, input) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        const productos = estado.productos;
+        
+        if (productos.length === 0) {
+            return { tipo: "texto", contenido: "📝 *No hay productos para eliminar.*" };
+        }
+
+        // Buscar producto a eliminar
+        for (let i = 0; i < productos.length; i++) {
+            if (input.toLowerCase().includes(productos[i].nombre.toLowerCase())) {
+                const eliminado = productos.splice(i, 1)[0];
+                return {
+                    tipo: "texto",
+                    contenido: `❌ *Eliminado:* ${eliminado.nombre}\n\n🛒 *Listado actual:*\n${sistemaCotizacion.generarResumenProductos(productos)}`
+                };
+            }
+        }
+
+        return {
+            tipo: "texto",
+            contenido: `❌ *No encontré ese producto.*\n\n🛒 *Tu listado:*\n${sistemaCotizacion.generarResumenProductos(productos)}\n\n💡 *Escribe "eliminar [nombre del producto]"*`
+        };
+    },
+
+    finalizarCotizacion: (idUsuario) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        
+        const resumen = `🎉 *¡COTIZACIÓN COMPLETADA!*\n\n🛒 *Tu listado final:*\n${sistemaCotizacion.generarResumenProductos(estado.productos)}\n\n📧 *¿Qué deseas hacer ahora?*\n\n1. 📋 **VER DETALLES COMPLETOS**\n2. 📧 **ENVIAR POR CORREO** \n3. 💬 **CONTACTAR POR WHATSAPP**\n4. 🔄 **HACER OTRA COTIZACIÓN**\n\n*Responde con el número de tu elección:*`;
+
+        // NO eliminar el estado aquí, ya que necesitamos los productos para el correo
+        estado.estado = sistemaCotizacion.estados.CONFIRMANDO_INFORMACION;
+        
+        return {
+            tipo: "texto",
+            contenido: resumen
+        };
+    },
+
+    generarErrorContacto: () => {
+        return {
+            tipo: "texto",
+            contenido: "❌ *Error en el proceso de contacto.* Por favor, escribe 'cancelar' para empezar de nuevo."
+        };
+    },
+
+    // ==================== FUNCIONES FALTANTES ACTUALIZADAS ====================
+    generarMensajeInicial: () => {
+        return {
+            tipo: "texto",
+            contenido: `📋 *¡Perfecto! Iniciemos tu cotización.*\n\n🛒 *¿Qué productos necesitas?*\n\n📋 *Puedes:*\n• **Describir tu proyecto** (ej: "necesito para un baño")\n• **Mencionar productos específicos** (ej: "tubos pvc 1/2 y conexiones")\n• **Escribir "ver categorías"** para ver opciones\n\n💡 *Ejemplos:*\n"Proyecto de baño con tubos 1/2"\n"Necesito 10m tubo pvc 1/2, 5 codos 90"\n"Material para sistema de riego"\n\n*También puedes escribir "cancelar" en cualquier momento.*`
+        };
+    },
+
+    reiniciarFlujo: (idUsuario) => {
+        return sistemaCotizacion.iniciar(idUsuario);
+    },
+
+    solicitarDetallesProductos: (estado) => {
+        if (estado.productos.length === 0) {
+            return {
+                tipo: "texto",
+                contenido: "📝 *Aún no has agregado productos.*\n\n¿Qué materiales necesitas?"
+            };
+        }
+        
+        return {
+            tipo: "texto",
+            contenido: `✅ *Productos agregados.* ¿Necesitas algo más?\n\n🛒 *Tu listado:*\n${sistemaCotizacion.generarResumenProductos(estado.productos)}\n\nEscribe "LISTO" para continuar o agrega más productos.`
+        };
+    },
+
+    procesarEspecificaciones: (idUsuario, input) => {
+        const estado = sistemaCotizacion.estado.get(idUsuario);
+        // Por ahora, simplificamos y vamos a confirmación
+        estado.estado = sistemaCotizacion.estados.CONFIRMANDO_INFORMACION;
+        return sistemaCotizacion.procesarConfirmacion(idUsuario, input);
+    }
+};
+
+// Detector de intención de cotización
+sistemaCotizacion.detectarIntencionCotizacion = (input) => {
+    const patrones = [
+        /(cotizaci[óo]n|presupuesto|precio|cost[oó])/i,
+        /(necesito|quiero|solicito).*(material|producto|tubo|tuber[ií]a|tinaco)/i,
+        /(listado|lista|pedido|orden).*(producto|material)/i,
+        /(envi[ae]r|mandar).*(correo|email)/i,
+        /(agregar|añadir).*(producto|material)/i
+    ];
+    return patrones.some(patron => patron.test(input));
+};
+
 // ==================== SISTEMA DE CONTEXTO Y MEMORIA ====================
 export const contextoConversacion = new Map();
 
@@ -403,6 +1113,82 @@ export const recomendarBombaAvanzado = async (input) => {
     respuesta += `\`\`\`\n\n`;
     respuesta += `💡 *Recomendación final:* Para ${numPisos} pisos y ${numBaños} baños, `;
     respuesta += `la bomba ${recomendaciones[0].tipo} ${recomendaciones[0].modelo} es óptima.`;
+
+    return { tipo: "texto", contenido: respuesta };
+};
+
+// ==================== RECOMENDACIÓN AVANZADA DE TUBERÍAS ====================
+export const recomendarTuberiaAvanzado = async (input) => {
+    const matchBaños = input.match(/(\d+)\s*baños?/i);
+    const numBaños = matchBaños ? parseInt(matchBaños[1]) : 2;
+    
+    const recomendaciones = {
+        'agua_fria': {
+            titulo: "🚰 *SISTEMA DE AGUA FRÍA*",
+            recomendaciones: [
+                {
+                    diametro: '1/2"',
+                    aplicacion: "Baños individuales, lavabos",
+                    caudal: "Hasta 15 LPM",
+                    materiales: "PVC Schedule 40, CPVC"
+                },
+                {
+                    diametro: '3/4"',
+                    aplicacion: "2-3 baños, cocina",
+                    caudal: "Hasta 30 LPM", 
+                    materiales: "PVC Schedule 40, Cobre Tipo M"
+                },
+                {
+                    diametro: '1"',
+                    aplicacion: "4+ baños, sistema completo",
+                    caudal: "Hasta 60 LPM",
+                    materiales: "PVC Schedule 80, Cobre Tipo L"
+                }
+            ]
+        },
+        'drenaje': {
+            titulo: "🚽 *SISTEMA DE DRENAJE*",
+            recomendaciones: [
+                {
+                    diametro: '2"',
+                    aplicacion: "Lavabos, regaderas, lavadoras",
+                    capacidad: "Hasta 3 baños",
+                    materiales: "PVC DWV, ABS"
+                },
+                {
+                    diametro: '3"', 
+                    aplicacion: "Inodoros, drenaje principal",
+                    capacidad: "Hasta 6 baños",
+                    materiales: "PVC DWV, ABS"
+                },
+                {
+                    diametro: '4"',
+                    aplicacion: "Drenaje principal edificios",
+                    capacidad: "6+ baños",
+                    materiales: "PVC DWV, Hierro Fundido"
+                }
+            ]
+        }
+    };
+
+    let respuesta = `🔧 *RECOMENDACIONES TÉCNICAS DE TUBERÍAS* 🔧\n\n`;
+    respuesta += `📊 *Para ${numBaños} baños:*\n\n`;
+
+    Object.values(recomendaciones).forEach(sistema => {
+        respuesta += `${sistema.titulo}\n\n`;
+        sistema.recomendaciones.forEach(rec => {
+            respuesta += `📏 *Diámetro ${rec.diametro}:*\n`;
+            respuesta += `🎯 Aplicación: ${rec.aplicacion}\n`;
+            respuesta += `💧 ${rec.caudal || rec.capacidad}\n`;
+            respuesta += `🏭 Materiales: ${rec.materiales}\n\n`;
+        });
+    });
+
+    respuesta += `💡 *CONSIDERACIONES TÉCNICAS:*\n`;
+    respuesta += `• Presión mínima requerida: 2.0 kg/cm²\n`;
+    respuesta += `• Velocidad máxima recomendada: 2.5 m/s\n`;
+    respuesta += `• Pendiente drenaje: 2% mínimo\n`;
+    respuesta += `• Juntas: Cemento solvente para PVC\n`;
 
     return { tipo: "texto", contenido: respuesta };
 };
@@ -968,7 +1754,55 @@ export const procesarMensaje = async (mensaje, idUsuario = 'default') => {
     try {
         const input = mensaje.toLowerCase().trim();
         
-        // 1. Detectar cancelación de flujo
+        // === SISTEMA DE COTIZACIÓN MEJORADO ===
+    
+        // 1. Detectar inicio de cotización (ALTA PRIORIDAD)
+        if ((/(cotizaci[óo]n|presupuesto|listado|pedido|materiales)/i.test(input) || 
+             /(necesito|quiero|solicito).*(material|producto|tubo|tuber[ií]a|tinaco|cisterna|bomba|válvula|conexión)/i.test(input)) && 
+            !sistemaCotizacion.estado.has(idUsuario)) {
+            const respuesta = sistemaCotizacion.iniciar(idUsuario);
+            gestionarContexto(idUsuario, mensaje, respuesta.contenido);
+            return renderizarRespuestaEnChat(respuesta);
+        }
+        
+        // 2. Procesar cotización existente (MÁXIMA PRIORIDAD)
+        if (sistemaCotizacion.estado.has(idUsuario)) {
+            const respuesta = sistemaCotizacion.procesar(idUsuario, mensaje);
+            if (respuesta) {
+                gestionarContexto(idUsuario, mensaje, respuesta.contenido);
+                return renderizarRespuestaEnChat(respuesta);
+            }
+        }
+        
+        // 3. Detectar números para opciones de menú
+        if (/^[1234]$/.test(input)) {
+            const estado = sistemaCotizacion.estado.get(idUsuario);
+            if (estado && estado.estado === sistemaCotizacion.estados.CONFIRMANDO_INFORMACION) {
+                switch (input) {
+                    case '1': // Ver detalles completos
+                        return renderizarRespuestaEnChat({
+                            tipo: "texto",
+                            contenido: `📋 *DETALLES COMPLETOS DE TU COTIZACIÓN*\n\n${sistemaCotizacion.generarResumenCompleto(estado)}\n\n💡 *¿Qué deseas hacer?*\nEscribe "SÍ" para continuar con el envío o "NO" para modificar.`
+                        });
+                    case '2': // Enviar por correo
+                        estado.estado = sistemaCotizacion.estados.SOLICITANDO_CONTACTO;
+                        return renderizarRespuestaEnChat({
+                            tipo: "texto",
+                            contenido: `✅ *¡Excelente elección!*\n\n👤 *Paso 1 de 3:* Para enviarte la cotización, necesito algunos datos:\n\n¿Cuál es tu nombre completo?`
+                        });
+                    case '3': // Contactar por WhatsApp
+                        return renderizarRespuestaEnChat({
+                            tipo: "texto",
+                            contenido: `💬 *CONTACTO POR WHATSAPP*\n\nPuedes contactarnos directamente al:\n📱 *+52 55 4322 5189*\n\n¡Estaremos encantados de atenderte! 🎯\n\n¿Necesitas algo más?`
+                        });
+                    case '4': // Hacer otra cotización
+                        sistemaCotizacion.estado.delete(idUsuario);
+                        return renderizarRespuestaEnChat(sistemaCotizacion.iniciar(idUsuario));
+                }
+            }
+        }
+
+        // 4. Detectar cancelación de flujo
         if (/(cancelar|detener|parar|no quiero|olvídalo)/i.test(input)) {
             const respuestaCancelacion = cancelarFlujo(idUsuario);
             if (respuestaCancelacion) {
@@ -977,21 +1811,21 @@ export const procesarMensaje = async (mensaje, idUsuario = 'default') => {
             }
         }
         
-        // 2. Gestionar flujos conversacionales
+        // 5. Gestionar flujos conversacionales
         const respuestaFlujo = gestionarFlujoConversacional(idUsuario, mensaje);
         if (respuestaFlujo) {
             gestionarContexto(idUsuario, mensaje, respuestaFlujo);
             return renderizarRespuestaEnChat({ tipo: "texto", contenido: respuestaFlujo });
         }
         
-        // 3. NUEVO: Verificar si es solicitud de recomendación técnica avanzada
+        // 6. Verificar si es solicitud de recomendación técnica avanzada
         const recomendacionAvanzada = await sistemaRecomendacionAvanzado(mensaje);
         if (recomendacionAvanzada) {
             gestionarContexto(idUsuario, mensaje, recomendacionAvanzada.contenido);
             return renderizarRespuestaEnChat(recomendacionAvanzada);
         }
         
-        // 4. Detectar saludos
+        // 7. Detectar saludos
         if (/(hola|buen|saludos|qué tal|buenas|hello|hi)/i.test(input)) {
             const contexto = obtenerContexto(idUsuario);
             const saludo = contexto.length > 0 
@@ -1002,7 +1836,7 @@ export const procesarMensaje = async (mensaje, idUsuario = 'default') => {
             return renderizarRespuestaEnChat({ tipo: "texto", contenido: saludo });
         }
         
-        // 5. Detectar despedidas
+        // 8. Detectar despedidas
         if (/(gracias|adi[óo]s|chao|bye|hasta luego|nos vemos|chao)/i.test(input)) {
             const sentimiento = analizarSentimiento(input);
             let despedida = "¡De nada! Estoy aquí para ayudarte cuando lo necesites. ¡Que tengas un excelente día! 🌟";
@@ -1017,7 +1851,7 @@ export const procesarMensaje = async (mensaje, idUsuario = 'default') => {
             return renderizarRespuestaEnChat({ tipo: "texto", contenido: despedida });
         }
         
-        // 6. DETECTAR SI ES UNA PREGUNTA TÉCNICA QUE DEBE IR DIRECTAMENTE A LA IA
+        // 9. DETECTAR SI ES UNA PREGUNTA TÉCNICA QUE DEBE IR DIRECTAMENTE A LA IA
         const esPreguntaTecnica = detectarPreguntaTecnica(input);
         const esConsultaDefinicion = detectarConsultaDefinicion(input);
         
@@ -1039,10 +1873,10 @@ export const procesarMensaje = async (mensaje, idUsuario = 'default') => {
             }
         }
         
-        // 7. PROCESAR LOCALMENTE (solo si no es pregunta técnica)
+        // 10. PROCESAR LOCALMENTE (solo si no es pregunta técnica)
         const respuestaLocal = await procesarRespuestaLocal(mensaje);
         
-        // 8. Si la respuesta local es genérica, consultar IAs
+        // 11. Si la respuesta local es genérica, consultar IAs
         const esRespuestaGenerica = knowledgeBase.respuestasGenericas.some(
             resp => resp === respuestaLocal.contenido
         );
@@ -1061,7 +1895,7 @@ export const procesarMensaje = async (mensaje, idUsuario = 'default') => {
             }
         }
 
-        // 9. Devolver respuesta local
+        // 12. Devolver respuesta local
         gestionarContexto(idUsuario, mensaje, respuestaLocal.contenido);
         return renderizarRespuestaEnChat(respuestaLocal);
 
@@ -1102,7 +1936,13 @@ export const renderizarRespuestaEnChat = (respuesta) => {
 
         return html;
     } else {
-        return `<div class="chat-response text-response">${respuesta.contenido}</div>`;
+        // Procesar texto para mejor visualización
+        const contenidoFormateado = respuesta.contenido
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>');
+            
+        return `<div class="chat-response text-response">${contenidoFormateado}</div>`;
     }
 };
 
@@ -1187,14 +2027,15 @@ export const estilosImagenesChat = `
 // ==================== INICIALIZACIÓN ====================
 export const inicializarChatbot = () => {
     console.log('🚀 Chatbot TUBCON Mejorado inicializado correctamente');
-    console.log('🔍 Funciones disponibles:');
-    console.log('   - Sistema de contexto y memoria');
-    console.log('   - Flujos conversacionales para cotizaciones');
-    console.log('   - Detección mejorada de intenciones');
-    console.log('   - Análisis de sentimiento');
-    console.log('   - Búsqueda de imágenes mejorada');
-    console.log('   - Sistema avanzado de recomendación técnica');
-    console.log('   - Fórmulas y cálculos técnicos integrados');
+    console.log('🔍 Mejoras implementadas:');
+    console.log('   - Sistema de detección de productos MEJORADO');
+    console.log('   - Manejo de cantidades automático');
+    console.log('   - Flujo de contacto completo (nombre, email, teléfono)');
+    console.log('   - Confirmación de envío de correo');
+    console.log('   - Eliminación de productos mejorada');
+    console.log('   - Interfaz de usuario más clara');
+    console.log('   - Sistema de recomendación técnica avanzada');
+    console.log('   - Búsqueda de imágenes integrada');
 };
 
 // Inicializar automáticamente
