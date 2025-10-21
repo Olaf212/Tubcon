@@ -6,10 +6,12 @@
     <title>TUBCON - Catálogo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="src/products.css">
+    <!-- CSS del Chatbot (externo) - IGUAL QUE INDEX.HTML -->
     <link rel="stylesheet" href="src/chatbot.css">
     <link rel="icon" type="image/png" href="public/images/iconoa.ico">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
-        /* ESTILOS PARA EL CHATBOT Y WHATSAPP - IGUAL QUE INDEX.HTML */
+        /* ESTILOS PARA WHATSAPP - IGUAL QUE INDEX.HTML */
         .whatsapp-float.hidden {
             opacity: 0;
             transform: scale(0.8);
@@ -360,38 +362,64 @@
             margin-bottom: 15px;
         }
         
-        .add-to-cart-btn {
-            background-color: #EF0315;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
+        /* ESTILOS PARA EL BOTÓN ANIMADO */
+        :root {
+            --primary-color: #EF0315;
+            --success-color: #28a745;
+        }
+
+        .button-container {
+            position: relative;
             width: 100%;
+        }
+
+        .animated-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            width: 100%;
+            height: 40px;
+            overflow: hidden; 
             position: relative;
-            overflow: hidden;
+            z-index: 2;
+            transition: background-color 0.2s;
         }
-        
-        .add-to-cart-btn:hover {
+
+        .animated-button:hover {
             background-color: #d0021b;
-            transform: translateY(-2px);
         }
-        
-        .add-to-cart-btn.added {
-            background-color: #28a745;
-            animation: pulse 0.5s ease;
+
+        .content-wrapper {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
         }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+
+        .cart-icon {
+            margin-left: 8px;
+            color: white; 
+            font-size: 1.2em;
+        }
+
+        .check-icon {
+            font-size: 1.5em;
+            position: absolute;
+            opacity: 0;
+            transform: scale(0);
+            color: white; /* Check blanco sobre fondo verde */
         }
         
         .catalog-button {
@@ -881,6 +909,72 @@
                 bottom: 20px; /* En la parte inferior */
             }
         }
+        /* ESTILOS PARA LA SECCIÓN DE REDIRECCIÓN */
+.redirect-section {
+    padding: 40px 20px;
+    background-color: #f8f8f8;
+}
+
+.redirect-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.redirect-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.redirect-item {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.redirect-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.redirect-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.redirect-item:hover .redirect-image {
+    transform: scale(1.05);
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .redirect-section {
+        padding: 30px 15px;
+    }
+    
+    .redirect-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .redirect-image {
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .redirect-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .redirect-image {
+        height: 180px;
+    }
+}
     </style>
 </head>
 
@@ -964,6 +1058,7 @@
             <span class="dot" onclick="currentSlide(2)"></span>
         </div>
     </div>
+    
 
     <!-- SECCIONES DE PRODUCTOS POR CATEGORÍA CON CARRUSELES -->
     
@@ -988,9 +1083,15 @@
                     <h3 class="product-name">Bomba Centrífuga</h3>
                     <p class="product-description">Bomba centrífuga para llenar tinacos a alturas menores de 15 metros. Flujo máximo 100-150 L/min.</p>
                     <p class="product-model">Modelos: 1/2 HP a 2 HP</p>
-                    <button class="add-to-cart-btn" data-product="Bomba Centrífuga" data-image="public/images/productos/centrifuga.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Bomba Centrífuga" data-image="public/images/productos/centrifuga.png">
+                            <div class="content-wrapper">
+                                <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                                
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1003,9 +1104,14 @@
                     <h3 class="product-name">Bomba Periférica</h3>
                     <p class="product-description">Mayor presión, menor flujo. Ideal para alturas mayores de 15 metros y sistemas hidroneumáticos.</p>
                     <p class="product-model">Modelo: Periférica Primo 1/2 HP</p>
-                    <button class="add-to-cart-btn" data-product="Bomba Periférica" data-image="public/images/productos/peri.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Bomba Periférica" data-image="public/images/productos/peri.png">
+                            <div class="content-wrapper">
+                               <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1018,9 +1124,14 @@
                     <h3 class="product-name">Bomba Presurizadora</h3>
                     <p class="product-description">Aumenta la presión del agua en toda la instalación. Encendido automático al detectar demanda.</p>
                     <p class="product-model">Modelos: 1/6 HP y 1/3 HP</p>
-                    <button class="add-to-cart-btn" data-product="Bomba Presurizadora" data-image="public/images/productos/pre.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Bomba Presurizadora" data-image="public/images/productos/pre.png">
+                            <div class="content-wrapper">
+                                <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1033,9 +1144,14 @@
                     <h3 class="product-name">Tinaco IUSA 1100 LTS</h3>
                     <p class="product-description">Tinaco tricapa con capacidad de 1,100 litros. Incluye válvula, multiconector y filtro.</p>
                     <p class="product-model">Capacidad: 1,100 litros</p>
-                    <button class="add-to-cart-btn" data-product="Tinaco IUSA 1100 LTS" data-image="public/images/productos/tinaco.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Tinaco IUSA 1100 LTS" data-image="public/images/productos/tinaco.png">
+                            <div class="content-wrapper">
+                           <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1048,9 +1164,14 @@
                     <h3 class="product-name">Cisterna IUSA</h3>
                     <p class="product-description">Cisternas de 2,500 a 10,000 litros. Tapa robusta de 54cm para sellado hermético.</p>
                     <p class="product-model">Capacidades: 2,500L - 10,000L</p>
-                    <button class="add-to-cart-btn" data-product="Cisterna IUSA" data-image="public/images/productos/cisterna.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Cisterna IUSA" data-image="public/images/productos/cisterna.png">
+                            <div class="content-wrapper">
+                                <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1063,9 +1184,14 @@
                     <h3 class="product-name">Bomba Sumergible</h3>
                     <p class="product-description">Bomba sumergible de alta presión para pozos y sistemas de extracción de agua.</p>
                     <p class="product-model">Modelos: 1.2" y 1.5"</p>
-                    <button class="add-to-cart-btn" data-product="Bomba Sumergible" data-image="public/images/productos/bomba.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Bomba Sumergible" data-image="public/images/productos/bomba.png">
+                            <div class="content-wrapper">
+                              <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1097,9 +1223,14 @@
                     <h3 class="product-name">Regulador R7000</h3>
                     <p class="product-description">Regulador de 1 vía para alta presión. Ideal para cilindro o tanque estacionario.</p>
                     <p class="product-model">Modelo: R7000</p>
-                    <button class="add-to-cart-btn" data-product="Regulador R7000" data-image="public/images/productos/7000.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Regulador R7000" data-image="public/images/productos/7000.png">
+                            <div class="content-wrapper">
+                                <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1112,9 +1243,14 @@
                     <h3 class="product-name">Regulador 2 Vías</h3>
                     <p class="product-description">Regulador de 2 vías baja presión. Permite conectar dos cilindros a una misma línea.</p>
                     <p class="product-model">Modelo: R2001 IUSA</p>
-                    <button class="add-to-cart-btn" data-product="Regulador 2 Vías" data-image="public/images/productos/R2001.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Regulador 2 Vías" data-image="public/images/productos/R2001.png">
+                            <div class="content-wrapper">
+                               <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1127,9 +1263,14 @@
                     <h3 class="product-name">Regulador Lobo</h3>
                     <p class="product-description">Regulador 2da etapa baja presión alto consumo. Para uso comercial e industrial.</p>
                     <p class="product-model">Modelos: RL06, RL13, RL19</p>
-                    <button class="add-to-cart-btn" data-product="Regulador Lobo" data-image="public/images/productos/lobo.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Regulador Lobo" data-image="public/images/productos/lobo.png">
+                            <div class="content-wrapper">
+                             <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1142,9 +1283,14 @@
                     <h3 class="product-name">Manguera para Gas L.P.</h3>
                     <p class="product-description">Mangueras reforzadas para gas LP. Tuercas de latón, férulas de acero inoxidable.</p>
                     <p class="product-model">Longitudes: 60cm - 5m</p>
-                    <button class="add-to-cart-btn" data-product="Manguera para Gas L.P." data-image="public/images/productos/maguera.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Manguera para Gas L.P." data-image="public/images/productos/maguera.png">
+                            <div class="content-wrapper">
+                              <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1157,9 +1303,14 @@
                     <h3 class="product-name">Regulador Sencillo 102</h3>
                     <p class="product-description">Regulador de gas LP 2 vías baja presión. Flujo de 1 m³/hr garantiza presión constante.</p>
                     <p class="product-model">Modelo: R102</p>
-                    <button class="add-to-cart-btn" data-product="Regulador Sencillo 102" data-image="public/images/productos/102.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Regulador Sencillo 102" data-image="public/images/productos/102.png">
+                            <div class="content-wrapper">
+                            <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1191,9 +1342,14 @@
                     <h3 class="product-name">Mezcladoras para Lavabo</h3>
                     <p class="product-description">Cartucho cerámico 1/4 de vuelta. Funcionamiento óptimo y ecológico.</p>
                     <p class="product-model">Series: 4000, 5000</p>
-                    <button class="add-to-cart-btn" data-product="Mezcladoras para Lavabo" data-image="public/images/productos/Mezcladoras.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Mezcladoras para Lavabo" data-image="public/images/productos/Mezcladoras.png">
+                            <div class="content-wrapper">
+                               <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1206,9 +1362,14 @@
                     <h3 class="product-name">Monomando para Lavabo</h3>
                     <p class="product-description">Control de una o dos temperaturas. Funcionamiento en baja, media y alta presión.</p>
                     <p class="product-model">Series: 4400, 4600</p>
-                    <button class="add-to-cart-btn" data-product="Monomando para Lavabo" data-image="public/images/productos/Monomandos.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Monomando para Lavabo" data-image="public/images/productos/Monomandos.png">
+                            <div class="content-wrapper">
+                              <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1221,9 +1382,14 @@
                     <h3 class="product-name">Mezcladoras para Tarja</h3>
                     <p class="product-description">Cartucho cerámico 1/4 de vuelta. Diseños modernos y clásicos.</p>
                     <p class="product-model">Series: 4300, 3200</p>
-                    <button class="add-to-cart-btn" data-product="Mezcladoras para Tarja" data-image="public/images/productos/tarja.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Mezcladoras para Tarja" data-image="public/images/productos/tarja.png">
+                            <div class="content-wrapper">
+                            <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1236,9 +1402,14 @@
                     <h3 class="product-name">Regaderas y Accesorios</h3>
                     <p class="product-description">Sistema "Limpia Fácil", múltiples funciones. Materiales ABS y acero inoxidable.</p>
                     <p class="product-model">Series: 3000, 4500</p>
-                    <button class="add-to-cart-btn" data-product="Regaderas y Accesorios" data-image="public/images/productos/Regaderas.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Regaderas y Accesorios" data-image="public/images/productos/Regaderas.png">
+                            <div class="content-wrapper">
+                                <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1251,9 +1422,14 @@
                     <h3 class="product-name">Accesorios de Baño</h3>
                     <p class="product-description">Toalleros, portarrollos, jaboneras y dispensadores. Acabados cromo y negro.</p>
                     <p class="product-model">Series: 1500, 3000, 4000</p>
-                    <button class="add-to-cart-btn" data-product="Accesorios de Baño" data-image="public/images/productos/Baño.png">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
+                    <div class="button-container">
+                        <button class="animated-button" data-product="Accesorios de Baño" data-image="public/images/productos/Baño.png">
+                            <div class="content-wrapper">
+                               <span class="text-content">AGREGAR AL CARRITO 🛒</span>
+                            </div>
+                            <span class="check-icon">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1322,7 +1498,7 @@
         </div>
     </div>
 
-    <!-- CHATBOT DESKTOP -->
+    <!-- CHATBOT DESKTOP - EXACTAMENTE IGUAL QUE INDEX.HTML -->
     <div class="chatbot-container" id="desktopChatbot">
         <div class="chatbot-header" id="chatbotToggle">
             <span>Asistente TUBCON</span>
@@ -1337,7 +1513,7 @@
         </div>
     </div>
 
-    <!-- CHATBOT MÓVIL -->
+    <!-- CHATBOT MÓVIL - EXACTAMENTE IGUAL QUE INDEX.HTML -->
     <div class="chatbot-bubble" id="mobileChatbotBubble">
         <i class="fas fa-comment"></i>
     </div>
@@ -1354,7 +1530,7 @@
         </div>
     </div>
 
-    <!-- WHATSAPP FLOAT -->
+    <!-- WHATSAPP FLOAT - EXACTAMENTE IGUAL QUE INDEX.HTML -->
     <div class="whatsapp-float" id="whatsappFloat">
         <a href="https://wa.me/525543225189" id="whatsappLink" target="_blank">
             <i class="fab fa-whatsapp"></i>
@@ -1460,6 +1636,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             initCarousels();
             initCart();
+            initAnimatedButtons();
         });
 
         // Función para inicializar todos los carruseles
@@ -1597,16 +1774,6 @@
                     closeCart();
                 }
             });
-
-            // Agregar eventos a los botones de "Agregar al carrito"
-            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const product = this.getAttribute('data-product');
-                    const image = this.getAttribute('data-image');
-                    
-                    addToCart(product, image);
-                });
-            });
         }
 
         // Agregar producto al carrito
@@ -1627,13 +1794,6 @@
             // Actualizar UI y guardar en localStorage
             updateCartUI();
             saveCart();
-            
-            // Animación de confirmación
-            const button = event.currentTarget;
-            button.classList.add('added');
-            setTimeout(() => {
-                button.classList.remove('added');
-            }, 500);
         }
 
         // Actualizar la interfaz del carrito
@@ -1743,11 +1903,107 @@
             localStorage.setItem('tubconCart', JSON.stringify(cart));
         }
 
+        // INICIALIZAR BOTONES ANIMADOS
+        function initAnimatedButtons() {
+            document.querySelectorAll('.animated-button').forEach(button => {
+                const textContent = button.querySelector('.text-content');
+                const cartIcon = button.querySelector('.cart-icon');
+                const checkIcon = button.querySelector('.check-icon');
+                
+                let isAnimating = false;
+                
+                const tl = gsap.timeline({ paused: true });
+                
+                // FASE 1: DESAPARICIÓN DEL TEXTO Y MOVIMIENTO DEL CARRITO HACIA LA IZQUIERDA (RECTO)
+                tl.to(textContent, { 
+                    opacity: 0, 
+                    duration: 0.2 
+                }, 0) 
+                  .to(cartIcon, {
+                      x: -150, // Se mueve recto hacia la izquierda
+                      y: 0,    // Sin movimiento vertical
+                      scale: 1, // Mantiene el tamaño
+                      rotation: 0, // Sin rotación
+                      opacity: 0,
+                      duration: 0.5,
+                      ease: 'power2.in',
+                  }, 0);
+                
+                // FASE 2: TRANSFORMACIÓN A CÍRCULO
+                tl.to(button, {
+                    width: 40,
+                    borderRadius: '50%',
+                    duration: 0.4,
+                    ease: 'power2.inOut',
+                }, 0.5)
+                
+                // CAMBIO DE COLOR A VERDE
+                .to(button, {
+                    backgroundColor: 'var(--success-color)' 
+                }, 0.7);
+                
+                // FASE 3: APARICIÓN DEL CHECK (blanco sobre fondo verde)
+                tl.to(checkIcon, {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.3,
+                    ease: 'back.out(2)' 
+                }, 0.95)
+                
+                // PAUSA
+                .to({}, { duration: 1.5 })
+                
+                // FASE 4: VUELTA AL ESTADO ORIGINAL
+                .to(checkIcon, { 
+                    opacity: 0, 
+                    scale: 0, 
+                    duration: 0.2 
+                }, '+=0') 
+                .to(button, {
+                    width: '100%',
+                    borderRadius: '5px',
+                    backgroundColor: 'var(--primary-color)',
+                    duration: 0.4,
+                    ease: 'power2.inOut',
+                }, '-=0.1')
+                .to(textContent, { 
+                    opacity: 1, 
+                    duration: 0.15 
+                }, '-=0.15')
+                .set(cartIcon, { 
+                    x: 0, 
+                    y: 0, 
+                    scale: 1, 
+                    rotation: 0, 
+                    opacity: 1 
+                });
+                
+                // Manejador de evento click
+                button.addEventListener('click', (event) => {
+                    if (isAnimating) return;
+                    isAnimating = true;
+                    
+                    // Obtener datos del producto
+                    const product = button.getAttribute('data-product');
+                    const image = button.getAttribute('data-image');
+                    
+                    // Agregar al carrito
+                    addToCart(product, image);
+                    
+                    // Iniciar animación
+                    tl.restart();
+                    tl.eventCallback('onComplete', () => {
+                        isAnimating = false;
+                    });
+                });
+            });
+        }
+
         // Hacer funciones disponibles globalmente
         window.removeFromCart = removeFromCart;
     </script>
 
-    <!-- Chatbot - ACTUALIZADO PARA SER IGUAL QUE INDEX.HTML -->
+    <!-- Chatbot - EXACTAMENTE IGUAL QUE INDEX.HTML -->
     <script type="module">
         import { knowledgeBase, procesarMensaje } from './chatbot.js';
         let isDesktopChatOpen = false;

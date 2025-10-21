@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botón Animado Mejorado</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --success-color: #28a745;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .button-container {
+            position: relative;
+        }
+
+        .animated-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 190px;
+            height: 40px;
+            overflow: hidden; 
+            position: relative;
+            z-index: 2;
+            transition: background-color 0.2s;
+        }
+
+        .animated-button:hover {
+            background-color: #0056b3;
+        }
+
+        .content-wrapper {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .cart-icon {
+            margin-left: 8px;
+            color: white; 
+            font-size: 1.2em;
+        }
+
+        .check-icon {
+            font-size: 1.5em;
+            position: absolute;
+            opacity: 0;
+            transform: scale(0);
+            color: white; /* Check blanco sobre fondo verde */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="button-container">
+        <button id="hybridButton" class="animated-button">
+            <div class="content-wrapper">
+                <span class="text-content">AGREGAR AL CARRITO</span>
+                <span class="cart-icon">🛒</span>
+            </div>
+            <span class="check-icon">✓</span>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const button = document.getElementById('hybridButton');
+            const textContent = button.querySelector('.text-content');
+            const cartIcon = button.querySelector('.cart-icon');
+            const checkIcon = button.querySelector('.check-icon');
+
+            let isAnimating = false;
+
+            const tl = gsap.timeline({ paused: true });
+
+            // FASE 1: DESAPARICIÓN DEL TEXTO Y MOVIMIENTO DEL CARRITO HACIA LA IZQUIERDA (RECTO)
+            tl.to(textContent, { 
+                opacity: 0, 
+                duration: 0.2 
+            }, 0) 
+              .to(cartIcon, {
+                  x: -150, // Se mueve recto hacia la izquierda
+                  y: 0,    // Sin movimiento vertical
+                  scale: 1, // Mantiene el tamaño
+                  rotation: 0, // Sin rotación
+                  opacity: 0,
+                  duration: 0.5,
+                  ease: 'power2.in',
+              }, 0);
+
+            // FASE 2: TRANSFORMACIÓN A CÍRCULO
+            tl.to(button, {
+                width: 40,
+                borderRadius: '50%',
+                duration: 0.4,
+                ease: 'power2.inOut',
+            }, 0.5)
+
+            // CAMBIO DE COLOR A VERDE
+            .to(button, {
+                backgroundColor: 'var(--success-color)' 
+            }, 0.7);
+
+            // FASE 3: APARICIÓN DEL CHECK (blanco sobre fondo verde)
+            tl.to(checkIcon, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.3,
+                ease: 'back.out(2)' 
+            }, 0.95)
+
+            // PAUSA
+            .to({}, { duration: 1.5 })
+
+            // FASE 4: VUELTA AL ESTADO ORIGINAL
+            .to(checkIcon, { 
+                opacity: 0, 
+                scale: 0, 
+                duration: 0.2 
+            }, '+=0') 
+            .to(button, {
+                width: 190,
+                borderRadius: '5px',
+                backgroundColor: 'var(--primary-color)',
+                duration: 0.4,
+                ease: 'power2.inOut',
+            }, '-=0.1')
+            .to(textContent, { 
+                opacity: 1, 
+                duration: 0.15 
+            }, '-=0.15')
+            .set(cartIcon, { 
+                x: 0, 
+                y: 0, 
+                scale: 1, 
+                rotation: 0, 
+                opacity: 1 
+            }); // Restablece todas las propiedades del carrito
+
+            // Manejador de evento click
+            button.addEventListener('click', () => {
+                if (isAnimating) return;
+                isAnimating = true;
+                tl.restart();
+                tl.eventCallback('onComplete', () => {
+                    isAnimating = false;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
